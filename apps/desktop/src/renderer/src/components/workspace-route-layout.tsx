@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { WorkspaceSlugProvider, paths } from "@multica/core/paths";
+import { WorkspaceSlugProvider, paths } from "@hira-vn/core/paths";
 import {
   workspaceBySlugOptions,
   workspaceListOptions,
-} from "@multica/core/workspace";
-import { setCurrentWorkspace } from "@multica/core/platform";
-import { useAuthStore } from "@multica/core/auth";
-import { useWorkspaceSeen } from "@multica/views/workspace/use-workspace-seen";
+} from "@hira-vn/core/workspace";
+import { setCurrentWorkspace } from "@hira-vn/core/platform";
+import { useAuthStore } from "@hira-vn/core/auth";
+import { useWorkspaceSeen } from "@hira-vn/views/workspace/use-workspace-seen";
 import { useTabStore } from "@/stores/tab-store";
 
 /**

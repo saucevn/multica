@@ -9,7 +9,7 @@ body:
       label: Deployment type
       description: Are you using the hosted version or a self-hosted instance?
       options:
-        - multica.ai (hosted)
+        - hira.vn (hosted)
         - Self-hosted
     validations:
       required: true

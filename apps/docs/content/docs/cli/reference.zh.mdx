@@ -1,16 +1,16 @@
 ---
 title: CLI Reference
-description: Complete command reference for the Multica CLI and agent daemon.
+description: Complete command reference for the Hira CLI and agent daemon.
 ---
 
-The `multica` CLI connects your local machine to Multica. It handles authentication, workspace management, issue tracking, and runs the agent daemon that executes AI tasks locally.
+The `hira` CLI connects your local machine to Hira. It handles authentication, workspace management, issue tracking, and runs the agent daemon that executes AI tasks locally.
 
 ## Authentication
 
 ### Browser Login
 
 ```bash
-multica login
+hira login
 ```
 
 Opens your browser for OAuth authentication, creates a 90-day personal access token, and auto-configures your workspaces.
@@ -18,7 +18,7 @@ Opens your browser for OAuth authentication, creates a 90-day personal access to
 ### Token Login
 
 ```bash
-multica login --token
+hira login --token
 ```
 
 Authenticate by pasting a personal access token directly. Useful for headless environments.
@@ -26,7 +26,7 @@ Authenticate by pasting a personal access token directly. Useful for headless en
 ### Check Status
 
 ```bash
-multica auth status
+hira auth status
 ```
 
 Shows your current server, user, and token validity.
@@ -34,40 +34,40 @@ Shows your current server, user, and token validity.
 ### Logout
 
 ```bash
-multica auth logout
+hira auth logout
 ```
 
 Removes the stored authentication token.
 
 ## Agent Daemon
 
-The daemon is the local agent runtime. It detects available AI CLIs on your machine, registers them with the Multica server, and executes tasks when agents are assigned work.
+The daemon is the local agent runtime. It detects available AI CLIs on your machine, registers them with the Hira server, and executes tasks when agents are assigned work.
 
 ### Start
 
 ```bash
-multica daemon start
+hira daemon start
 ```
 
-By default, the daemon runs in the background and logs to `~/.multica/daemon.log`.
+By default, the daemon runs in the background and logs to `~/.hira/daemon.log`.
 
 To run in the foreground (useful for debugging):
 
 ```bash
-multica daemon start --foreground
+hira daemon start --foreground
 ```
 
 ### Stop
 
 ```bash
-multica daemon stop
+hira daemon stop
 ```
 
 ### Status
 
 ```bash
-multica daemon status
-multica daemon status --output json
+hira daemon status
+hira daemon status --output json
 ```
 
 Shows PID, uptime, detected agents, and watched workspaces.
@@ -75,9 +75,9 @@ Shows PID, uptime, detected agents, and watched workspaces.
 ### Logs
 
 ```bash
-multica daemon logs              # Last 50 lines
-multica daemon logs -f           # Follow (tail -f)
-multica daemon logs -n 100       # Last 100 lines
+hira daemon logs              # Last 50 lines
+hira daemon logs -f           # Follow (tail -f)
+hira daemon logs -n 100       # Last 100 lines
 ```
 
 ### Supported Agents
@@ -109,49 +109,49 @@ Daemon behavior is configured via flags or environment variables:
 
 | Setting | Flag | Env Variable | Default |
 |---------|------|--------------|---------|
-| Poll interval | `--poll-interval` | `MULTICA_DAEMON_POLL_INTERVAL` | `3s` |
-| Heartbeat interval | `--heartbeat-interval` | `MULTICA_DAEMON_HEARTBEAT_INTERVAL` | `15s` |
-| Agent timeout | `--agent-timeout` | `MULTICA_AGENT_TIMEOUT` | `2h` |
-| Max concurrent tasks | `--max-concurrent-tasks` | `MULTICA_DAEMON_MAX_CONCURRENT_TASKS` | `20` |
-| Daemon ID | `--daemon-id` | `MULTICA_DAEMON_ID` | hostname |
-| Device name | `--device-name` | `MULTICA_DAEMON_DEVICE_NAME` | hostname |
-| Runtime name | `--runtime-name` | `MULTICA_AGENT_RUNTIME_NAME` | `Local Agent` |
-| Workspaces root | — | `MULTICA_WORKSPACES_ROOT` | `~/multica_workspaces` |
+| Poll interval | `--poll-interval` | `HIRA_DAEMON_POLL_INTERVAL` | `3s` |
+| Heartbeat interval | `--heartbeat-interval` | `HIRA_DAEMON_HEARTBEAT_INTERVAL` | `15s` |
+| Agent timeout | `--agent-timeout` | `HIRA_AGENT_TIMEOUT` | `2h` |
+| Max concurrent tasks | `--max-concurrent-tasks` | `HIRA_DAEMON_MAX_CONCURRENT_TASKS` | `20` |
+| Daemon ID | `--daemon-id` | `HIRA_DAEMON_ID` | hostname |
+| Device name | `--device-name` | `HIRA_DAEMON_DEVICE_NAME` | hostname |
+| Runtime name | `--runtime-name` | `HIRA_AGENT_RUNTIME_NAME` | `Local Agent` |
+| Workspaces root | — | `HIRA_WORKSPACES_ROOT` | `~/hira_workspaces` |
 
 Agent-specific overrides:
 
 | Variable | Description |
 |----------|-------------|
-| `MULTICA_CLAUDE_PATH` | Custom path to the `claude` binary |
-| `MULTICA_CLAUDE_MODEL` | Override the Claude model used |
-| `MULTICA_CODEX_PATH` | Custom path to the `codex` binary |
-| `MULTICA_CODEX_MODEL` | Override the Codex model used |
-| `MULTICA_OPENCODE_PATH` | Custom path to the `opencode` binary |
-| `MULTICA_OPENCODE_MODEL` | Override the OpenCode model used |
-| `MULTICA_OPENCLAW_PATH` | Custom path to the `openclaw` binary |
-| `MULTICA_OPENCLAW_MODEL` | Override the OpenClaw model used |
-| `MULTICA_HERMES_PATH` | Custom path to the `hermes` binary |
-| `MULTICA_HERMES_MODEL` | Override the Hermes model used |
-| `MULTICA_GEMINI_PATH` | Custom path to the `gemini` binary |
-| `MULTICA_GEMINI_MODEL` | Override the Gemini model used |
+| `HIRA_CLAUDE_PATH` | Custom path to the `claude` binary |
+| `HIRA_CLAUDE_MODEL` | Override the Claude model used |
+| `HIRA_CODEX_PATH` | Custom path to the `codex` binary |
+| `HIRA_CODEX_MODEL` | Override the Codex model used |
+| `HIRA_OPENCODE_PATH` | Custom path to the `opencode` binary |
+| `HIRA_OPENCODE_MODEL` | Override the OpenCode model used |
+| `HIRA_OPENCLAW_PATH` | Custom path to the `openclaw` binary |
+| `HIRA_OPENCLAW_MODEL` | Override the OpenClaw model used |
+| `HIRA_HERMES_PATH` | Custom path to the `hermes` binary |
+| `HIRA_HERMES_MODEL` | Override the Hermes model used |
+| `HIRA_GEMINI_PATH` | Custom path to the `gemini` binary |
+| `HIRA_GEMINI_MODEL` | Override the Gemini model used |
 
 ### Self-Hosted Server
 
-When connecting to a self-hosted Multica instance, point the CLI to your server before logging in:
+When connecting to a self-hosted Hira instance, point the CLI to your server before logging in:
 
 ```bash
-export MULTICA_APP_URL=https://app.example.com
-export MULTICA_SERVER_URL=wss://api.example.com/ws
+export HIRA_APP_URL=https://app.example.com
+export HIRA_SERVER_URL=wss://api.example.com/ws
 
-multica login
-multica daemon start
+hira login
+hira daemon start
 ```
 
 Or set them persistently:
 
 ```bash
-multica config set app_url https://app.example.com
-multica config set server_url wss://api.example.com/ws
+hira config set app_url https://app.example.com
+hira config set server_url wss://api.example.com/ws
 ```
 
 ### Profiles
@@ -160,23 +160,23 @@ Profiles let you run multiple daemons on the same machine — for example, one f
 
 ```bash
 # Set up a staging profile
-multica setup self-host --profile staging --server-url https://api-staging.example.com --app-url https://staging.example.com
+hira setup self-host --profile staging --server-url https://api-staging.example.com --app-url https://staging.example.com
 
 # Start its daemon
-multica daemon start --profile staging
+hira daemon start --profile staging
 
 # Default profile runs separately
-multica daemon start
+hira daemon start
 ```
 
-Each profile gets its own config directory (`~/.multica/profiles/<name>/`), daemon state, health port, and workspace root.
+Each profile gets its own config directory (`~/.hira/profiles/<name>/`), daemon state, health port, and workspace root.
 
 ## Workspaces
 
 ### List Workspaces
 
 ```bash
-multica workspace list
+hira workspace list
 ```
 
 Watched workspaces are marked with `*`. The daemon only processes tasks for watched workspaces.
@@ -184,21 +184,21 @@ Watched workspaces are marked with `*`. The daemon only processes tasks for watc
 ### Watch / Unwatch
 
 ```bash
-multica workspace watch <workspace-id>
-multica workspace unwatch <workspace-id>
+hira workspace watch <workspace-id>
+hira workspace unwatch <workspace-id>
 ```
 
 ### Get Details
 
 ```bash
-multica workspace get <workspace-id>
-multica workspace get <workspace-id> --output json
+hira workspace get <workspace-id>
+hira workspace get <workspace-id> --output json
 ```
 
 ### List Members
 
 ```bash
-multica workspace members <workspace-id>
+hira workspace members <workspace-id>
 ```
 
 ## Issues
@@ -206,10 +206,10 @@ multica workspace members <workspace-id>
 ### List Issues
 
 ```bash
-multica issue list
-multica issue list --status in_progress
-multica issue list --priority urgent --assignee "Agent Name"
-multica issue list --limit 20 --output json
+hira issue list
+hira issue list --status in_progress
+hira issue list --priority urgent --assignee "Agent Name"
+hira issue list --limit 20 --output json
 ```
 
 Available filters: `--status`, `--priority`, `--assignee`, `--project`, `--limit`.
@@ -217,14 +217,14 @@ Available filters: `--status`, `--priority`, `--assignee`, `--project`, `--limit
 ### Get Issue
 
 ```bash
-multica issue get <id>
-multica issue get <id> --output json
+hira issue get <id>
+hira issue get <id> --output json
 ```
 
 ### Create Issue
 
 ```bash
-multica issue create --title "Fix login bug" --description "..." --priority high --assignee "Lambda"
+hira issue create --title "Fix login bug" --description "..." --priority high --assignee "Lambda"
 ```
 
 Flags: `--title` (required), `--description`, `--status`, `--priority`, `--assignee`, `--parent`, `--project`, `--due-date`.
@@ -232,20 +232,20 @@ Flags: `--title` (required), `--description`, `--status`, `--priority`, `--assig
 ### Update Issue
 
 ```bash
-multica issue update <id> --title "New title" --priority urgent
+hira issue update <id> --title "New title" --priority urgent
 ```
 
 ### Assign Issue
 
 ```bash
-multica issue assign <id> --to "Lambda"
-multica issue assign <id> --unassign
+hira issue assign <id> --to "Lambda"
+hira issue assign <id> --unassign
 ```
 
 ### Change Status
 
 ```bash
-multica issue status <id> in_progress
+hira issue status <id> in_progress
 ```
 
 Valid statuses: `backlog`, `todo`, `in_progress`, `in_review`, `done`, `blocked`, `cancelled`.
@@ -254,31 +254,31 @@ Valid statuses: `backlog`, `todo`, `in_progress`, `in_review`, `done`, `blocked`
 
 ```bash
 # List comments
-multica issue comment list <issue-id>
+hira issue comment list <issue-id>
 
 # Add a comment
-multica issue comment add <issue-id> --content "Looks good, merging now"
+hira issue comment add <issue-id> --content "Looks good, merging now"
 
 # Reply to a specific comment
-multica issue comment add <issue-id> --parent <comment-id> --content "Thanks!"
+hira issue comment add <issue-id> --parent <comment-id> --content "Thanks!"
 
 # Delete a comment
-multica issue comment delete <comment-id>
+hira issue comment delete <comment-id>
 ```
 
 ### Execution History
 
 ```bash
 # List all execution runs for an issue
-multica issue runs <issue-id>
-multica issue runs <issue-id> --output json
+hira issue runs <issue-id>
+hira issue runs <issue-id> --output json
 
 # View messages for a specific execution run
-multica issue run-messages <task-id>
-multica issue run-messages <task-id> --output json
+hira issue run-messages <task-id>
+hira issue run-messages <task-id> --output json
 
 # Incremental fetch (only messages after a given sequence number)
-multica issue run-messages <task-id> --since 42 --output json
+hira issue run-messages <task-id> --since 42 --output json
 ```
 
 ## Projects
@@ -289,9 +289,9 @@ belongs to a workspace and can optionally have a lead (member or agent).
 ### List Projects
 
 ```bash
-multica project list
-multica project list --status in_progress
-multica project list --output json
+hira project list
+hira project list --status in_progress
+hira project list --output json
 ```
 
 Available filters: `--status`.
@@ -299,14 +299,14 @@ Available filters: `--status`.
 ### Get Project
 
 ```bash
-multica project get <id>
-multica project get <id> --output json
+hira project get <id>
+hira project get <id> --output json
 ```
 
 ### Create Project
 
 ```bash
-multica project create --title "2026 Week 16 Sprint" --icon "🏃" --lead "Lambda"
+hira project create --title "2026 Week 16 Sprint" --icon "🏃" --lead "Lambda"
 ```
 
 Flags: `--title` (required), `--description`, `--status`, `--icon`, `--lead`.
@@ -314,8 +314,8 @@ Flags: `--title` (required), `--description`, `--status`, `--icon`, `--lead`.
 ### Update Project
 
 ```bash
-multica project update <id> --title "New title" --status in_progress
-multica project update <id> --lead "Lambda"
+hira project update <id> --title "New title" --status in_progress
+hira project update <id> --lead "Lambda"
 ```
 
 Flags: `--title`, `--description`, `--status`, `--icon`, `--lead`.
@@ -323,7 +323,7 @@ Flags: `--title`, `--description`, `--status`, `--icon`, `--lead`.
 ### Change Status
 
 ```bash
-multica project status <id> in_progress
+hira project status <id> in_progress
 ```
 
 Valid statuses: `planned`, `in_progress`, `paused`, `completed`, `cancelled`.
@@ -331,7 +331,7 @@ Valid statuses: `planned`, `in_progress`, `paused`, `completed`, `cancelled`.
 ### Delete Project
 
 ```bash
-multica project delete <id>
+hira project delete <id>
 ```
 
 ### Associating Issues with Projects
@@ -340,9 +340,9 @@ Use the `--project` flag on `issue create` / `issue update` to attach an issue t
 project, or on `issue list` to filter issues by project:
 
 ```bash
-multica issue create --title "Login bug" --project <project-id>
-multica issue update <issue-id> --project <project-id>
-multica issue list --project <project-id>
+hira issue create --title "Login bug" --project <project-id>
+hira issue update <issue-id> --project <project-id>
+hira issue list --project <project-id>
 ```
 
 ## Configuration
@@ -350,7 +350,7 @@ multica issue list --project <project-id>
 ### View Config
 
 ```bash
-multica config show
+hira config show
 ```
 
 Shows config file path, server URL, app URL, and default workspace.
@@ -358,17 +358,17 @@ Shows config file path, server URL, app URL, and default workspace.
 ### Set Values
 
 ```bash
-multica config set server_url wss://api.example.com/ws
-multica config set app_url https://app.example.com
-multica config set workspace_id <workspace-id>
+hira config set server_url wss://api.example.com/ws
+hira config set app_url https://app.example.com
+hira config set workspace_id <workspace-id>
 ```
 
 ## Other Commands
 
 ```bash
-multica version              # Show CLI version and commit hash
-multica update               # Update to latest version
-multica agent list           # List agents in the current workspace
+hira version              # Show CLI version and commit hash
+hira update               # Update to latest version
+hira agent list           # List agents in the current workspace
 ```
 
 ## Output Formats
@@ -379,6 +379,6 @@ Most commands support `--output` with two formats:
 - `json` — structured JSON (useful for scripting and automation)
 
 ```bash
-multica issue list --output json
-multica daemon status --output json
+hira issue list --output json
+hira daemon status --output json
 ```

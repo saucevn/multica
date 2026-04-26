@@ -2,22 +2,22 @@
 
 import { useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "@multica/core/api";
+import { api } from "@hira-vn/core/api";
 import {
   workspaceKeys,
   workspaceListOptions,
-} from "@multica/core/workspace/queries";
+} from "@hira-vn/core/workspace/queries";
 import {
   paths,
   resolvePostAuthDestination,
   useHasOnboarded,
-} from "@multica/core/paths";
+} from "@hira-vn/core/paths";
 import { useNavigation } from "../navigation";
 import { useLogout } from "../auth";
 import { DragStrip } from "../platform";
-import { Button } from "@multica/ui/components/ui/button";
-import { Card, CardContent } from "@multica/ui/components/ui/card";
-import { Skeleton } from "@multica/ui/components/ui/skeleton";
+import { Button } from "@hira-vn/ui/components/ui/button";
+import { Card, CardContent } from "@hira-vn/ui/components/ui/card";
+import { Skeleton } from "@hira-vn/ui/components/ui/skeleton";
 import { ArrowLeft, LogOut, Users, Check, X } from "lucide-react";
 
 export interface InvitePageProps {

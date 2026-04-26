@@ -10,10 +10,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 
-	"github.com/multica-ai/multica/server/internal/analytics"
-	"github.com/multica-ai/multica/server/internal/logger"
-	db "github.com/multica-ai/multica/server/pkg/db/generated"
-	"github.com/multica-ai/multica/server/pkg/protocol"
+	"github.com/hira-vn/hira/server/internal/analytics"
+	"github.com/hira-vn/hira/server/internal/logger"
+	db "github.com/hira-vn/hira/server/pkg/db/generated"
+	"github.com/hira-vn/hira/server/pkg/protocol"
 )
 
 // Upper bound on free-text fields. `cloudWaitlistReasonMaxLen` is a

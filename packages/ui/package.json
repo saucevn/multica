@@ -1,5 +1,5 @@
 {
-  "name": "@multica/ui",
+  "name": "@hira-vn/ui",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -52,7 +52,7 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@multica/tsconfig": "workspace:*",
+    "@hira-vn/tsconfig": "workspace:*",
     "@types/linkify-it": "^5.0.0",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

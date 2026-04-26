@@ -6,7 +6,7 @@ import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import { FileText, Download } from 'lucide-react'
-import { cn } from '@multica/ui/lib/utils'
+import { cn } from '@hira-vn/ui/lib/utils'
 import { CodeBlock, InlineCode } from './CodeBlock'
 import { preprocessFileCards } from './file-cards'
 import { preprocessLinks } from './linkify'
@@ -54,7 +54,7 @@ export interface MarkdownProps {
    */
   renderMention?: (props: { type: string; id: string }) => React.ReactNode
   /**
-   * CDN hostname for file card detection (e.g. "multica-static.copilothub.ai").
+   * CDN hostname for file card detection (e.g. "hira-static.copilothub.ai").
    * When provided, enables file card preprocessing and rendering.
    */
   cdnDomain?: string

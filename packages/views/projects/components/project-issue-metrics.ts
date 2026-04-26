@@ -1,4 +1,4 @@
-import type { Project } from "@multica/core/types";
+import type { Project } from "@hira-vn/core/types";
 
 export function getProjectIssueMetrics(
   project: Pick<Project, "issue_count" | "done_count">,

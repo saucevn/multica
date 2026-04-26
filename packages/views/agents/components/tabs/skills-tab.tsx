@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Plus, FileText, Trash2, Info } from "lucide-react";
-import type { Agent } from "@multica/core/types";
+import type { Agent } from "@hira-vn/core/types";
 import {
   Dialog,
   DialogContent,
@@ -10,12 +10,12 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@multica/ui/components/ui/dialog";
-import { Button } from "@multica/ui/components/ui/button";
+} from "@hira-vn/ui/components/ui/dialog";
+import { Button } from "@hira-vn/ui/components/ui/button";
 import { toast } from "sonner";
-import { api } from "@multica/core/api";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { skillListOptions, workspaceKeys } from "@multica/core/workspace/queries";
+import { api } from "@hira-vn/core/api";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
+import { skillListOptions, workspaceKeys } from "@hira-vn/core/workspace/queries";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function SkillsTab({

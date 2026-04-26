@@ -16,14 +16,14 @@ import {
   Zap,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@multica/ui/components/ui/button";
-import { Input } from "@multica/ui/components/ui/input";
-import { Label } from "@multica/ui/components/ui/label";
-import { useScrollFade } from "@multica/ui/hooks/use-scroll-fade";
-import { cn } from "@multica/ui/lib/utils";
-import { useCreateWorkspace } from "@multica/core/workspace/mutations";
-import type { Workspace } from "@multica/core/types";
-import { DragStrip } from "@multica/views/platform";
+import { Button } from "@hira-vn/ui/components/ui/button";
+import { Input } from "@hira-vn/ui/components/ui/input";
+import { Label } from "@hira-vn/ui/components/ui/label";
+import { useScrollFade } from "@hira-vn/ui/hooks/use-scroll-fade";
+import { cn } from "@hira-vn/ui/lib/utils";
+import { useCreateWorkspace } from "@hira-vn/core/workspace/mutations";
+import type { Workspace } from "@hira-vn/core/types";
+import { DragStrip } from "@hira-vn/views/platform";
 import { StepHeader } from "../components/step-header";
 import { RadioMark } from "../components/option-card";
 import { WorkspaceAvatar } from "../../workspace/workspace-avatar";
@@ -48,7 +48,7 @@ import {
  * shared form's own button would fight the footer CTA.
  *
  * The create-fields block doubles as a pedagogical preview: the URL is
- * rendered as a `multica.ai/[slug]` pill, and a live `Issues will look
+ * rendered as a `hira.vn/[slug]` pill, and a live `Issues will look
  * like ACME-123` line shows the user what their issue IDs will read
  * like before they've created anything.
  *
@@ -210,7 +210,7 @@ export function StepWorkspace({
         </Label>
         <div className="flex items-center rounded-md border bg-muted transition-colors focus-within:border-foreground">
           <span className="select-none pl-3 font-mono text-sm text-muted-foreground">
-            multica.ai/
+            hira.vn/
           </span>
           <Input
             id="ws-slug"
@@ -364,7 +364,7 @@ function ExistingWorkspaceCard({
           {workspace.name}
         </div>
         <div className="truncate font-mono text-xs text-muted-foreground">
-          multica.ai/{workspace.slug}
+          hira.vn/{workspace.slug}
         </div>
       </div>
       <RadioMark selected={selected} />
@@ -495,7 +495,7 @@ function WorkspacePreviewCard({
             {name}
           </div>
           <div className="truncate font-mono text-[11.5px] text-muted-foreground">
-            multica.ai/{slug}
+            hira.vn/{slug}
           </div>
         </div>
         <Lock

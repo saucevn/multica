@@ -1,5 +1,5 @@
-import { preprocessLinks, preprocessMentionShortcodes, preprocessFileCards } from "@multica/ui/markdown";
-import { configStore } from "@multica/core/config";
+import { preprocessLinks, preprocessMentionShortcodes, preprocessFileCards } from "@hira-vn/ui/markdown";
+import { configStore } from "@hira-vn/core/config";
 
 /**
  * Preprocess a markdown string before loading into Tiptap via contentType: 'markdown'.

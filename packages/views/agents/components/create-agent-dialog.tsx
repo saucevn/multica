@@ -10,7 +10,7 @@ import type {
   RuntimeDevice,
   MemberWithUser,
   CreateAgentRequest,
-} from "@multica/core/types";
+} from "@hira-vn/core/types";
 import {
   Dialog,
   DialogContent,
@@ -18,15 +18,15 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@multica/ui/components/ui/dialog";
+} from "@hira-vn/ui/components/ui/dialog";
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-} from "@multica/ui/components/ui/popover";
-import { Button } from "@multica/ui/components/ui/button";
-import { Input } from "@multica/ui/components/ui/input";
-import { Label } from "@multica/ui/components/ui/label";
+} from "@hira-vn/ui/components/ui/popover";
+import { Button } from "@hira-vn/ui/components/ui/button";
+import { Input } from "@hira-vn/ui/components/ui/input";
+import { Label } from "@hira-vn/ui/components/ui/label";
 import { toast } from "sonner";
 
 type RuntimeFilter = "mine" | "all";

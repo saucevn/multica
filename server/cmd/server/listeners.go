@@ -6,10 +6,10 @@ import (
 	"log/slog"
 	"strings"
 
-	"github.com/multica-ai/multica/server/internal/events"
-	"github.com/multica-ai/multica/server/internal/handler"
-	"github.com/multica-ai/multica/server/internal/realtime"
-	"github.com/multica-ai/multica/server/pkg/protocol"
+	"github.com/hira-vn/hira/server/internal/events"
+	"github.com/hira-vn/hira/server/internal/handler"
+	"github.com/hira-vn/hira/server/internal/realtime"
+	"github.com/hira-vn/hira/server/pkg/protocol"
 )
 
 // registerListeners wires up event bus listeners for WS broadcasting.

@@ -16,7 +16,7 @@ func TestBuildCommentReplyInstructionsIncludesTriggerID(t *testing.T) {
 	got := BuildCommentReplyInstructions(issueID, triggerID)
 
 	for _, want := range []string{
-		"multica issue comment add " + issueID + " --parent " + triggerID,
+		"hira issue comment add " + issueID + " --parent " + triggerID,
 		"do NOT reuse --parent values from previous turns",
 	} {
 		if !strings.Contains(got, want) {
@@ -56,7 +56,7 @@ func TestInjectRuntimeConfigCommentTriggerUsesHelper(t *testing.T) {
 	s := string(content)
 	for _, want := range []string{
 		triggerID,
-		"multica issue comment add " + issueID + " --parent " + triggerID,
+		"hira issue comment add " + issueID + " --parent " + triggerID,
 		"do NOT reuse --parent values from previous turns",
 	} {
 		if !strings.Contains(s, want) {

@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/multica-ai/multica/server/internal/realtime"
+	"github.com/hira-vn/hira/server/internal/realtime"
 )
 
 // realtimeMetricsHandler returns the HTTP handler for /health/realtime.

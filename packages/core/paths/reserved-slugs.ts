@@ -28,7 +28,7 @@ export const RESERVED_SLUGS = new Set([
   // Platform / marketing routes (current + likely-future)
   "api",
   "admin",
-  "multica", // brand name — prevent impersonation workspaces
+  "hira", // brand name — prevent impersonation workspaces
   "www",     // hostname confusable; never a legitimate workspace slug
   "new",     // ambiguous verb-as-slug; reserved for future global create routes
   "home",     // likely-future marketing/landing entry

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { X, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@multica/ui/components/ui/button";
+import { Button } from "@hira-vn/ui/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,10 +13,10 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@multica/ui/components/ui/alert-dialog";
-import type { UpdateIssueRequest } from "@multica/core/types";
-import { useIssueSelectionStore } from "@multica/core/issues/stores/selection-store";
-import { useBatchUpdateIssues, useBatchDeleteIssues } from "@multica/core/issues/mutations";
+} from "@hira-vn/ui/components/ui/alert-dialog";
+import type { UpdateIssueRequest } from "@hira-vn/core/types";
+import { useIssueSelectionStore } from "@hira-vn/core/issues/stores/selection-store";
+import { useBatchUpdateIssues, useBatchDeleteIssues } from "@hira-vn/core/issues/mutations";
 import { StatusPicker, PriorityPicker, AssigneePicker } from "./pickers";
 
 export function BatchActionToolbar() {

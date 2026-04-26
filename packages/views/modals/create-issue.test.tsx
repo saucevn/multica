@@ -30,25 +30,25 @@ vi.mock("../navigation", () => ({
   useNavigation: () => ({ push: mockPush }),
 }));
 
-vi.mock("@multica/core/paths", () => ({
+vi.mock("@hira-vn/core/paths", () => ({
   useCurrentWorkspace: () => ({ name: "Test Workspace" }),
   useWorkspacePaths: () => ({
     issueDetail: (id: string) => `/ws-test/issues/${id}`,
   }),
 }));
 
-vi.mock("@multica/core/hooks", () => ({
+vi.mock("@hira-vn/core/hooks", () => ({
   useWorkspaceId: () => "ws-test",
 }));
 
-vi.mock("@multica/core/issues/queries", () => ({
+vi.mock("@hira-vn/core/issues/queries", () => ({
   issueDetailOptions: (wsId: string, id: string) => ({
     queryKey: ["issues", wsId, "detail", id],
     queryFn: () => Promise.resolve(null),
   }),
 }));
 
-vi.mock("@multica/core/issues/stores/draft-store", () => ({
+vi.mock("@hira-vn/core/issues/stores/draft-store", () => ({
   useIssueDraftStore: Object.assign(
     (selector?: (state: typeof mockDraftStore) => unknown) =>
       (selector ? selector(mockDraftStore) : mockDraftStore),
@@ -56,16 +56,16 @@ vi.mock("@multica/core/issues/stores/draft-store", () => ({
   ),
 }));
 
-vi.mock("@multica/core/issues/mutations", () => ({
+vi.mock("@hira-vn/core/issues/mutations", () => ({
   useCreateIssue: () => ({ mutateAsync: mockCreateIssue }),
   useUpdateIssue: () => ({ mutate: vi.fn() }),
 }));
 
-vi.mock("@multica/core/hooks/use-file-upload", () => ({
+vi.mock("@hira-vn/core/hooks/use-file-upload", () => ({
   useFileUpload: () => ({ uploadWithToast: vi.fn() }),
 }));
 
-vi.mock("@multica/core/api", () => ({
+vi.mock("@hira-vn/core/api", () => ({
   api: {},
 }));
 
@@ -126,7 +126,7 @@ vi.mock("../projects/components/project-picker", () => ({
   ProjectPicker: () => <div data-testid="project-picker" />,
 }));
 
-vi.mock("@multica/ui/components/ui/dialog", () => ({
+vi.mock("@hira-vn/ui/components/ui/dialog", () => ({
   Dialog: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-root">{children}</div>,
   DialogContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div className={className}>{children}</div>
@@ -136,7 +136,7 @@ vi.mock("@multica/ui/components/ui/dialog", () => ({
   ),
 }));
 
-vi.mock("@multica/ui/components/ui/dropdown-menu", () => ({
+vi.mock("@hira-vn/ui/components/ui/dropdown-menu", () => ({
   DropdownMenu: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   DropdownMenuTrigger: ({ render }: { render: React.ReactNode }) => <>{render}</>,
   DropdownMenuContent: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -150,13 +150,13 @@ vi.mock("./issue-picker-modal", () => ({
   IssuePickerModal: () => null,
 }));
 
-vi.mock("@multica/ui/components/ui/tooltip", () => ({
+vi.mock("@hira-vn/ui/components/ui/tooltip", () => ({
   Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   TooltipTrigger: ({ render }: { render: React.ReactNode }) => <>{render}</>,
   TooltipContent: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-vi.mock("@multica/ui/components/ui/button", () => ({
+vi.mock("@hira-vn/ui/components/ui/button", () => ({
   Button: ({
     children,
     disabled,
@@ -174,7 +174,7 @@ vi.mock("@multica/ui/components/ui/button", () => ({
   ),
 }));
 
-vi.mock("@multica/ui/components/common/file-upload-button", () => ({
+vi.mock("@hira-vn/ui/components/common/file-upload-button", () => ({
   FileUploadButton: ({ onSelect }: { onSelect: (file: File) => void }) => (
     <button type="button" onClick={() => onSelect(new File(["test"], "test.txt"))}>
       Upload file
@@ -182,7 +182,7 @@ vi.mock("@multica/ui/components/common/file-upload-button", () => ({
   ),
 }));
 
-vi.mock("@multica/ui/lib/utils", () => ({
+vi.mock("@hira-vn/ui/lib/utils", () => ({
   cn: (...values: Array<string | false | null | undefined>) => values.filter(Boolean).join(" "),
 }));
 

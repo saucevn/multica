@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { AlertCircle, ArrowDownToLine, Check, Loader2 } from "lucide-react";
-import { Button } from "@multica/ui/components/ui/button";
+import { Button } from "@hira-vn/ui/components/ui/button";
 
 type CheckState =
   | { status: "idle" }

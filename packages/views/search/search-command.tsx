@@ -26,27 +26,27 @@ import {
 import { Command as CommandPrimitive } from "cmdk";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { SearchIssueResult, SearchProjectResult } from "@multica/core/types";
-import { api } from "@multica/core/api";
-import { useRecentIssuesStore } from "@multica/core/issues/stores";
-import { issueDetailOptions } from "@multica/core/issues/queries";
-import { useWorkspaceId } from "@multica/core";
-import { paths, useCurrentWorkspace, useWorkspacePaths } from "@multica/core/paths";
-import type { WorkspacePaths } from "@multica/core/paths";
-import { useModalStore } from "@multica/core/modals";
-import { workspaceListOptions } from "@multica/core/workspace/queries";
+import type { SearchIssueResult, SearchProjectResult } from "@hira-vn/core/types";
+import { api } from "@hira-vn/core/api";
+import { useRecentIssuesStore } from "@hira-vn/core/issues/stores";
+import { issueDetailOptions } from "@hira-vn/core/issues/queries";
+import { useWorkspaceId } from "@hira-vn/core";
+import { paths, useCurrentWorkspace, useWorkspacePaths } from "@hira-vn/core/paths";
+import type { WorkspacePaths } from "@hira-vn/core/paths";
+import { useModalStore } from "@hira-vn/core/modals";
+import { workspaceListOptions } from "@hira-vn/core/workspace/queries";
 import { StatusIcon } from "../issues/components";
-import { STATUS_CONFIG } from "@multica/core/issues/config";
-import { PROJECT_STATUS_CONFIG } from "@multica/core/projects/config";
-import type { ProjectStatus } from "@multica/core/types";
+import { STATUS_CONFIG } from "@hira-vn/core/issues/config";
+import { PROJECT_STATUS_CONFIG } from "@hira-vn/core/projects/config";
+import type { ProjectStatus } from "@hira-vn/core/types";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@multica/ui/components/ui/dialog";
-import { useTheme } from "@multica/ui/components/common/theme-provider";
+} from "@hira-vn/ui/components/ui/dialog";
+import { useTheme } from "@hira-vn/ui/components/common/theme-provider";
 import { useNavigation } from "../navigation";
 import { useSearchStore } from "./search-store";
 

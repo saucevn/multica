@@ -3,14 +3,14 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { useAuthStore } from "@multica/core/auth";
+import { useAuthStore } from "@hira-vn/core/auth";
 import {
   paths,
   resolvePostAuthDestination,
   useHasOnboarded,
-} from "@multica/core/paths";
-import { workspaceListOptions } from "@multica/core/workspace/queries";
-import { CliInstallInstructions, OnboardingFlow } from "@multica/views/onboarding";
+} from "@hira-vn/core/paths";
+import { workspaceListOptions } from "@hira-vn/core/workspace/queries";
+import { CliInstallInstructions, OnboardingFlow } from "@hira-vn/views/onboarding";
 
 /**
  * Web shell for the onboarding flow. The route is the platform chrome on

@@ -8,19 +8,19 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@multica/ui/components/ui/dialog";
-import { Button } from "@multica/ui/components/ui/button";
+} from "@hira-vn/ui/components/ui/dialog";
+import { Button } from "@hira-vn/ui/components/ui/button";
 import {
   ContentEditor,
   type ContentEditorRef,
   useFileDropZone,
   FileDropOverlay,
 } from "../editor";
-import { useCreateFeedback } from "@multica/core/feedback";
-import { useCurrentWorkspace } from "@multica/core/paths";
-import { useFileUpload } from "@multica/core/hooks/use-file-upload";
-import { api } from "@multica/core/api";
-import { captureFeedbackOpened } from "@multica/core/analytics";
+import { useCreateFeedback } from "@hira-vn/core/feedback";
+import { useCurrentWorkspace } from "@hira-vn/core/paths";
+import { useFileUpload } from "@hira-vn/core/hooks/use-file-upload";
+import { api } from "@hira-vn/core/api";
+import { captureFeedbackOpened } from "@hira-vn/core/analytics";
 
 const MAX_MESSAGE_LEN = 10000;
 

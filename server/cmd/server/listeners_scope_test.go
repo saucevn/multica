@@ -4,8 +4,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/multica-ai/multica/server/internal/events"
-	"github.com/multica-ai/multica/server/pkg/protocol"
+	"github.com/hira-vn/hira/server/internal/events"
+	"github.com/hira-vn/hira/server/pkg/protocol"
 )
 
 // fakeBroadcaster records every fanout call so tests can assert which scope a

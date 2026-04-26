@@ -1,4 +1,4 @@
-.PHONY: help makehelp dev server daemon cli multica build test migrate-up migrate-down sqlc seed clean setup start stop check worktree-env setup-main start-main stop-main check-main setup-worktree start-worktree stop-worktree check-worktree db-up db-down db-reset selfhost selfhost-build selfhost-stop
+.PHONY: help makehelp dev server daemon cli hira build test migrate-up migrate-down sqlc seed clean setup start stop check worktree-env setup-main start-main stop-main check-main setup-worktree start-worktree stop-worktree check-worktree db-up db-down db-reset selfhost selfhost-build selfhost-stop
 
 MAIN_ENV_FILE ?= .env
 WORKTREE_ENV_FILE ?= .env.worktree
@@ -8,23 +8,23 @@ ifneq ($(wildcard $(ENV_FILE)),)
 include $(ENV_FILE)
 endif
 
-POSTGRES_DB ?= multica
-POSTGRES_USER ?= multica
-POSTGRES_PASSWORD ?= multica
+POSTGRES_DB ?= hira
+POSTGRES_USER ?= hira
+POSTGRES_PASSWORD ?= hira
 POSTGRES_PORT ?= 5432
 PORT ?= 8080
 FRONTEND_PORT ?= 3000
 FRONTEND_ORIGIN ?= http://localhost:$(FRONTEND_PORT)
-MULTICA_APP_URL ?= $(FRONTEND_ORIGIN)
+HIRA_APP_URL ?= $(FRONTEND_ORIGIN)
 DATABASE_URL ?= postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@localhost:$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=disable
 NEXT_PUBLIC_API_URL ?= http://localhost:$(PORT)
 NEXT_PUBLIC_WS_URL ?= ws://localhost:$(PORT)/ws
 GOOGLE_REDIRECT_URI ?= $(FRONTEND_ORIGIN)/auth/callback
-MULTICA_SERVER_URL ?= ws://localhost:$(PORT)/ws
+HIRA_SERVER_URL ?= ws://localhost:$(PORT)/ws
 
 export
 
-MULTICA_ARGS ?= $(ARGS)
+HIRA_ARGS ?= $(ARGS)
 
 COMPOSE := docker compose
 
@@ -64,15 +64,15 @@ selfhost: ## Create .env if needed, then pull and start the official self-hosted
 		fi; \
 		echo "==> Generated random JWT_SECRET"; \
 	fi
-	@echo "==> Pulling official Multica images..."
+	@echo "==> Pulling official Hira images..."
 	@if ! docker compose -f docker-compose.selfhost.yml pull; then \
 		echo ""; \
-		echo "Official images for tag '$${MULTICA_IMAGE_TAG:-latest}' are not published yet."; \
+		echo "Official images for tag '$${HIRA_IMAGE_TAG:-latest}' are not published yet."; \
 		echo "If this is before the first GHCR release, build from the current checkout:"; \
 		echo "  make selfhost-build"; \
 		exit 1; \
 	fi
-	@echo "==> Starting Multica via Docker Compose..."
+	@echo "==> Starting Hira via Docker Compose..."
 	docker compose -f docker-compose.selfhost.yml up -d
 	@echo "==> Waiting for backend to be ready..."
 	@for i in $$(seq 1 30); do \
@@ -83,19 +83,19 @@ selfhost: ## Create .env if needed, then pull and start the official self-hosted
 	done
 	@if curl -sf http://localhost:$${PORT:-8080}/health > /dev/null 2>&1; then \
 		echo ""; \
-		echo "✓ Multica is running!"; \
+		echo "✓ Hira is running!"; \
 		echo "  Frontend: http://localhost:$${FRONTEND_PORT:-3000}"; \
 		echo "  Backend:  http://localhost:$${PORT:-8080}"; \
 		echo ""; \
-		echo "Images: $${MULTICA_BACKEND_IMAGE:-ghcr.io/multica-ai/multica-backend}:$${MULTICA_IMAGE_TAG:-latest}"; \
-		echo "        $${MULTICA_WEB_IMAGE:-ghcr.io/multica-ai/multica-web}:$${MULTICA_IMAGE_TAG:-latest}"; \
+		echo "Images: $${HIRA_BACKEND_IMAGE:-ghcr.io/hira-vn/hira-backend}:$${HIRA_IMAGE_TAG:-latest}"; \
+		echo "        $${HIRA_WEB_IMAGE:-ghcr.io/hira-vn/hira-web}:$${HIRA_IMAGE_TAG:-latest}"; \
 		echo ""; \
 		echo "Log in: configure RESEND_API_KEY in .env for email codes,"; \
 		echo "        or set APP_ENV=development in .env (private networks only) to enable code 888888."; \
 		echo ""; \
 		echo "Next — install the CLI and connect your machine:"; \
-		echo "  brew install multica-ai/tap/multica"; \
-		echo "  multica setup self-host"; \
+		echo "  brew install hira-vn/tap/hira"; \
+		echo "  hira setup self-host"; \
 	else \
 		echo ""; \
 		echo "Services are still starting. Check logs:"; \
@@ -114,7 +114,7 @@ selfhost-build: ## Build backend/web from the current checkout and start the sel
 		fi; \
 		echo "==> Generated random JWT_SECRET"; \
 	fi
-	@echo "==> Building Multica from the current checkout..."
+	@echo "==> Building Hira from the current checkout..."
 	docker compose -f docker-compose.selfhost.yml -f docker-compose.selfhost.build.yml up -d --build
 	@echo "==> Waiting for backend to be ready..."
 	@for i in $$(seq 1 30); do \
@@ -125,7 +125,7 @@ selfhost-build: ## Build backend/web from the current checkout and start the sel
 	done
 	@if curl -sf http://localhost:$${PORT:-8080}/health > /dev/null 2>&1; then \
 		echo ""; \
-		echo "✓ Multica is running!"; \
+		echo "✓ Hira is running!"; \
 		echo "  Frontend: http://localhost:$${FRONTEND_PORT:-3000}"; \
 		echo "  Backend:  http://localhost:$${PORT:-8080}"; \
 		echo ""; \
@@ -133,11 +133,11 @@ selfhost-build: ## Build backend/web from the current checkout and start the sel
 		echo "        or set APP_ENV=development in .env (private networks only) to enable code 888888."; \
 		echo ""; \
 		echo "Built images locally via docker-compose.selfhost.build.yml."; \
-		echo "Local tags: multica-backend:dev and multica-web:dev."; \
+		echo "Local tags: hira-backend:dev and hira-web:dev."; \
 		echo ""; \
 		echo "Next — install the CLI and connect your machine:"; \
-		echo "  brew install multica-ai/tap/multica"; \
-		echo "  multica setup self-host"; \
+		echo "  brew install hira-vn/tap/hira"; \
+		echo "  hira setup self-host"; \
 	else \
 		echo ""; \
 		echo "Services are still starting. Check logs:"; \
@@ -145,7 +145,7 @@ selfhost-build: ## Build backend/web from the current checkout and start the sel
 	fi
 
 selfhost-stop: ## Stop the self-hosted Docker Compose stack
-	@echo "==> Stopping Multica services..."
+	@echo "==> Stopping Hira services..."
 	docker compose -f docker-compose.selfhost.yml down
 	@echo "✓ All services stopped."
 
@@ -264,13 +264,13 @@ server: ## Run only the Go server for the current checkout
 	cd server && go run ./cmd/server
 
 daemon: ## Restart the local agent daemon using the CLI's stored auth/session
-	@$(MAKE) multica MULTICA_ARGS="daemon restart --profile local"
+	@$(MAKE) hira HIRA_ARGS="daemon restart --profile local"
 
-cli: ## Run the multica CLI with ARGS or MULTICA_ARGS from source
-	@$(MAKE) multica MULTICA_ARGS="$(MULTICA_ARGS)"
+cli: ## Run the hira CLI with ARGS or HIRA_ARGS from source
+	@$(MAKE) hira HIRA_ARGS="$(HIRA_ARGS)"
 
-multica: ## Run the multica CLI entrypoint directly from the Go source tree
-	cd server && go run ./cmd/multica $(MULTICA_ARGS)
+hira: ## Run the hira CLI entrypoint directly from the Go source tree
+	cd server && go run ./cmd/hira $(HIRA_ARGS)
 
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 COMMIT  ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
@@ -278,7 +278,7 @@ DATE    ?= $(shell date -u '+%Y-%m-%dT%H:%M:%SZ')
 
 build: ## Build the server, CLI, and migrate binaries into server/bin
 	cd server && go build -o bin/server ./cmd/server
-	cd server && go build -ldflags "-X main.version=$(VERSION) -X main.commit=$(COMMIT) -X main.date=$(DATE)" -o bin/multica ./cmd/multica
+	cd server && go build -ldflags "-X main.version=$(VERSION) -X main.commit=$(COMMIT) -X main.date=$(DATE)" -o bin/hira ./cmd/hira
 	cd server && go build -o bin/migrate ./cmd/migrate
 
 test: ## Run Go tests after ensuring the target DB exists and migrations are applied

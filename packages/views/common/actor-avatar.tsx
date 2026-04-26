@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ActorAvatar as ActorAvatarBase } from "@multica/ui/components/common/actor-avatar";
+import { ActorAvatar as ActorAvatarBase } from "@hira-vn/ui/components/common/actor-avatar";
 import {
   HoverCard,
   HoverCardTrigger,
   HoverCardContent,
-} from "@multica/ui/components/ui/hover-card";
-import { useActorName } from "@multica/core/workspace/hooks";
+} from "@hira-vn/ui/components/ui/hover-card";
+import { useActorName } from "@hira-vn/core/workspace/hooks";
 import { AgentProfileCard } from "../agents/components/agent-profile-card";
 
 interface ActorAvatarProps {

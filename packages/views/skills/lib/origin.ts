@@ -1,4 +1,4 @@
-import type { Skill } from "@multica/core/types";
+import type { Skill } from "@hira-vn/core/types";
 
 /**
  * Discriminated view over `Skill.config.origin` — the JSONB blob the backend

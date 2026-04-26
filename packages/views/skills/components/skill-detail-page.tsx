@@ -22,23 +22,23 @@ import type {
   Skill,
   SkillFile,
   UpdateSkillRequest,
-} from "@multica/core/types";
+} from "@hira-vn/core/types";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "@multica/core/api";
-import { timeAgo } from "@multica/core/utils";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { useWorkspacePaths } from "@multica/core/paths";
+import { api } from "@hira-vn/core/api";
+import { timeAgo } from "@hira-vn/core/utils";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
+import { useWorkspacePaths } from "@hira-vn/core/paths";
 import {
   agentListOptions,
   memberListOptions,
   selectSkillAssignments,
   skillDetailOptions,
   workspaceKeys,
-} from "@multica/core/workspace/queries";
-import { runtimeListOptions } from "@multica/core/runtimes";
-import { ActorAvatar } from "@multica/ui/components/common/actor-avatar";
-import { Button, buttonVariants } from "@multica/ui/components/ui/button";
+} from "@hira-vn/core/workspace/queries";
+import { runtimeListOptions } from "@hira-vn/core/runtimes";
+import { ActorAvatar } from "@hira-vn/ui/components/common/actor-avatar";
+import { Button, buttonVariants } from "@hira-vn/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -46,16 +46,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@multica/ui/components/ui/dialog";
-import { Input } from "@multica/ui/components/ui/input";
-import { Label } from "@multica/ui/components/ui/label";
-import { Skeleton } from "@multica/ui/components/ui/skeleton";
-import { Textarea } from "@multica/ui/components/ui/textarea";
+} from "@hira-vn/ui/components/ui/dialog";
+import { Input } from "@hira-vn/ui/components/ui/input";
+import { Label } from "@hira-vn/ui/components/ui/label";
+import { Skeleton } from "@hira-vn/ui/components/ui/skeleton";
+import { Textarea } from "@hira-vn/ui/components/ui/textarea";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@multica/ui/components/ui/tooltip";
+} from "@hira-vn/ui/components/ui/tooltip";
 import { AppLink, useNavigation } from "../../navigation";
 import { useCanEditSkill } from "../hooks/use-can-edit-skill";
 import { readOrigin, totalFileCount, type OriginInfo } from "../lib/origin";

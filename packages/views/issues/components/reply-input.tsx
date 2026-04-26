@@ -3,12 +3,12 @@
 import { useRef, useState, useCallback } from "react";
 import { ArrowUp, Loader2, Maximize2, Minimize2 } from "lucide-react";
 import { ContentEditor, type ContentEditorRef, useFileDropZone, FileDropOverlay } from "../../editor";
-import { FileUploadButton } from "@multica/ui/components/common/file-upload-button";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
+import { FileUploadButton } from "@hira-vn/ui/components/common/file-upload-button";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@hira-vn/ui/components/ui/tooltip";
 import { ActorAvatar } from "../../common/actor-avatar";
-import { useFileUpload } from "@multica/core/hooks/use-file-upload";
-import { api } from "@multica/core/api";
-import { cn } from "@multica/ui/lib/utils";
+import { useFileUpload } from "@hira-vn/core/hooks/use-file-upload";
+import { api } from "@hira-vn/core/api";
+import { cn } from "@hira-vn/ui/lib/utils";
 
 // ---------------------------------------------------------------------------
 // Types

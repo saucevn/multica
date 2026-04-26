@@ -5,11 +5,11 @@ import (
 	"testing"
 
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/multica-ai/multica/server/internal/events"
-	"github.com/multica-ai/multica/server/internal/handler"
-	"github.com/multica-ai/multica/server/internal/util"
-	db "github.com/multica-ai/multica/server/pkg/db/generated"
-	"github.com/multica-ai/multica/server/pkg/protocol"
+	"github.com/hira-vn/hira/server/internal/events"
+	"github.com/hira-vn/hira/server/internal/handler"
+	"github.com/hira-vn/hira/server/internal/util"
+	db "github.com/hira-vn/hira/server/pkg/db/generated"
+	"github.com/hira-vn/hira/server/pkg/protocol"
 )
 
 // subscriberTest helpers — reuse the integration test fixtures from TestMain
@@ -123,7 +123,7 @@ func TestSubscriberIssueCreated_CreatorAndAssignee(t *testing.T) {
 	bus := events.New()
 	registerSubscriberListeners(bus, queries)
 
-	assigneeEmail := "subscriber-assignee-test@multica.ai"
+	assigneeEmail := "subscriber-assignee-test@hira.vn"
 	assigneeID := createTestUser(t, assigneeEmail)
 	t.Cleanup(func() { cleanupTestUser(t, assigneeEmail) })
 
@@ -207,7 +207,7 @@ func TestSubscriberIssueUpdated_AssigneeChanged(t *testing.T) {
 	bus := events.New()
 	registerSubscriberListeners(bus, queries)
 
-	assigneeEmail := "subscriber-new-assignee-test@multica.ai"
+	assigneeEmail := "subscriber-new-assignee-test@hira.vn"
 	assigneeID := createTestUser(t, assigneeEmail)
 	t.Cleanup(func() { cleanupTestUser(t, assigneeEmail) })
 
@@ -281,7 +281,7 @@ func TestSubscriberCommentCreated_CommenterSubscribed(t *testing.T) {
 	bus := events.New()
 	registerSubscriberListeners(bus, queries)
 
-	commenterEmail := "subscriber-commenter-test@multica.ai"
+	commenterEmail := "subscriber-commenter-test@hira.vn"
 	commenterID := createTestUser(t, commenterEmail)
 	t.Cleanup(func() { cleanupTestUser(t, commenterEmail) })
 

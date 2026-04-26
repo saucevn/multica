@@ -1,5 +1,5 @@
 {
-  "name": "@multica/core",
+  "name": "@hira-vn/core",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -79,7 +79,7 @@
     "react": "catalog:"
   },
   "devDependencies": {
-    "@multica/tsconfig": "workspace:*",
+    "@hira-vn/tsconfig": "workspace:*",
     "@types/react": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

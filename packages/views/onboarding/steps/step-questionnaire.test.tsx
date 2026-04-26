@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { QuestionnaireAnswers } from "@multica/core/onboarding";
+import type { QuestionnaireAnswers } from "@hira-vn/core/onboarding";
 import { StepQuestionnaire } from "./step-questionnaire";
 
 const EMPTY_ANSWERS: QuestionnaireAnswers = {

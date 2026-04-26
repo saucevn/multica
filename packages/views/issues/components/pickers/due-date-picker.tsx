@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import { CalendarDays } from "lucide-react";
-import type { UpdateIssueRequest } from "@multica/core/types";
-import { Calendar } from "@multica/ui/components/ui/calendar";
+import type { UpdateIssueRequest } from "@hira-vn/core/types";
+import { Calendar } from "@hira-vn/ui/components/ui/calendar";
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-} from "@multica/ui/components/ui/popover";
-import { Button } from "@multica/ui/components/ui/button";
+} from "@hira-vn/ui/components/ui/popover";
+import { Button } from "@hira-vn/ui/components/ui/button";
 
 export function DueDatePicker({
   dueDate,

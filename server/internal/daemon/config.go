@@ -31,11 +31,11 @@ type Config struct {
 	LegacyDaemonIDs    []string              // historical daemon_ids this machine may have registered under; reported at register time so the server can merge old runtime rows
 	DeviceName         string
 	RuntimeName        string
-	CLIVersion         string                // multica CLI version (e.g. "0.1.13")
+	CLIVersion         string                // hira CLI version (e.g. "0.1.13")
 	LaunchedBy         string                // "desktop" when spawned by the Electron app, empty for standalone
 	Profile            string                // profile name (empty = default)
 	Agents             map[string]AgentEntry // keyed by provider: claude, codex, copilot, opencode, openclaw, hermes, gemini, pi, cursor, kimi
-	WorkspacesRoot     string                // base path for execution envs (default: ~/multica_workspaces)
+	WorkspacesRoot     string                // base path for execution envs (default: ~/hira_workspaces)
 	KeepEnvAfterTask   bool                  // preserve env after task for debugging
 	HealthPort         int                   // local HTTP port for health checks (default: 19514)
 	MaxConcurrentTasks int                   // max tasks running in parallel (default: 20)
@@ -68,7 +68,7 @@ type Overrides struct {
 // and optional CLI flag overrides.
 func LoadConfig(overrides Overrides) (Config, error) {
 	// Server URL: override > env > default
-	rawServerURL := envOrDefault("MULTICA_SERVER_URL", DefaultServerURL)
+	rawServerURL := envOrDefault("HIRA_SERVER_URL", DefaultServerURL)
 	if overrides.ServerURL != "" {
 		rawServerURL = overrides.ServerURL
 	}
@@ -79,74 +79,74 @@ func LoadConfig(overrides Overrides) (Config, error) {
 
 	// Probe available agent CLIs
 	agents := map[string]AgentEntry{}
-	claudePath := envOrDefault("MULTICA_CLAUDE_PATH", "claude")
+	claudePath := envOrDefault("HIRA_CLAUDE_PATH", "claude")
 	if _, err := exec.LookPath(claudePath); err == nil {
 		agents["claude"] = AgentEntry{
 			Path:  claudePath,
-			Model: strings.TrimSpace(os.Getenv("MULTICA_CLAUDE_MODEL")),
+			Model: strings.TrimSpace(os.Getenv("HIRA_CLAUDE_MODEL")),
 		}
 	}
-	codexPath := envOrDefault("MULTICA_CODEX_PATH", "codex")
+	codexPath := envOrDefault("HIRA_CODEX_PATH", "codex")
 	if _, err := exec.LookPath(codexPath); err == nil {
 		agents["codex"] = AgentEntry{
 			Path:  codexPath,
-			Model: strings.TrimSpace(os.Getenv("MULTICA_CODEX_MODEL")),
+			Model: strings.TrimSpace(os.Getenv("HIRA_CODEX_MODEL")),
 		}
 	}
-	opencodePath := envOrDefault("MULTICA_OPENCODE_PATH", "opencode")
+	opencodePath := envOrDefault("HIRA_OPENCODE_PATH", "opencode")
 	if _, err := exec.LookPath(opencodePath); err == nil {
 		agents["opencode"] = AgentEntry{
 			Path:  opencodePath,
-			Model: strings.TrimSpace(os.Getenv("MULTICA_OPENCODE_MODEL")),
+			Model: strings.TrimSpace(os.Getenv("HIRA_OPENCODE_MODEL")),
 		}
 	}
-	openclawPath := envOrDefault("MULTICA_OPENCLAW_PATH", "openclaw")
+	openclawPath := envOrDefault("HIRA_OPENCLAW_PATH", "openclaw")
 	if _, err := exec.LookPath(openclawPath); err == nil {
 		agents["openclaw"] = AgentEntry{
 			Path:  openclawPath,
-			Model: strings.TrimSpace(os.Getenv("MULTICA_OPENCLAW_MODEL")),
+			Model: strings.TrimSpace(os.Getenv("HIRA_OPENCLAW_MODEL")),
 		}
 	}
-	hermesPath := envOrDefault("MULTICA_HERMES_PATH", "hermes")
+	hermesPath := envOrDefault("HIRA_HERMES_PATH", "hermes")
 	if _, err := exec.LookPath(hermesPath); err == nil {
 		agents["hermes"] = AgentEntry{
 			Path:  hermesPath,
-			Model: strings.TrimSpace(os.Getenv("MULTICA_HERMES_MODEL")),
+			Model: strings.TrimSpace(os.Getenv("HIRA_HERMES_MODEL")),
 		}
 	}
-	geminiPath := envOrDefault("MULTICA_GEMINI_PATH", "gemini")
+	geminiPath := envOrDefault("HIRA_GEMINI_PATH", "gemini")
 	if _, err := exec.LookPath(geminiPath); err == nil {
 		agents["gemini"] = AgentEntry{
 			Path:  geminiPath,
-			Model: strings.TrimSpace(os.Getenv("MULTICA_GEMINI_MODEL")),
+			Model: strings.TrimSpace(os.Getenv("HIRA_GEMINI_MODEL")),
 		}
 	}
-	piPath := envOrDefault("MULTICA_PI_PATH", "pi")
+	piPath := envOrDefault("HIRA_PI_PATH", "pi")
 	if _, err := exec.LookPath(piPath); err == nil {
 		agents["pi"] = AgentEntry{
 			Path:  piPath,
-			Model: strings.TrimSpace(os.Getenv("MULTICA_PI_MODEL")),
+			Model: strings.TrimSpace(os.Getenv("HIRA_PI_MODEL")),
 		}
 	}
-	cursorPath := envOrDefault("MULTICA_CURSOR_PATH", "cursor-agent")
+	cursorPath := envOrDefault("HIRA_CURSOR_PATH", "cursor-agent")
 	if _, err := exec.LookPath(cursorPath); err == nil {
 		agents["cursor"] = AgentEntry{
 			Path:  cursorPath,
-			Model: strings.TrimSpace(os.Getenv("MULTICA_CURSOR_MODEL")),
+			Model: strings.TrimSpace(os.Getenv("HIRA_CURSOR_MODEL")),
 		}
 	}
-	copilotPath := envOrDefault("MULTICA_COPILOT_PATH", "copilot")
+	copilotPath := envOrDefault("HIRA_COPILOT_PATH", "copilot")
 	if _, err := exec.LookPath(copilotPath); err == nil {
 		agents["copilot"] = AgentEntry{
 			Path:  copilotPath,
-			Model: strings.TrimSpace(os.Getenv("MULTICA_COPILOT_MODEL")),
+			Model: strings.TrimSpace(os.Getenv("HIRA_COPILOT_MODEL")),
 		}
 	}
-	kimiPath := envOrDefault("MULTICA_KIMI_PATH", "kimi")
+	kimiPath := envOrDefault("HIRA_KIMI_PATH", "kimi")
 	if _, err := exec.LookPath(kimiPath); err == nil {
 		agents["kimi"] = AgentEntry{
 			Path:  kimiPath,
-			Model: strings.TrimSpace(os.Getenv("MULTICA_KIMI_MODEL")),
+			Model: strings.TrimSpace(os.Getenv("HIRA_KIMI_MODEL")),
 		}
 	}
 	if len(agents) == 0 {
@@ -160,7 +160,7 @@ func LoadConfig(overrides Overrides) (Config, error) {
 	}
 
 	// Durations: override > env > default
-	pollInterval, err := durationFromEnv("MULTICA_DAEMON_POLL_INTERVAL", DefaultPollInterval)
+	pollInterval, err := durationFromEnv("HIRA_DAEMON_POLL_INTERVAL", DefaultPollInterval)
 	if err != nil {
 		return Config{}, err
 	}
@@ -168,7 +168,7 @@ func LoadConfig(overrides Overrides) (Config, error) {
 		pollInterval = overrides.PollInterval
 	}
 
-	heartbeatInterval, err := durationFromEnv("MULTICA_DAEMON_HEARTBEAT_INTERVAL", DefaultHeartbeatInterval)
+	heartbeatInterval, err := durationFromEnv("HIRA_DAEMON_HEARTBEAT_INTERVAL", DefaultHeartbeatInterval)
 	if err != nil {
 		return Config{}, err
 	}
@@ -176,7 +176,7 @@ func LoadConfig(overrides Overrides) (Config, error) {
 		heartbeatInterval = overrides.HeartbeatInterval
 	}
 
-	agentTimeout, err := durationFromEnv("MULTICA_AGENT_TIMEOUT", DefaultAgentTimeout)
+	agentTimeout, err := durationFromEnv("HIRA_AGENT_TIMEOUT", DefaultAgentTimeout)
 	if err != nil {
 		return Config{}, err
 	}
@@ -184,7 +184,7 @@ func LoadConfig(overrides Overrides) (Config, error) {
 		agentTimeout = overrides.AgentTimeout
 	}
 
-	maxConcurrentTasks, err := intFromEnv("MULTICA_DAEMON_MAX_CONCURRENT_TASKS", DefaultMaxConcurrentTasks)
+	maxConcurrentTasks, err := intFromEnv("HIRA_DAEMON_MAX_CONCURRENT_TASKS", DefaultMaxConcurrentTasks)
 	if err != nil {
 		return Config{}, err
 	}
@@ -199,9 +199,9 @@ func LoadConfig(overrides Overrides) (Config, error) {
 	// The persistent UUID is written once to `<profile-dir>/daemon.id` and
 	// then reused forever so hostname drift (.local suffix, system rename,
 	// mDNS state, profile switch) no longer mints a new runtime identity.
-	// Callers may still pin a specific id via MULTICA_DAEMON_ID or the
+	// Callers may still pin a specific id via HIRA_DAEMON_ID or the
 	// override field (e.g. for tests or embedded environments).
-	daemonID := strings.TrimSpace(os.Getenv("MULTICA_DAEMON_ID"))
+	daemonID := strings.TrimSpace(os.Getenv("HIRA_DAEMON_ID"))
 	if overrides.DaemonID != "" {
 		daemonID = overrides.DaemonID
 	}
@@ -218,7 +218,7 @@ func LoadConfig(overrides Overrides) (Config, error) {
 	legacyDaemonIDs := LegacyDaemonIDs(host, profile)
 	// Pre-change (#1220) daemon identity was stored per profile, which means
 	// the same machine could end up with multiple leftover daemon.id files
-	// — e.g. ~/.multica/daemon.id (default) plus ~/.multica/profiles/<x>/
+	// — e.g. ~/.hira/daemon.id (default) plus ~/.hira/profiles/<x>/
 	// daemon.id. Surface those UUIDs so the server can merge their runtime
 	// rows into the canonical machine UUID. Fatal-free: a broken profiles
 	// dir shouldn't block startup.
@@ -226,34 +226,34 @@ func LoadConfig(overrides Overrides) (Config, error) {
 		legacyDaemonIDs = append(legacyDaemonIDs, uuids...)
 	}
 	// Strip anything that collides with the resolved daemon_id (e.g. when
-	// the user explicitly pins MULTICA_DAEMON_ID=<hostname>, or when the
+	// the user explicitly pins HIRA_DAEMON_ID=<hostname>, or when the
 	// canonical id was itself promoted from a pre-change profile file).
 	legacyDaemonIDs = filterLegacyIDs(legacyDaemonIDs, daemonID)
 
-	deviceName := envOrDefault("MULTICA_DAEMON_DEVICE_NAME", host)
+	deviceName := envOrDefault("HIRA_DAEMON_DEVICE_NAME", host)
 	if overrides.DeviceName != "" {
 		deviceName = overrides.DeviceName
 	}
 
-	runtimeName := envOrDefault("MULTICA_AGENT_RUNTIME_NAME", DefaultRuntimeName)
+	runtimeName := envOrDefault("HIRA_AGENT_RUNTIME_NAME", DefaultRuntimeName)
 	if overrides.RuntimeName != "" {
 		runtimeName = overrides.RuntimeName
 	}
 
-	// Workspaces root: override > env > default (~/multica_workspaces or ~/multica_workspaces_<profile>)
-	workspacesRoot := strings.TrimSpace(os.Getenv("MULTICA_WORKSPACES_ROOT"))
+	// Workspaces root: override > env > default (~/hira_workspaces or ~/hira_workspaces_<profile>)
+	workspacesRoot := strings.TrimSpace(os.Getenv("HIRA_WORKSPACES_ROOT"))
 	if overrides.WorkspacesRoot != "" {
 		workspacesRoot = overrides.WorkspacesRoot
 	}
 	if workspacesRoot == "" {
 		home, err := os.UserHomeDir()
 		if err != nil {
-			return Config{}, fmt.Errorf("resolve home directory: %w (set MULTICA_WORKSPACES_ROOT to override)", err)
+			return Config{}, fmt.Errorf("resolve home directory: %w (set HIRA_WORKSPACES_ROOT to override)", err)
 		}
 		if profile != "" {
-			workspacesRoot = filepath.Join(home, "multica_workspaces_"+profile)
+			workspacesRoot = filepath.Join(home, "hira_workspaces_"+profile)
 		} else {
-			workspacesRoot = filepath.Join(home, "multica_workspaces")
+			workspacesRoot = filepath.Join(home, "hira_workspaces")
 		}
 	}
 	workspacesRoot, err = filepath.Abs(workspacesRoot)
@@ -268,22 +268,22 @@ func LoadConfig(overrides Overrides) (Config, error) {
 	}
 
 	// Keep env after task: env > default (false)
-	keepEnv := os.Getenv("MULTICA_KEEP_ENV_AFTER_TASK") == "true" || os.Getenv("MULTICA_KEEP_ENV_AFTER_TASK") == "1"
+	keepEnv := os.Getenv("HIRA_KEEP_ENV_AFTER_TASK") == "true" || os.Getenv("HIRA_KEEP_ENV_AFTER_TASK") == "1"
 
 	// GC config: env > defaults
 	gcEnabled := true
-	if v := os.Getenv("MULTICA_GC_ENABLED"); v == "false" || v == "0" {
+	if v := os.Getenv("HIRA_GC_ENABLED"); v == "false" || v == "0" {
 		gcEnabled = false
 	}
-	gcInterval, err := durationFromEnv("MULTICA_GC_INTERVAL", DefaultGCInterval)
+	gcInterval, err := durationFromEnv("HIRA_GC_INTERVAL", DefaultGCInterval)
 	if err != nil {
 		return Config{}, err
 	}
-	gcTTL, err := durationFromEnv("MULTICA_GC_TTL", DefaultGCTTL)
+	gcTTL, err := durationFromEnv("HIRA_GC_TTL", DefaultGCTTL)
 	if err != nil {
 		return Config{}, err
 	}
-	gcOrphanTTL, err := durationFromEnv("MULTICA_GC_ORPHAN_TTL", DefaultGCOrphanTTL)
+	gcOrphanTTL, err := durationFromEnv("HIRA_GC_ORPHAN_TTL", DefaultGCOrphanTTL)
 	if err != nil {
 		return Config{}, err
 	}
@@ -314,7 +314,7 @@ func LoadConfig(overrides Overrides) (Config, error) {
 func NormalizeServerBaseURL(raw string) (string, error) {
 	u, err := url.Parse(strings.TrimSpace(raw))
 	if err != nil {
-		return "", fmt.Errorf("invalid MULTICA_SERVER_URL: %w", err)
+		return "", fmt.Errorf("invalid HIRA_SERVER_URL: %w", err)
 	}
 	switch u.Scheme {
 	case "ws":
@@ -323,7 +323,7 @@ func NormalizeServerBaseURL(raw string) (string, error) {
 		u.Scheme = "https"
 	case "http", "https":
 	default:
-		return "", fmt.Errorf("MULTICA_SERVER_URL must use ws, wss, http, or https")
+		return "", fmt.Errorf("HIRA_SERVER_URL must use ws, wss, http, or https")
 	}
 	if u.Path == "/ws" {
 		u.Path = ""

@@ -4,7 +4,7 @@ import * as React from "react"
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import { Menubar as MenubarPrimitive } from "@base-ui/react/menubar"
 
-import { cn } from "@multica/ui/lib/utils"
+import { cn } from "@hira-vn/ui/lib/utils"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +19,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@multica/ui/components/ui/dropdown-menu"
+} from "@hira-vn/ui/components/ui/dropdown-menu"
 import { CheckIcon } from "lucide-react"
 
 function Menubar({ className, ...props }: MenubarPrimitive.Props) {

@@ -2,12 +2,12 @@
 
 import { Cloud, Monitor, Wifi, WifiOff } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import type { Agent, AgentRuntime } from "@multica/core/types";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { agentListOptions, memberListOptions } from "@multica/core/workspace/queries";
-import { runtimeListOptions } from "@multica/core/runtimes/queries";
-import { ActorAvatar as ActorAvatarBase } from "@multica/ui/components/common/actor-avatar";
-import { Skeleton } from "@multica/ui/components/ui/skeleton";
+import type { Agent, AgentRuntime } from "@hira-vn/core/types";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
+import { agentListOptions, memberListOptions } from "@hira-vn/core/workspace/queries";
+import { runtimeListOptions } from "@hira-vn/core/runtimes/queries";
+import { ActorAvatar as ActorAvatarBase } from "@hira-vn/ui/components/common/actor-avatar";
+import { Skeleton } from "@hira-vn/ui/components/ui/skeleton";
 import { statusConfig } from "../config";
 import { formatLastSeen } from "../../runtimes/utils";
 

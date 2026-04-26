@@ -1,5 +1,5 @@
-import type { Issue, IssueStatus, IssuePriority } from "@multica/core/types";
-import type { ActorFilterValue } from "@multica/core/issues/stores/view-store";
+import type { Issue, IssueStatus, IssuePriority } from "@hira-vn/core/types";
+import type { ActorFilterValue } from "@hira-vn/core/issues/stores/view-store";
 
 export interface IssueFilters {
   statusFilters: IssueStatus[];

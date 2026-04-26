@@ -13,35 +13,35 @@ import {
   MoreHorizontal,
   X as XIcon,
 } from "lucide-react";
-import { cn } from "@multica/ui/lib/utils";
+import { cn } from "@hira-vn/ui/lib/utils";
 import { toast } from "sonner";
-import type { Issue, IssueStatus, IssuePriority, IssueAssigneeType } from "@multica/core/types";
+import type { Issue, IssueStatus, IssuePriority, IssueAssigneeType } from "@hira-vn/core/types";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
-} from "@multica/ui/components/ui/dialog";
+} from "@hira-vn/ui/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@multica/ui/components/ui/dropdown-menu";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
-import { Button } from "@multica/ui/components/ui/button";
+} from "@hira-vn/ui/components/ui/dropdown-menu";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@hira-vn/ui/components/ui/tooltip";
+import { Button } from "@hira-vn/ui/components/ui/button";
 import { ContentEditor, type ContentEditorRef, TitleEditor, useFileDropZone, FileDropOverlay } from "../editor";
 import { StatusIcon, StatusPicker, PriorityPicker, AssigneePicker, DueDatePicker } from "../issues/components";
 import { BacklogAgentHintContent } from "../issues/components/backlog-agent-hint-dialog";
 import { ProjectPicker } from "../projects/components/project-picker";
-import { useCurrentWorkspace, useWorkspacePaths } from "@multica/core/paths";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { useIssueDraftStore } from "@multica/core/issues/stores/draft-store";
-import { issueDetailOptions } from "@multica/core/issues/queries";
-import { useCreateIssue, useUpdateIssue } from "@multica/core/issues/mutations";
-import { useFileUpload } from "@multica/core/hooks/use-file-upload";
-import { api } from "@multica/core/api";
-import { FileUploadButton } from "@multica/ui/components/common/file-upload-button";
+import { useCurrentWorkspace, useWorkspacePaths } from "@hira-vn/core/paths";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
+import { useIssueDraftStore } from "@hira-vn/core/issues/stores/draft-store";
+import { issueDetailOptions } from "@hira-vn/core/issues/queries";
+import { useCreateIssue, useUpdateIssue } from "@hira-vn/core/issues/mutations";
+import { useFileUpload } from "@hira-vn/core/hooks/use-file-upload";
+import { api } from "@hira-vn/core/api";
+import { FileUploadButton } from "@hira-vn/ui/components/common/file-upload-button";
 import { PillButton } from "../common/pill-button";
 import { IssuePickerModal } from "./issue-picker-modal";
 
@@ -156,7 +156,7 @@ export function CreateIssueModal({ onClose, data }: { onClose: () => void; data?
       clearDraft();
       const shouldShowBacklogHint =
         status === "backlog" && assigneeType === "agent" && assigneeId &&
-        localStorage.getItem("multica:backlog-agent-hint-dismissed") !== "true";
+        localStorage.getItem("hira:backlog-agent-hint-dismissed") !== "true";
 
       if (shouldShowBacklogHint) {
         setBacklogHintIssueId(issue.id);
@@ -230,7 +230,7 @@ export function CreateIssueModal({ onClose, data }: { onClose: () => void; data?
               onClose();
             }}
             onDismissPermanently={() => {
-              localStorage.setItem("multica:backlog-agent-hint-dismissed", "true");
+              localStorage.setItem("hira:backlog-agent-hint-dismissed", "true");
             }}
             onMoveToTodo={() => {
               updateIssueMutation.mutate(

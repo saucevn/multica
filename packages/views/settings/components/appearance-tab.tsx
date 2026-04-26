@@ -1,7 +1,7 @@
 "use client";
 
-import { useTheme } from "@multica/ui/components/common/theme-provider";
-import { cn } from "@multica/ui/lib/utils";
+import { useTheme } from "@hira-vn/ui/components/common/theme-provider";
+import { cn } from "@hira-vn/ui/lib/utils";
 
 const LIGHT_COLORS = {
   titleBar: "#e8e8e8",

@@ -33,22 +33,22 @@ import type { Editor } from "@tiptap/core";
 import { posToDOMRect } from "@tiptap/core";
 import { NodeSelection } from "@tiptap/pm/state";
 import { toast } from "sonner";
-import { useCreateIssue } from "@multica/core/issues/mutations";
-import { Toggle } from "@multica/ui/components/ui/toggle";
-import { Separator } from "@multica/ui/components/ui/separator";
+import { useCreateIssue } from "@hira-vn/core/issues/mutations";
+import { Toggle } from "@hira-vn/ui/components/ui/toggle";
+import { Separator } from "@hira-vn/ui/components/ui/separator";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
   TooltipProvider,
-} from "@multica/ui/components/ui/tooltip";
+} from "@hira-vn/ui/components/ui/tooltip";
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-} from "@multica/ui/components/ui/popover";
-import { Input } from "@multica/ui/components/ui/input";
-import { Button } from "@multica/ui/components/ui/button";
+} from "@hira-vn/ui/components/ui/popover";
+import { Input } from "@hira-vn/ui/components/ui/input";
+import { Button } from "@hira-vn/ui/components/ui/button";
 import {
   Bold,
   Italic,

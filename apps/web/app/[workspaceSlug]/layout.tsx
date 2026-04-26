@@ -3,13 +3,13 @@
 import { use, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { WorkspaceSlugProvider, paths } from "@multica/core/paths";
-import { workspaceBySlugOptions } from "@multica/core/workspace";
-import { setCurrentWorkspace } from "@multica/core/platform";
-import { useAuthStore } from "@multica/core/auth";
-import { NoAccessPage } from "@multica/views/workspace/no-access-page";
-import { MulticaIcon } from "@multica/ui/components/common/multica-icon";
-import { useWorkspaceSeen } from "@multica/views/workspace/use-workspace-seen";
+import { WorkspaceSlugProvider, paths } from "@hira-vn/core/paths";
+import { workspaceBySlugOptions } from "@hira-vn/core/workspace";
+import { setCurrentWorkspace } from "@hira-vn/core/platform";
+import { useAuthStore } from "@hira-vn/core/auth";
+import { NoAccessPage } from "@hira-vn/views/workspace/no-access-page";
+import { HiraIcon } from "@hira-vn/ui/components/common/hira-icon";
+import { useWorkspaceSeen } from "@hira-vn/views/workspace/use-workspace-seen";
 
 export default function WorkspaceLayout({
   children,
@@ -63,7 +63,7 @@ export default function WorkspaceLayout({
 
   const loadingIndicator = (
     <div className="flex h-svh items-center justify-center">
-      <MulticaIcon className="size-6 animate-pulse" />
+      <HiraIcon className="size-6 animate-pulse" />
     </div>
   );
 

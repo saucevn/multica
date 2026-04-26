@@ -30,7 +30,7 @@ jobs:
         run: pnpm install
 
       - name: Build, type check, and test
-        run: pnpm exec turbo build typecheck test --filter='!@multica/docs'
+        run: pnpm exec turbo build typecheck test --filter='!@hira-vn/docs'
 
   backend:
     runs-on: ubuntu-latest
@@ -38,13 +38,13 @@ jobs:
       postgres:
         image: pgvector/pgvector:pg17
         env:
-          POSTGRES_DB: multica
-          POSTGRES_USER: multica
-          POSTGRES_PASSWORD: multica
+          POSTGRES_DB: hira
+          POSTGRES_USER: hira
+          POSTGRES_PASSWORD: hira
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U multica -d multica"
+          --health-cmd "pg_isready -U hira -d hira"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 20
@@ -58,7 +58,7 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     env:
-      DATABASE_URL: postgres://multica:multica@localhost:5432/multica?sslmode=disable
+      DATABASE_URL: postgres://hira:hira@localhost:5432/hira?sslmode=disable
       # Wires up the RedisLocalSkill*_test.go suite. Distinct from REDIS_URL
       # (which would flip the server binary itself onto the Redis-backed
       # realtime relay + request stores); the tests talk to this Redis

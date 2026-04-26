@@ -18,9 +18,9 @@ import {
   Cpu,
   Filter,
 } from "lucide-react";
-import { cn } from "@multica/ui/lib/utils";
-import { Dialog, DialogContent, DialogTitle } from "@multica/ui/components/ui/dialog";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@multica/ui/components/ui/collapsible";
+import { cn } from "@hira-vn/ui/lib/utils";
+import { Dialog, DialogContent, DialogTitle } from "@hira-vn/ui/components/ui/dialog";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@hira-vn/ui/components/ui/collapsible";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -28,10 +28,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuCheckboxItem,
   DropdownMenuItem,
-} from "@multica/ui/components/ui/dropdown-menu";
+} from "@hira-vn/ui/components/ui/dropdown-menu";
 import { ActorAvatar } from "../../common/actor-avatar";
-import { api } from "@multica/core/api";
-import type { AgentTask, Agent, AgentRuntime } from "@multica/core/types/agent";
+import { api } from "@hira-vn/core/api";
+import type { AgentTask, Agent, AgentRuntime } from "@hira-vn/core/types/agent";
 import { redactSecrets } from "../utils/redact";
 
 // ─── Types ─────────────────────────────────────────────────────────────────

@@ -1,11 +1,11 @@
 ---
 title: Self-Host 快速上手
-description: 在自己的服务器或本机用 Docker 把 Multica 跑起来。约 10 分钟。
+description: 在自己的服务器或本机用 Docker 把 Hira 跑起来。约 10 分钟。
 ---
 
 import { Callout } from "fumadocs-ui/components/callout";
 
-这一页带你用 Docker 把 Multica 的**服务器**（后端 + 前端 + PostgreSQL）跑在自己的机器或服务器上。走完这一篇你的数据就完全在自己手里——包括 [工作区](/workspaces)、[issue](/issues)、[评论](/comments)、[智能体](/agents) 配置。
+这一页带你用 Docker 把 Hira 的**服务器**（后端 + 前端 + PostgreSQL）跑在自己的机器或服务器上。走完这一篇你的数据就完全在自己手里——包括 [工作区](/workspaces)、[issue](/issues)、[评论](/comments)、[智能体](/agents) 配置。
 
 智能体**执行**还是靠你本地跑的 [守护进程](/daemon-runtimes) + 本地装好的 [AI 编程工具](/providers)——这点和 Cloud 完全一样。Self-host 换掉的是服务器那一层，不是执行那一层。
 
@@ -19,15 +19,15 @@ import { Callout } from "fumadocs-ui/components/callout";
 ## 1. 拉取项目 + 一键启动后端
 
 ```bash
-git clone https://github.com/multica-ai/multica.git
-cd multica
+git clone https://github.com/hira-vn/hira.git
+cd hira
 make selfhost
 ```
 
 `make selfhost` 会：
 
 1. 如果没有 `.env` 文件，从 `.env.example` 自动生成一份并**生成随机 JWT_SECRET**
-2. 拉取官方 Docker 镜像（PostgreSQL、Multica backend、Multica frontend）
+2. 拉取官方 Docker 镜像（PostgreSQL、Hira backend、Hira frontend）
 3. 用 `docker-compose.selfhost.yml` 启动全部服务
 4. 等后端 `/health` 端点准备就绪
 
@@ -83,16 +83,16 @@ make selfhost
 
 ## 5. 连接命令行工具到你自己的 server
 
-命令行装法和 [Cloud 快速上手 → 2. 装命令行工具](/cloud-quickstart#2-装-multica-命令行工具) 一样——Homebrew / 脚本 / PowerShell 任选。装好之后，**用 self-host 版本的 setup 命令**：
+命令行装法和 [Cloud 快速上手 → 2. 装命令行工具](/cloud-quickstart#2-装-hira-命令行工具) 一样——Homebrew / 脚本 / PowerShell 任选。装好之后，**用 self-host 版本的 setup 命令**：
 
 ```bash
-multica setup self-host --server-url http://<你的服务器地址>:8080 --app-url http://<你的服务器地址>:3000
+hira setup self-host --server-url http://<你的服务器地址>:8080 --app-url http://<你的服务器地址>:3000
 ```
 
 本地就是一台电脑跑整套的话：
 
 ```bash
-multica setup self-host
+hira setup self-host
 ```
 
 默认连 `http://localhost:8080`（backend）+ `http://localhost:3000`（frontend）。

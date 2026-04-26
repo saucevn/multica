@@ -3,15 +3,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
-import type { Agent } from "@multica/core/types";
+import type { Agent } from "@hira-vn/core/types";
 
 const mockListSkills = vi.hoisted(() => vi.fn());
 
-vi.mock("@multica/core/hooks", () => ({
+vi.mock("@hira-vn/core/hooks", () => ({
   useWorkspaceId: () => "ws-1",
 }));
 
-vi.mock("@multica/core/api", () => ({
+vi.mock("@hira-vn/core/api", () => ({
   api: {
     listSkills: (...args: unknown[]) => mockListSkills(...args),
     setAgentSkills: vi.fn(),
@@ -95,7 +95,7 @@ describe("SkillsTab", () => {
     ).not.toBeInTheDocument();
 
     // No runtime list / local-skills query should be wired up either —
-    // we removed @multica/core/runtimes from this file's imports.
+    // we removed @hira-vn/core/runtimes from this file's imports.
     // Surface it via behaviour: the `agent` here has runtime_id but the
     // tab must not invoke any runtime-list mock to render. (Both are
     // already deleted from the mock setup above; this assertion is

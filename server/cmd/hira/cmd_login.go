@@ -9,13 +9,13 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/multica-ai/multica/server/internal/cli"
+	"github.com/hira-vn/hira/server/internal/cli"
 )
 
 // tryResolveAppURL returns the app URL if configured, or "" if not available.
 // Unlike resolveAppURL, it never calls os.Exit.
 func tryResolveAppURL(cmd *cobra.Command) string {
-	for _, key := range []string{"MULTICA_APP_URL", "FRONTEND_ORIGIN"} {
+	for _, key := range []string{"HIRA_APP_URL", "FRONTEND_ORIGIN"} {
 		if val := strings.TrimSpace(os.Getenv(key)); val != "" {
 			return strings.TrimRight(val, "/")
 		}
@@ -31,7 +31,7 @@ func tryResolveAppURL(cmd *cobra.Command) string {
 var loginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Authenticate and set up workspaces",
-	Long:  "Log in to Multica, then automatically discover and watch all your workspaces.",
+	Long:  "Log in to Hira, then automatically discover and watch all your workspaces.",
 	RunE:  runLogin,
 }
 
@@ -49,11 +49,11 @@ func runLogin(cmd *cobra.Command, args []string) error {
 	// Auto-discover and watch all workspaces.
 	if err := autoWatchWorkspaces(cmd); err != nil {
 		fmt.Fprintf(os.Stderr, "\nCould not auto-configure workspaces: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Run 'multica workspace list' and 'multica workspace watch <id>' to set up manually.\n")
+		fmt.Fprintf(os.Stderr, "Run 'hira workspace list' and 'hira workspace watch <id>' to set up manually.\n")
 		return nil
 	}
 
-	fmt.Fprintf(os.Stderr, "\n→ Run 'multica daemon start' to start your local agent runtime.\n")
+	fmt.Fprintf(os.Stderr, "\n→ Run 'hira daemon start' to start your local agent runtime.\n")
 	return nil
 }
 
@@ -122,7 +122,7 @@ func waitForWorkspaceCreation(cmd *cobra.Command, client *cli.APIClient) ([]stru
 		// No app URL available (e.g. token login without prior setup).
 		// Can't open the browser — tell the user to create a workspace manually.
 		fmt.Fprintln(os.Stderr, "\nNo workspaces found.")
-		fmt.Fprintln(os.Stderr, "Create a workspace in the web dashboard, then run 'multica login' again.")
+		fmt.Fprintln(os.Stderr, "Create a workspace in the web dashboard, then run 'hira login' again.")
 		return nil, nil
 	}
 

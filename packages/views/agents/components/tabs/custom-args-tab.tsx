@@ -7,11 +7,11 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
-import type { Agent, RuntimeDevice } from "@multica/core/types";
-import { createSafeId } from "@multica/core/utils";
-import { Button } from "@multica/ui/components/ui/button";
-import { Input } from "@multica/ui/components/ui/input";
-import { Label } from "@multica/ui/components/ui/label";
+import type { Agent, RuntimeDevice } from "@hira-vn/core/types";
+import { createSafeId } from "@hira-vn/core/utils";
+import { Button } from "@hira-vn/ui/components/ui/button";
+import { Input } from "@hira-vn/ui/components/ui/input";
+import { Label } from "@hira-vn/ui/components/ui/label";
 import { toast } from "sonner";
 
 interface ArgEntry {

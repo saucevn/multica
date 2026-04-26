@@ -1,5 +1,5 @@
-appId: ai.multica.desktop
-productName: Multica
+appId: vn.hira.desktop
+productName: Hira
 directories:
   buildResources: build
 files:
@@ -9,9 +9,9 @@ files:
   - "!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}"
   - "!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}"
 protocols:
-  - name: Multica
+  - name: Hira
     schemes:
-      - multica
+      - hira
 asarUnpack:
   - resources/**
 mac:
@@ -19,32 +19,32 @@ mac:
   target:
     - dmg
     - zip
-  # Hardcoded name avoids the `@multica/desktop-*` subdirectory that
+  # Hardcoded name avoids the `@hira-vn/desktop-*` subdirectory that
   # `${name}` produces for scoped package names.
-  # Naming scheme: multica-desktop-<version>-<platform>-<arch>.<ext>
+  # Naming scheme: hira-desktop-<version>-<platform>-<arch>.<ext>
   # so the filename alone surfaces kind, version, platform, and CPU arch.
-  artifactName: multica-desktop-${version}-mac-${arch}.${ext}
+  artifactName: hira-desktop-${version}-mac-${arch}.${ext}
   # Notarize via notarytool. Requires APPLE_ID + APPLE_APP_SPECIFIC_PASSWORD
   # + APPLE_TEAM_ID env vars at package time. Non-mac contributors are
   # unaffected because `pnpm package` already requires the Developer ID
   # signing cert — notarization is a strict superset.
   notarize: true
 dmg:
-  artifactName: multica-desktop-${version}-mac-${arch}.${ext}
+  artifactName: hira-desktop-${version}-mac-${arch}.${ext}
 linux:
   target:
     - AppImage
     - deb
     - rpm
-  artifactName: multica-desktop-${version}-linux-${arch}.${ext}
+  artifactName: hira-desktop-${version}-linux-${arch}.${ext}
 win:
   target:
     - nsis
-  artifactName: multica-desktop-${version}-windows-${arch}.${ext}
+  artifactName: hira-desktop-${version}-windows-${arch}.${ext}
 publish:
   provider: github
-  owner: multica-ai
-  repo: multica
+  owner: hira-vn
+  repo: hira
   # Align with our CLI release flow which pre-creates a *published* GitHub
   # Release via `gh release create`. The electron-builder default of
   # `releaseType: draft` conflicts with `existingType=release` and causes

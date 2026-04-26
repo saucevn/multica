@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { act, render, screen } from "@testing-library/react";
-import type { AgentRuntime } from "@multica/core/types";
+import type { AgentRuntime } from "@hira-vn/core/types";
 
 // Hoisted mocks — replace analytics and the runtime picker before the SUT
 // imports them. Tests drive picker state via `mocks.pickerState`; every
@@ -18,7 +18,7 @@ const mocks = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("@multica/core/analytics", () => ({
+vi.mock("@hira-vn/core/analytics", () => ({
   captureEvent: mocks.captureEvent,
   setPersonProperties: mocks.setPersonProperties,
 }));

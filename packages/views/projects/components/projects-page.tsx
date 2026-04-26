@@ -3,37 +3,37 @@
 import { useState, useCallback } from "react";
 import { Plus, FolderKanban, UserMinus, Check } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { projectListOptions } from "@multica/core/projects/queries";
-import { useUpdateProject } from "@multica/core/projects/mutations";
+import { projectListOptions } from "@hira-vn/core/projects/queries";
+import { useUpdateProject } from "@hira-vn/core/projects/mutations";
 import {
   PROJECT_STATUS_CONFIG,
   PROJECT_STATUS_ORDER,
   PROJECT_PRIORITY_CONFIG,
   PROJECT_PRIORITY_ORDER,
-} from "@multica/core/projects/config";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { useWorkspacePaths } from "@multica/core/paths";
-import { memberListOptions, agentListOptions } from "@multica/core/workspace/queries";
-import { useModalStore } from "@multica/core/modals";
+} from "@hira-vn/core/projects/config";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
+import { useWorkspacePaths } from "@hira-vn/core/paths";
+import { memberListOptions, agentListOptions } from "@hira-vn/core/workspace/queries";
+import { useModalStore } from "@hira-vn/core/modals";
 import { AppLink } from "../../navigation";
 import { ActorAvatar } from "../../common/actor-avatar";
-import { useActorName } from "@multica/core/workspace/hooks";
-import { Skeleton } from "@multica/ui/components/ui/skeleton";
-import { Button } from "@multica/ui/components/ui/button";
-import { cn } from "@multica/ui/lib/utils";
+import { useActorName } from "@hira-vn/core/workspace/hooks";
+import { Skeleton } from "@hira-vn/ui/components/ui/skeleton";
+import { Button } from "@hira-vn/ui/components/ui/button";
+import { cn } from "@hira-vn/ui/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@multica/ui/components/ui/dropdown-menu";
+} from "@hira-vn/ui/components/ui/dropdown-menu";
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-} from "@multica/ui/components/ui/popover";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
-import type { Project, ProjectStatus, ProjectPriority, UpdateProjectRequest } from "@multica/core/types";
+} from "@hira-vn/ui/components/ui/popover";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@hira-vn/ui/components/ui/tooltip";
+import type { Project, ProjectStatus, ProjectPriority, UpdateProjectRequest } from "@hira-vn/core/types";
 import { PageHeader } from "../../layout/page-header";
 import { PriorityIcon } from "../../issues/components/priority-icon";
 

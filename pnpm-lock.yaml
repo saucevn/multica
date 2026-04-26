@@ -129,13 +129,13 @@ importers:
       '@fontsource/geist-mono':
         specifier: ^5.2.7
         version: 5.2.7
-      '@multica/core':
+      '@hira-vn/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@multica/ui':
+      '@hira-vn/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@multica/views':
+      '@hira-vn/views':
         specifier: workspace:*
         version: link:../../packages/views
       electron-updater:
@@ -160,7 +160,7 @@ importers:
       '@electron-toolkit/tsconfig':
         specifier: ^2.0.0
         version: 2.0.0(@types/node@25.5.0)
-      '@multica/tsconfig':
+      '@hira-vn/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
       '@tailwindcss/vite':
@@ -214,7 +214,7 @@ importers:
 
   apps/docs:
     dependencies:
-      '@multica/ui':
+      '@hira-vn/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       fumadocs-core:
@@ -281,13 +281,13 @@ importers:
       '@floating-ui/dom':
         specifier: ^1.7.6
         version: 1.7.6
-      '@multica/core':
+      '@hira-vn/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@multica/ui':
+      '@hira-vn/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@multica/views':
+      '@hira-vn/views':
         specifier: workspace:*
         version: link:../../packages/views
       '@tanstack/react-query':
@@ -481,7 +481,7 @@ importers:
         specifier: 'catalog:'
         version: 5.0.12(@types/react@19.2.14)(immer@11.1.4)(react@19.2.3)(use-sync-external-store@1.6.0(react@19.2.3))
     devDependencies:
-      '@multica/tsconfig':
+      '@hira-vn/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       '@types/react':
@@ -604,7 +604,7 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
     devDependencies:
-      '@multica/tsconfig':
+      '@hira-vn/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       '@types/linkify-it':
@@ -640,10 +640,10 @@ importers:
       '@floating-ui/dom':
         specifier: ^1.7.6
         version: 1.7.6
-      '@multica/core':
+      '@hira-vn/core':
         specifier: workspace:*
         version: link:../core
-      '@multica/ui':
+      '@hira-vn/ui':
         specifier: workspace:*
         version: link:../ui
       '@tanstack/react-query':
@@ -755,7 +755,7 @@ importers:
         specifier: 'catalog:'
         version: 5.0.12(@types/react@19.2.14)(immer@11.1.4)(react@19.2.3)(use-sync-external-store@1.6.0(react@19.2.3))
     devDependencies:
-      '@multica/tsconfig':
+      '@hira-vn/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       '@testing-library/jest-dom':

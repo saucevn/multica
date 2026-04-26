@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@multica/ui/lib/utils";
+import { cn } from "@hira-vn/ui/lib/utils";
 
 export function PillButton({
   children,

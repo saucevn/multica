@@ -13,37 +13,37 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/multica-ai/multica/server/internal/cli"
+	"github.com/hira-vn/hira/server/internal/cli"
 )
 
 var setupCmd = &cobra.Command{
 	Use:   "setup",
 	Short: "Configure the CLI, authenticate, and start the daemon",
-	Long: `Configures the CLI to connect to Multica Cloud (multica.ai), then
+	Long: `Configures the CLI to connect to Hira Cloud (hira.vn), then
 authenticates via browser and starts the agent daemon.
 
 If a configuration already exists, you will be prompted before overwriting.
 
-Use 'multica setup self-host' to connect to a self-hosted server instead.
+Use 'hira setup self-host' to connect to a self-hosted server instead.
 
 Use --profile to create an isolated configuration for a separate environment:
-  multica setup self-host --profile staging --server-url https://api-staging.co`,
+  hira setup self-host --profile staging --server-url https://api-staging.co`,
 	RunE: runSetupCloud,
 }
 
 var setupCloudCmd = &cobra.Command{
 	Use:   "cloud",
-	Short: "Configure the CLI for Multica Cloud (multica.ai)",
-	Long: `Explicitly configures the CLI to connect to Multica Cloud (multica.ai).
+	Short: "Configure the CLI for Hira Cloud (hira.vn)",
+	Long: `Explicitly configures the CLI to connect to Hira Cloud (hira.vn).
 
-This is equivalent to running 'multica setup' without a subcommand.`,
+This is equivalent to running 'hira setup' without a subcommand.`,
 	RunE: runSetupCloud,
 }
 
 var setupSelfHostCmd = &cobra.Command{
 	Use:   "self-host",
-	Short: "Configure the CLI for a self-hosted Multica server",
-	Long: `Configures the CLI to connect to a self-hosted Multica server.
+	Short: "Configure the CLI for a self-hosted Hira server",
+	Long: `Configures the CLI to connect to a self-hosted Hira server.
 
 By default, connects to http://localhost:8080 (backend) and http://localhost:3000 (frontend).
 Use --server-url and --app-url to specify a custom server (e.g. an on-premise deployment).
@@ -53,9 +53,9 @@ If you run this command from a different machine than the server, also pass
 the OAuth login flow can return the token to the CLI.
 
 Examples:
-  multica setup self-host
-  multica setup self-host --server-url https://api.internal.co --app-url https://app.internal.co
-  multica setup self-host --port 9090 --frontend-port 4000`,
+  hira setup self-host
+  hira setup self-host --server-url https://api.internal.co --app-url https://app.internal.co
+  hira setup self-host --port 9090 --frontend-port 4000`,
 	RunE: runSetupSelfHost,
 }
 
@@ -124,14 +124,14 @@ func runSetupCloud(cmd *cobra.Command, args []string) error {
 	}
 
 	cfg := cli.CLIConfig{
-		ServerURL: "https://api.multica.ai",
-		AppURL:    "https://multica.ai",
+		ServerURL: "https://api.hira.vn",
+		AppURL:    "https://hira.vn",
 	}
 	if err := cli.SaveCLIConfigForProfile(cfg, profile); err != nil {
 		return fmt.Errorf("save config: %w", err)
 	}
 
-	fmt.Fprintln(os.Stderr, "Configured for Multica Cloud (https://multica.ai).")
+	fmt.Fprintln(os.Stderr, "Configured for Hira Cloud (https://hira.vn).")
 	fmt.Fprintf(os.Stderr, "  server_url: %s\n", cfg.ServerURL)
 	fmt.Fprintf(os.Stderr, "  app_url:    %s\n", cfg.AppURL)
 	printConfigLocation(profile)
@@ -146,7 +146,7 @@ func runSetupCloud(cmd *cobra.Command, args []string) error {
 	if err := runDaemonBackground(cmd); err != nil {
 		return fmt.Errorf("start daemon: %w", err)
 	}
-	fmt.Fprintln(os.Stderr, "\n✓ Setup complete! Your machine is now connected to Multica.")
+	fmt.Fprintln(os.Stderr, "\n✓ Setup complete! Your machine is now connected to Hira.")
 
 	return nil
 }
@@ -206,7 +206,7 @@ func runSetupSelfHost(cmd *cobra.Command, args []string) error {
 	// Check if the server is reachable.
 	if !probeServer(serverURL) {
 		fmt.Fprintf(os.Stderr, "\n⚠ Server at %s is not reachable.\n", serverURL)
-		fmt.Fprintln(os.Stderr, "  Make sure the server is running, then run 'multica login'.")
+		fmt.Fprintln(os.Stderr, "  Make sure the server is running, then run 'hira login'.")
 		return nil
 	}
 
@@ -220,7 +220,7 @@ func runSetupSelfHost(cmd *cobra.Command, args []string) error {
 	if err := runDaemonBackground(cmd); err != nil {
 		return fmt.Errorf("start daemon: %w", err)
 	}
-	fmt.Fprintln(os.Stderr, "\n✓ Setup complete! Your machine is now connected to Multica.")
+	fmt.Fprintln(os.Stderr, "\n✓ Setup complete! Your machine is now connected to Hira.")
 
 	return nil
 }
@@ -258,7 +258,7 @@ func promptAppURL(serverURL string) (string, error) {
 	return strings.TrimRight(strings.TrimSpace(line), "/"), nil
 }
 
-// probeServer checks whether a Multica backend is reachable at the given URL.
+// probeServer checks whether a Hira backend is reachable at the given URL.
 func probeServer(baseURL string) bool {
 	url := strings.TrimRight(baseURL, "/") + "/health"
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)

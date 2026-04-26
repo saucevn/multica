@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowUp, Loader2, Square } from "lucide-react";
-import { Button } from "@multica/ui/components/ui/button";
+import { Button } from "@hira-vn/ui/components/ui/button";
 
 interface SubmitButtonProps {
   onClick: () => void;

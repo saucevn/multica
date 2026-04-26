@@ -13,10 +13,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/multica-ai/multica/server/internal/cli"
-	"github.com/multica-ai/multica/server/internal/daemon/execenv"
-	"github.com/multica-ai/multica/server/internal/daemon/repocache"
-	"github.com/multica-ai/multica/server/pkg/agent"
+	"github.com/hira-vn/hira/server/internal/cli"
+	"github.com/hira-vn/hira/server/internal/daemon/execenv"
+	"github.com/hira-vn/hira/server/internal/daemon/repocache"
+	"github.com/hira-vn/hira/server/pkg/agent"
 )
 
 // ErrRepoNotConfigured is returned by ensureRepoReady when the requested repo
@@ -168,9 +168,9 @@ func (d *Daemon) resolveAuth() error {
 		return fmt.Errorf("load CLI config: %w", err)
 	}
 	if cfg.Token == "" {
-		loginHint := "'multica login'"
+		loginHint := "'hira login'"
 		if d.cfg.Profile != "" {
-			loginHint = fmt.Sprintf("'multica login --profile %s'", d.cfg.Profile)
+			loginHint = fmt.Sprintf("'hira login --profile %s'", d.cfg.Profile)
 		}
 		d.logger.Warn("not authenticated — run " + loginHint + " to authenticate, then restart the daemon")
 		return fmt.Errorf("not authenticated: run %s first", loginHint)
@@ -714,7 +714,7 @@ func (d *Daemon) handleUpdate(ctx context.Context, runtimeID string, update *Pen
 		d.logger.Info("refusing CLI self-update: daemon is managed by Desktop", "runtime_id", runtimeID, "update_id", update.ID)
 		d.client.ReportUpdateResult(ctx, runtimeID, update.ID, map[string]any{
 			"status": "failed",
-			"error":  "CLI is managed by Multica Desktop — update the Desktop app to upgrade the CLI",
+			"error":  "CLI is managed by Hira Desktop — update the Desktop app to upgrade the CLI",
 		})
 		return
 	}
@@ -772,7 +772,7 @@ func (d *Daemon) handleUpdate(ctx context.Context, runtimeID string, update *Pen
 }
 
 // triggerRestart initiates a graceful daemon restart after a successful CLI update.
-// For brew installs, it keeps the symlink path (e.g. /opt/homebrew/bin/multica)
+// For brew installs, it keeps the symlink path (e.g. /opt/homebrew/bin/hira)
 // so the restarted daemon picks up the new Cellar version automatically.
 // For non-brew installs, it resolves to the absolute path of the replaced binary.
 // The caller (cmd_daemon.go) checks RestartBinary() and launches the new process.
@@ -1009,7 +1009,7 @@ func (d *Daemon) handleTask(ctx context.Context, task Task) {
 
 func (d *Daemon) runTask(ctx context.Context, task Task, provider string, taskLog *slog.Logger) (TaskResult, error) {
 	// Refuse to spawn an agent without a workspace. An empty workspace_id
-	// here would make MULTICA_WORKSPACE_ID empty in the agent env, and the
+	// here would make HIRA_WORKSPACE_ID empty in the agent env, and the
 	// CLI would otherwise silently fall back to the user-global config — a
 	// path that can leak operations into an unrelated workspace when
 	// multiple workspaces share a host.
@@ -1035,7 +1035,7 @@ func (d *Daemon) runTask(ctx context.Context, task Task, provider string, taskLo
 
 	// Prepare isolated execution environment.
 	// Repos are passed as metadata only — the agent checks them out on demand
-	// via `multica repo checkout <url>`.
+	// via `hira repo checkout <url>`.
 	taskCtx := execenv.TaskContextForEnv{
 		IssueID:                 task.IssueID,
 		TriggerCommentID:        task.TriggerCommentID,
@@ -1086,26 +1086,26 @@ func (d *Daemon) runTask(ctx context.Context, task Task, provider string, taskLo
 	prompt := BuildPrompt(task)
 
 	// Pass the daemon's auth credentials and context so the spawned agent CLI
-	// can call the Multica API and the local daemon (e.g. `multica repo checkout`).
+	// can call the Hira API and the local daemon (e.g. `hira repo checkout`).
 	agentEnv := map[string]string{
-		"MULTICA_TOKEN":        d.client.Token(),
-		"MULTICA_SERVER_URL":   d.cfg.ServerBaseURL,
-		"MULTICA_DAEMON_PORT":  fmt.Sprintf("%d", d.cfg.HealthPort),
-		"MULTICA_WORKSPACE_ID": task.WorkspaceID,
-		"MULTICA_AGENT_NAME":   agentName,
-		"MULTICA_AGENT_ID":     task.AgentID,
-		"MULTICA_TASK_ID":      task.ID,
+		"HIRA_TOKEN":        d.client.Token(),
+		"HIRA_SERVER_URL":   d.cfg.ServerBaseURL,
+		"HIRA_DAEMON_PORT":  fmt.Sprintf("%d", d.cfg.HealthPort),
+		"HIRA_WORKSPACE_ID": task.WorkspaceID,
+		"HIRA_AGENT_NAME":   agentName,
+		"HIRA_AGENT_ID":     task.AgentID,
+		"HIRA_TASK_ID":      task.ID,
 	}
 	if task.AutopilotRunID != "" {
-		agentEnv["MULTICA_AUTOPILOT_RUN_ID"] = task.AutopilotRunID
+		agentEnv["HIRA_AUTOPILOT_RUN_ID"] = task.AutopilotRunID
 	}
 	if task.AutopilotID != "" {
-		agentEnv["MULTICA_AUTOPILOT_ID"] = task.AutopilotID
+		agentEnv["HIRA_AUTOPILOT_ID"] = task.AutopilotID
 	}
-	// Ensure the multica CLI is on PATH inside the agent's environment.
+	// Ensure the hira CLI is on PATH inside the agent's environment.
 	// Some runtimes (e.g. Codex) run in an isolated sandbox that may not
 	// inherit the daemon's PATH. Prepend the directory of the running
-	// multica binary so that `multica` commands in the agent always resolve.
+	// hira binary so that `hira` commands in the agent always resolve.
 	if selfBin, err := os.Executable(); err == nil {
 		binDir := filepath.Dir(selfBin)
 		agentEnv["PATH"] = binDir + string(os.PathListSeparator) + os.Getenv("PATH")
@@ -1158,7 +1158,7 @@ func (d *Daemon) runTask(ctx context.Context, task Task, provider string, taskLo
 		mcpConfig = task.Agent.McpConfig
 	}
 	// Two-tier model resolution: an explicit agent.model wins,
-	// then the daemon-wide MULTICA_<PROVIDER>_MODEL env var. If
+	// then the daemon-wide HIRA_<PROVIDER>_MODEL env var. If
 	// both are empty we deliberately pass "" through — each
 	// backend omits `--model` from the CLI invocation, so the
 	// provider picks its own default (Claude Code's shipped
@@ -1585,7 +1585,7 @@ func convertSkillsForEnv(skills []SkillData) []execenv.SkillContextForEnv {
 // daemon-internal variables and critical system paths.
 func isBlockedEnvKey(key string) bool {
 	upper := strings.ToUpper(key)
-	if strings.HasPrefix(upper, "MULTICA_") {
+	if strings.HasPrefix(upper, "HIRA_") {
 		return true
 	}
 	switch upper {

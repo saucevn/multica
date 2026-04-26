@@ -7,10 +7,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/multica-ai/multica/server/internal/analytics"
-	"github.com/multica-ai/multica/server/internal/logger"
-	"github.com/multica-ai/multica/server/internal/middleware"
-	db "github.com/multica-ai/multica/server/pkg/db/generated"
+	"github.com/hira-vn/hira/server/internal/analytics"
+	"github.com/hira-vn/hira/server/internal/logger"
+	"github.com/hira-vn/hira/server/internal/middleware"
+	db "github.com/hira-vn/hira/server/pkg/db/generated"
 )
 
 // feedbackImageRegex is a coarse check for markdown image syntax ![alt](url).

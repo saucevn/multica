@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { ArrowRight, Download, Loader2 } from "lucide-react";
-import { Button, buttonVariants } from "@multica/ui/components/ui/button";
-import { MulticaIcon } from "@multica/ui/components/common/multica-icon";
-import { captureDownloadIntent } from "@multica/core/analytics";
-import { cn } from "@multica/ui/lib/utils";
-import { DragStrip } from "@multica/views/platform";
-import { STATUS_CONFIG } from "@multica/core/issues/config";
-import type { IssueStatus } from "@multica/core/types";
+import { Button, buttonVariants } from "@hira-vn/ui/components/ui/button";
+import { HiraIcon } from "@hira-vn/ui/components/common/hira-icon";
+import { captureDownloadIntent } from "@hira-vn/core/analytics";
+import { cn } from "@hira-vn/ui/lib/utils";
+import { DragStrip } from "@hira-vn/views/platform";
+import { STATUS_CONFIG } from "@hira-vn/core/issues/config";
+import type { IssueStatus } from "@hira-vn/core/types";
 import { StatusIcon } from "../../issues/components/status-icon";
 import { ProviderLogo } from "../../runtimes/components/provider-logo";
 
@@ -77,9 +77,9 @@ export function StepWelcome({
         <div className="flex flex-1 flex-col justify-center px-6 pb-12 sm:px-10 md:px-20 lg:px-20 xl:px-24">
           <div className="flex w-full max-w-[540px] flex-col gap-8">
             <div className="flex items-center gap-2.5">
-              <MulticaIcon className="size-5 text-foreground" noSpin />
+              <HiraIcon className="size-5 text-foreground" noSpin />
               <span className="font-serif text-xl font-medium tracking-tight">
-                Welcome to Multica
+                Welcome to Hira
               </span>
             </div>
 

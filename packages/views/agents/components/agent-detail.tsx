@@ -14,7 +14,7 @@ import {
   KeyRound,
   Terminal,
 } from "lucide-react";
-import type { Agent, RuntimeDevice, MemberWithUser } from "@multica/core/types";
+import type { Agent, RuntimeDevice, MemberWithUser } from "@hira-vn/core/types";
 import {
   Dialog,
   DialogContent,
@@ -22,14 +22,14 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@multica/ui/components/ui/dialog";
+} from "@hira-vn/ui/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "@multica/ui/components/ui/dropdown-menu";
-import { Button } from "@multica/ui/components/ui/button";
+} from "@hira-vn/ui/components/ui/dropdown-menu";
+import { Button } from "@hira-vn/ui/components/ui/button";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { statusConfig } from "../config";
 import { InstructionsTab } from "./tabs/instructions-tab";

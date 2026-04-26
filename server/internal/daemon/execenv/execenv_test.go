@@ -168,7 +168,7 @@ func TestPrepareWithRepoContext(t *testing.T) {
 	}
 	s := string(content)
 	for _, want := range []string{
-		"multica repo checkout",
+		"hira repo checkout",
 		"https://github.com/org/backend",
 		"Go backend",
 		"https://github.com/org/frontend",
@@ -295,14 +295,14 @@ func TestWriteContextFilesAutopilotRunOnly(t *testing.T) {
 		"run-1",
 		"autopilot-1",
 		"Check dependencies and report outdated packages.",
-		"multica autopilot get autopilot-1 --output json",
+		"hira autopilot get autopilot-1 --output json",
 		"no assigned issue",
 	} {
 		if !strings.Contains(s, want) {
 			t.Errorf("autopilot context missing %q\n---\n%s", want, s)
 		}
 	}
-	if strings.Contains(s, "Run `multica issue get") {
+	if strings.Contains(s, "Run `hira issue get") {
 		t.Errorf("autopilot context should not contain issue get workflow\n---\n%s", s)
 	}
 }
@@ -417,9 +417,9 @@ func TestInjectRuntimeConfigClaude(t *testing.T) {
 
 	s := string(content)
 	for _, want := range []string{
-		"Multica Agent Runtime",
-		"multica issue get",
-		"multica issue comment list",
+		"Hira Agent Runtime",
+		"hira issue get",
+		"hira issue comment list",
 		"Go Conventions",
 		"PR Review",
 		"discovered automatically",
@@ -450,8 +450,8 @@ func TestInjectRuntimeConfigGemini(t *testing.T) {
 
 	s := string(content)
 	for _, want := range []string{
-		"Multica Agent Runtime",
-		"multica issue get",
+		"Hira Agent Runtime",
+		"hira issue get",
 		"Writing",
 	} {
 		if !strings.Contains(s, want) {
@@ -487,7 +487,7 @@ func TestInjectRuntimeConfigCodex(t *testing.T) {
 	}
 
 	s := string(content)
-	if !strings.Contains(s, "Multica Agent Runtime") {
+	if !strings.Contains(s, "Hira Agent Runtime") {
 		t.Error("AGENTS.md missing meta skill header")
 	}
 	if !strings.Contains(s, "Coding") {
@@ -511,8 +511,8 @@ func TestInjectRuntimeConfigNoSkills(t *testing.T) {
 	}
 
 	s := string(content)
-	if !strings.Contains(s, "multica issue get") {
-		t.Error("should reference multica CLI even without skills")
+	if !strings.Contains(s, "hira issue get") {
+		t.Error("should reference hira CLI even without skills")
 	}
 	if strings.Contains(s, "## Skills") {
 		t.Error("should not have Skills section when there are no skills")
@@ -639,7 +639,7 @@ func TestInjectRuntimeConfigOpencode(t *testing.T) {
 	}
 
 	s := string(content)
-	if !strings.Contains(s, "Multica Agent Runtime") {
+	if !strings.Contains(s, "Hira Agent Runtime") {
 		t.Error("AGENTS.md missing meta skill header")
 	}
 	if !strings.Contains(s, "Coding") {
@@ -701,7 +701,7 @@ func TestPrepareWithRepoContextOpencode(t *testing.T) {
 	}
 	s := string(content)
 	for _, want := range []string{
-		"multica repo checkout",
+		"hira repo checkout",
 		"https://github.com/org/backend",
 		"Go backend",
 	} {
@@ -744,10 +744,10 @@ func TestInjectRuntimeConfigRequiresExplicitCommentPost(t *testing.T) {
 			}
 			s := string(data)
 
-			// The workflow must contain an explicit `multica issue comment add`
+			// The workflow must contain an explicit `hira issue comment add`
 			// invocation for this issue — not just a prose mention of posting.
 			mustContain := []string{
-				"multica issue comment add issue-1",
+				"hira issue comment add issue-1",
 				"mandatory",
 			}
 			for _, want := range mustContain {
@@ -760,7 +760,7 @@ func TestInjectRuntimeConfigRequiresExplicitCommentPost(t *testing.T) {
 			// output is not user-visible. This is the second line of defense
 			// in case the agent skips past the workflow steps.
 			for _, want := range []string{
-				"Final results MUST be delivered via `multica issue comment add`",
+				"Final results MUST be delivered via `hira issue comment add`",
 				"does NOT see your terminal output",
 			} {
 				if !strings.Contains(s, want) {
@@ -796,7 +796,7 @@ func TestInjectRuntimeConfigAutopilotRunOnlyNoIssueWorkflow(t *testing.T) {
 		"Autopilot in run-only mode",
 		"Autopilot run ID: `run-1`",
 		"Check dependencies and report outdated packages.",
-		"multica autopilot get autopilot-1 --output json",
+		"hira autopilot get autopilot-1 --output json",
 		"Your final assistant output is captured automatically as the autopilot run result",
 	} {
 		if !strings.Contains(s, want) {
@@ -805,8 +805,8 @@ func TestInjectRuntimeConfigAutopilotRunOnlyNoIssueWorkflow(t *testing.T) {
 	}
 
 	for _, absent := range []string{
-		"Run `multica issue get",
-		"Final results MUST be delivered via `multica issue comment add`",
+		"Run `hira issue get",
+		"Final results MUST be delivered via `hira issue comment add`",
 	} {
 		if strings.Contains(s, absent) {
 			t.Errorf("autopilot runtime config should not contain %q\n---\n%s", absent, s)
@@ -850,7 +850,7 @@ func TestInjectRuntimeConfigHermes(t *testing.T) {
 	}
 
 	s := string(content)
-	if !strings.Contains(s, "Multica Agent Runtime") {
+	if !strings.Contains(s, "Hira Agent Runtime") {
 		t.Error("AGENTS.md missing meta skill header")
 	}
 	if !strings.Contains(s, "Coding") {
@@ -1071,7 +1071,7 @@ func TestEnsureCodexSandboxConfigCreatesDefaultLinux(t *testing.T) {
 		t.Fatalf("failed to read config.toml: %v", err)
 	}
 	s := string(data)
-	if !strings.Contains(s, multicaManagedBeginMarker) || !strings.Contains(s, multicaManagedEndMarker) {
+	if !strings.Contains(s, hiraManagedBeginMarker) || !strings.Contains(s, hiraManagedEndMarker) {
 		t.Errorf("missing managed block markers, got:\n%s", s)
 	}
 	if !strings.Contains(s, `sandbox_mode = "workspace-write"`) {
@@ -1079,7 +1079,7 @@ func TestEnsureCodexSandboxConfigCreatesDefaultLinux(t *testing.T) {
 	}
 	// The managed block uses TOML dotted-key form rather than a
 	// `[sandbox_workspace_write]` section header so it cannot leak into or
-	// inherit from any surrounding table scope. See upsertMulticaManagedBlock
+	// inherit from any surrounding table scope. See upsertHiraManagedBlock
 	// for why.
 	if strings.Contains(s, "[sandbox_workspace_write]") {
 		t.Errorf("managed block must not open a [sandbox_workspace_write] table header, got:\n%s", s)
@@ -1121,7 +1121,7 @@ func TestEnsureCodexSandboxConfigIsIdempotent(t *testing.T) {
 	}
 	data, _ := os.ReadFile(configPath)
 	// The managed block should appear exactly once.
-	if n := strings.Count(string(data), multicaManagedBeginMarker); n != 1 {
+	if n := strings.Count(string(data), hiraManagedBeginMarker); n != 1 {
 		t.Errorf("expected exactly 1 managed block, got %d in:\n%s", n, data)
 	}
 }
@@ -1200,12 +1200,12 @@ func TestEnsureCodexSandboxConfigHoistsAboveUserTables(t *testing.T) {
 
 	// User config that ends inside a table. If the managed block were
 	// appended at EOF, `sandbox_mode = "..."` would be parsed as
-	// permissions.multica.sandbox_mode and Codex would never see it — see
+	// permissions.hira.sandbox_mode and Codex would never see it — see
 	// review of MUL-963 PR #1246. The block must be hoisted above any
 	// user-defined table headers so it lives at the TOML root.
 	existing := `model = "o3"
 
-[permissions.multica]
+[permissions.hira]
 trust = "always"
 `
 	os.WriteFile(configPath, []byte(existing), 0o644)
@@ -1218,9 +1218,9 @@ trust = "always"
 	data, _ := os.ReadFile(configPath)
 	s := string(data)
 
-	beginIdx := strings.Index(s, multicaManagedBeginMarker)
-	endIdx := strings.Index(s, multicaManagedEndMarker)
-	tableIdx := strings.Index(s, "[permissions.multica]")
+	beginIdx := strings.Index(s, hiraManagedBeginMarker)
+	endIdx := strings.Index(s, hiraManagedEndMarker)
+	tableIdx := strings.Index(s, "[permissions.hira]")
 	if beginIdx < 0 || endIdx < 0 || tableIdx < 0 {
 		t.Fatalf("expected managed block and user table to both be present, got:\n%s", s)
 	}
@@ -1228,14 +1228,14 @@ trust = "always"
 	// that sandbox_mode and sandbox_workspace_write.network_access are
 	// parsed at the TOML root.
 	if !(beginIdx < endIdx && endIdx < tableIdx) {
-		t.Errorf("managed block must be hoisted above [permissions.multica]; got begin=%d end=%d table=%d:\n%s", beginIdx, endIdx, tableIdx, s)
+		t.Errorf("managed block must be hoisted above [permissions.hira]; got begin=%d end=%d table=%d:\n%s", beginIdx, endIdx, tableIdx, s)
 	}
 	// User content must be preserved verbatim.
 	if !strings.Contains(s, `model = "o3"`) {
 		t.Error("lost user top-level key")
 	}
 	if !strings.Contains(s, `trust = "always"`) {
-		t.Error("lost user permissions.multica content")
+		t.Error("lost user permissions.hira content")
 	}
 
 	// Running again must be idempotent even when the preceding content ends
@@ -1247,7 +1247,7 @@ trust = "always"
 	if string(data2) != s {
 		t.Errorf("second pass should be idempotent:\n--- first ---\n%s\n--- second ---\n%s", s, data2)
 	}
-	if n := strings.Count(string(data2), multicaManagedBeginMarker); n != 1 {
+	if n := strings.Count(string(data2), hiraManagedBeginMarker); n != 1 {
 		t.Errorf("expected exactly one managed block after idempotent rewrite, got %d", n)
 	}
 }
@@ -1263,15 +1263,15 @@ func TestEnsureCodexSandboxConfigMovesLegacyTrailingBlockToTop(t *testing.T) {
 	// top; otherwise sandbox_mode remains trapped inside the preceding table.
 	legacy := `model = "o3"
 
-[permissions.multica]
+[permissions.hira]
 trust = "always"
 
-` + multicaManagedBeginMarker + `
+` + hiraManagedBeginMarker + `
 sandbox_mode = "workspace-write"
 
 [sandbox_workspace_write]
 network_access = true
-` + multicaManagedEndMarker + `
+` + hiraManagedEndMarker + `
 `
 	os.WriteFile(configPath, []byte(legacy), 0o644)
 
@@ -1282,12 +1282,12 @@ network_access = true
 	data, _ := os.ReadFile(configPath)
 	s := string(data)
 
-	beginIdx := strings.Index(s, multicaManagedBeginMarker)
-	tableIdx := strings.Index(s, "[permissions.multica]")
+	beginIdx := strings.Index(s, hiraManagedBeginMarker)
+	tableIdx := strings.Index(s, "[permissions.hira]")
 	if beginIdx < 0 || tableIdx < 0 || beginIdx > tableIdx {
-		t.Errorf("expected managed block to be hoisted above [permissions.multica], got:\n%s", s)
+		t.Errorf("expected managed block to be hoisted above [permissions.hira], got:\n%s", s)
 	}
-	if strings.Count(s, multicaManagedBeginMarker) != 1 {
+	if strings.Count(s, hiraManagedBeginMarker) != 1 {
 		t.Errorf("expected exactly one managed block, got:\n%s", s)
 	}
 	// The old inline `[sandbox_workspace_write]` header must be gone — the
@@ -1395,8 +1395,8 @@ func TestReuseRestoresCodexHome(t *testing.T) {
 	if err != nil {
 		t.Fatalf("config.toml not found in reused CodexHome: %v", err)
 	}
-	if !strings.Contains(string(data), multicaManagedBeginMarker) {
-		t.Error("reused config.toml missing multica-managed block")
+	if !strings.Contains(string(data), hiraManagedBeginMarker) {
+		t.Error("reused config.toml missing hira-managed block")
 	}
 }
 

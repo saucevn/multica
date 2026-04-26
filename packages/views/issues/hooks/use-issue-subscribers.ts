@@ -2,14 +2,14 @@
 
 import { useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import type { IssueSubscriber } from "@multica/core/types";
+import type { IssueSubscriber } from "@hira-vn/core/types";
 import type {
   SubscriberAddedPayload,
   SubscriberRemovedPayload,
-} from "@multica/core/types";
-import { issueSubscribersOptions, issueKeys } from "@multica/core/issues/queries";
-import { useToggleIssueSubscriber } from "@multica/core/issues/mutations";
-import { useWSEvent, useWSReconnect } from "@multica/core/realtime";
+} from "@hira-vn/core/types";
+import { issueSubscribersOptions, issueKeys } from "@hira-vn/core/issues/queries";
+import { useToggleIssueSubscriber } from "@hira-vn/core/issues/mutations";
+import { useWSEvent, useWSReconnect } from "@hira-vn/core/realtime";
 
 export function useIssueSubscribers(issueId: string, userId?: string) {
   const qc = useQueryClient();

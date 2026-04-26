@@ -8,13 +8,13 @@ import {
   ResizablePanelGroup,
   ResizablePanel,
   ResizableHandle,
-} from "@multica/ui/components/ui/resizable";
-import { Skeleton } from "@multica/ui/components/ui/skeleton";
-import { useAuthStore } from "@multica/core/auth";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { runtimeListOptions, runtimeKeys } from "@multica/core/runtimes/queries";
-import { useUpdatableRuntimeIds } from "@multica/core/runtimes/hooks";
-import { useWSEvent } from "@multica/core/realtime";
+} from "@hira-vn/ui/components/ui/resizable";
+import { Skeleton } from "@hira-vn/ui/components/ui/skeleton";
+import { useAuthStore } from "@hira-vn/core/auth";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
+import { runtimeListOptions, runtimeKeys } from "@hira-vn/core/runtimes/queries";
+import { useUpdatableRuntimeIds } from "@hira-vn/core/runtimes/hooks";
+import { useWSEvent } from "@hira-vn/core/realtime";
 import { RuntimeList } from "./runtime-list";
 import { RuntimeDetail } from "./runtime-detail";
 
@@ -44,7 +44,7 @@ export default function RuntimesPage({ topSlot, bootstrapping }: RuntimesPagePro
   const { data: runtimes = [], isLoading: fetching } = useQuery(runtimeListOptions(wsId, ownerParam));
 
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({
-    id: "multica_runtimes_layout",
+    id: "hira_runtimes_layout",
   });
 
   // Re-fetch on daemon register/deregister events.

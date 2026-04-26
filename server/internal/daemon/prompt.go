@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/multica-ai/multica/server/internal/daemon/execenv"
+	"github.com/hira-vn/hira/server/internal/daemon/execenv"
 )
 
 // BuildPrompt constructs the task prompt for an agent CLI.
@@ -21,9 +21,9 @@ func BuildPrompt(task Task) string {
 		return buildAutopilotPrompt(task)
 	}
 	var b strings.Builder
-	b.WriteString("You are running as a local coding agent for a Multica workspace.\n\n")
+	b.WriteString("You are running as a local coding agent for a Hira workspace.\n\n")
 	fmt.Fprintf(&b, "Your assigned issue ID is: %s\n\n", task.IssueID)
-	fmt.Fprintf(&b, "Start by running `multica issue get %s --output json` to understand your task, then complete it.\n", task.IssueID)
+	fmt.Fprintf(&b, "Start by running `hira issue get %s --output json` to understand your task, then complete it.\n", task.IssueID)
 	return b.String()
 }
 
@@ -35,7 +35,7 @@ func BuildPrompt(task Task) string {
 // previous turn's --parent UUID.
 func buildCommentPrompt(task Task) string {
 	var b strings.Builder
-	b.WriteString("You are running as a local coding agent for a Multica workspace.\n\n")
+	b.WriteString("You are running as a local coding agent for a Hira workspace.\n\n")
 	fmt.Fprintf(&b, "Your assigned issue ID is: %s\n\n", task.IssueID)
 	if task.TriggerCommentContent != "" {
 		authorLabel := "A user"
@@ -52,7 +52,7 @@ func buildCommentPrompt(task Task) string {
 			b.WriteString("⚠️ The triggering comment was posted by another agent. Before replying, decide whether a reply is warranted at all. If that comment was an acknowledgment, thanks, or sign-off and no concrete question or task is being asked of you, do NOT reply — silence is the preferred way to end agent-to-agent threads. If you do reply, do not @mention the other agent as a sign-off (that re-triggers them and starts a loop).\n\n")
 		}
 	}
-	fmt.Fprintf(&b, "Start by running `multica issue get %s --output json` to understand your task, then decide how to proceed.\n\n", task.IssueID)
+	fmt.Fprintf(&b, "Start by running `hira issue get %s --output json` to understand your task, then decide how to proceed.\n\n", task.IssueID)
 	b.WriteString(execenv.BuildCommentReplyInstructions(task.IssueID, task.TriggerCommentID))
 	return b.String()
 }
@@ -60,7 +60,7 @@ func buildCommentPrompt(task Task) string {
 // buildChatPrompt constructs a prompt for interactive chat tasks.
 func buildChatPrompt(task Task) string {
 	var b strings.Builder
-	b.WriteString("You are running as a chat assistant for a Multica workspace.\n")
+	b.WriteString("You are running as a chat assistant for a Hira workspace.\n")
 	b.WriteString("A user is chatting with you directly. Respond to their message.\n\n")
 	fmt.Fprintf(&b, "User message:\n%s\n", task.ChatMessage)
 	return b.String()
@@ -69,8 +69,8 @@ func buildChatPrompt(task Task) string {
 // buildAutopilotPrompt constructs a prompt for run_only autopilot tasks.
 func buildAutopilotPrompt(task Task) string {
 	var b strings.Builder
-	b.WriteString("You are running as a local coding agent for a Multica workspace.\n\n")
-	b.WriteString("This task was triggered by an Autopilot in run-only mode. There is no assigned Multica issue for this run.\n\n")
+	b.WriteString("You are running as a local coding agent for a Hira workspace.\n\n")
+	b.WriteString("This task was triggered by an Autopilot in run-only mode. There is no assigned Hira issue for this run.\n\n")
 	fmt.Fprintf(&b, "Autopilot run ID: %s\n", task.AutopilotRunID)
 	if task.AutopilotID != "" {
 		fmt.Fprintf(&b, "Autopilot ID: %s\n", task.AutopilotID)
@@ -94,10 +94,10 @@ func buildAutopilotPrompt(task Task) string {
 		b.WriteString("No additional autopilot instructions were provided. Inspect the autopilot configuration before proceeding.\n\n")
 	}
 	if task.AutopilotID != "" {
-		fmt.Fprintf(&b, "Start by running `multica autopilot get %s --output json` if you need the full autopilot configuration, then complete the instructions above.\n", task.AutopilotID)
+		fmt.Fprintf(&b, "Start by running `hira autopilot get %s --output json` if you need the full autopilot configuration, then complete the instructions above.\n", task.AutopilotID)
 	} else {
 		b.WriteString("Complete the instructions above.\n")
 	}
-	b.WriteString("Do not run `multica issue get`; this run does not have an issue ID.\n")
+	b.WriteString("Do not run `hira issue get`; this run does not have an issue ID.\n")
 	return b.String()
 }

@@ -32,7 +32,7 @@ server/bin/
 server/tmp/
 server/migrate
 server/daemon
-server/multica
+server/hira
 
 # Test artifacts
 test-results/

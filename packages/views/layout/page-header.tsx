@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@multica/ui/lib/utils";
-import { SidebarTrigger, useSidebar } from "@multica/ui/components/ui/sidebar";
+import { cn } from "@hira-vn/ui/lib/utils";
+import { SidebarTrigger, useSidebar } from "@hira-vn/ui/components/ui/sidebar";
 
 function MobileSidebarTrigger() {
   try {

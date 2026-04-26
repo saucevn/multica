@@ -1,4 +1,4 @@
-import { cn } from "@multica/ui/lib/utils";
+import { cn } from "@hira-vn/ui/lib/utils";
 
 const sizeMap = {
   sm: "h-5 w-5 text-xs rounded",

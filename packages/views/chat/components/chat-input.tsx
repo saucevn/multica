@@ -3,9 +3,9 @@
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { ContentEditor, type ContentEditorRef } from "../../editor";
-import { SubmitButton } from "@multica/ui/components/common/submit-button";
-import { useChatStore, DRAFT_NEW_SESSION } from "@multica/core/chat";
-import { createLogger } from "@multica/core/logger";
+import { SubmitButton } from "@hira-vn/ui/components/common/submit-button";
+import { useChatStore, DRAFT_NEW_SESSION } from "@hira-vn/core/chat";
+import { createLogger } from "@hira-vn/core/logger";
 
 const logger = createLogger("chat.ui");
 

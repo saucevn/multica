@@ -8,21 +8,21 @@ import type {
   MemberWithUser,
   Agent,
   UpdateIssueRequest,
-} from "@multica/core/types";
-import { useAuthStore } from "@multica/core/auth";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { useWorkspacePaths } from "@multica/core/paths";
-import { useModalStore } from "@multica/core/modals";
-import { useUpdateIssue } from "@multica/core/issues/mutations";
+} from "@hira-vn/core/types";
+import { useAuthStore } from "@hira-vn/core/auth";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
+import { useWorkspacePaths } from "@hira-vn/core/paths";
+import { useModalStore } from "@hira-vn/core/modals";
+import { useUpdateIssue } from "@hira-vn/core/issues/mutations";
 import {
   memberListOptions,
   agentListOptions,
-} from "@multica/core/workspace/queries";
-import { pinListOptions, useCreatePin, useDeletePin } from "@multica/core/pins";
+} from "@hira-vn/core/workspace/queries";
+import { pinListOptions, useCreatePin, useDeletePin } from "@hira-vn/core/pins";
 import { canAssignAgent } from "../components/pickers";
 import { useNavigation } from "../../navigation";
 
-const BACKLOG_HINT_LS_KEY = "multica:backlog-agent-hint-dismissed";
+const BACKLOG_HINT_LS_KEY = "hira:backlog-agent-hint-dismissed";
 
 export interface UseIssueActionsResult {
   // Derived data for rendering menu rows

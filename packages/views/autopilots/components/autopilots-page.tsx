@@ -3,18 +3,18 @@
 import { useState } from "react";
 import { Plus, Zap, Play, Pause, AlertCircle, Newspaper, GitPullRequest, Bug, BarChart3, Shield, FileSearch } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { autopilotListOptions } from "@multica/core/autopilots/queries";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { useWorkspacePaths } from "@multica/core/paths";
-import { useActorName } from "@multica/core/workspace/hooks";
+import { autopilotListOptions } from "@hira-vn/core/autopilots/queries";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
+import { useWorkspacePaths } from "@hira-vn/core/paths";
+import { useActorName } from "@hira-vn/core/workspace/hooks";
 import { AppLink } from "../../navigation";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { PageHeader } from "../../layout/page-header";
-import { Skeleton } from "@multica/ui/components/ui/skeleton";
-import { Button } from "@multica/ui/components/ui/button";
-import { cn } from "@multica/ui/lib/utils";
+import { Skeleton } from "@hira-vn/ui/components/ui/skeleton";
+import { Button } from "@hira-vn/ui/components/ui/button";
+import { cn } from "@hira-vn/ui/lib/utils";
 import { AutopilotDialog } from "./autopilot-dialog";
-import type { Autopilot } from "@multica/core/types";
+import type { Autopilot } from "@hira-vn/core/types";
 import type { TriggerFrequency } from "./trigger-config";
 
 interface AutopilotTemplate {

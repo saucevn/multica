@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, waitFor } from "@testing-library/react";
-import { paths } from "@multica/core/paths";
+import { paths } from "@hira-vn/core/paths";
 
 const { mockPush, mockSearchParams, mockLoginWithGoogle, mockListWorkspaces } =
   vi.hoisted(() => ({
@@ -13,7 +13,7 @@ const { mockPush, mockSearchParams, mockLoginWithGoogle, mockListWorkspaces } =
 const makeUser = (overrides: Partial<{ onboarded_at: string | null }> = {}) => ({
   id: "user-1",
   name: "Test",
-  email: "test@multica.ai",
+  email: "test@hira.vn",
   avatar_url: null,
   onboarded_at: null,
   onboarding_questionnaire: {},
@@ -33,10 +33,10 @@ vi.mock("@tanstack/react-query", () => ({
 
 // Preserve the real sanitizeNextUrl so the "drop unsafe ?next=" behavior is
 // exercised rather than silently diverging from the source of truth.
-vi.mock("@multica/core/auth", async () => {
+vi.mock("@hira-vn/core/auth", async () => {
   const actual =
-    await vi.importActual<typeof import("@multica/core/auth")>(
-      "@multica/core/auth",
+    await vi.importActual<typeof import("@hira-vn/core/auth")>(
+      "@hira-vn/core/auth",
     );
   return {
     ...actual,
@@ -45,11 +45,11 @@ vi.mock("@multica/core/auth", async () => {
   };
 });
 
-vi.mock("@multica/core/workspace/queries", () => ({
+vi.mock("@hira-vn/core/workspace/queries", () => ({
   workspaceKeys: { list: () => ["workspaces"] },
 }));
 
-vi.mock("@multica/core/api", () => ({
+vi.mock("@hira-vn/core/api", () => ({
   api: {
     listWorkspaces: mockListWorkspaces,
     googleLogin: vi.fn(),

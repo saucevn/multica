@@ -13,16 +13,16 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 
-	"github.com/multica-ai/multica/server/internal/analytics"
-	"github.com/multica-ai/multica/server/internal/auth"
-	"github.com/multica-ai/multica/server/internal/events"
-	"github.com/multica-ai/multica/server/internal/handler"
-	"github.com/multica-ai/multica/server/internal/middleware"
-	"github.com/multica-ai/multica/server/internal/realtime"
-	"github.com/multica-ai/multica/server/internal/service"
-	"github.com/multica-ai/multica/server/internal/storage"
-	"github.com/multica-ai/multica/server/internal/util"
-	db "github.com/multica-ai/multica/server/pkg/db/generated"
+	"github.com/hira-vn/hira/server/internal/analytics"
+	"github.com/hira-vn/hira/server/internal/auth"
+	"github.com/hira-vn/hira/server/internal/events"
+	"github.com/hira-vn/hira/server/internal/handler"
+	"github.com/hira-vn/hira/server/internal/middleware"
+	"github.com/hira-vn/hira/server/internal/realtime"
+	"github.com/hira-vn/hira/server/internal/service"
+	"github.com/hira-vn/hira/server/internal/storage"
+	"github.com/hira-vn/hira/server/internal/util"
+	db "github.com/hira-vn/hira/server/pkg/db/generated"
 )
 
 var defaultOrigins = []string{

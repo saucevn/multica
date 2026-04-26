@@ -11,12 +11,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/multica-ai/multica/server/internal/analytics"
-	"github.com/multica-ai/multica/server/internal/events"
-	"github.com/multica-ai/multica/server/internal/logger"
-	"github.com/multica-ai/multica/server/internal/realtime"
-	"github.com/multica-ai/multica/server/internal/service"
-	db "github.com/multica-ai/multica/server/pkg/db/generated"
+	"github.com/hira-vn/hira/server/internal/analytics"
+	"github.com/hira-vn/hira/server/internal/events"
+	"github.com/hira-vn/hira/server/internal/logger"
+	"github.com/hira-vn/hira/server/internal/realtime"
+	"github.com/hira-vn/hira/server/internal/service"
+	db "github.com/hira-vn/hira/server/pkg/db/generated"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -33,7 +33,7 @@ func redisClientName(existing, suffix string) string {
 	if existing != "" {
 		return existing + ":" + suffix
 	}
-	return "multica-api:" + suffix
+	return "hira-api:" + suffix
 }
 
 func closeRedisClient(label string, client *redis.Client) {
@@ -126,7 +126,7 @@ func main() {
 
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		dbURL = "postgres://multica:multica@localhost:5432/multica?sslmode=disable"
+		dbURL = "postgres://hira:hira@localhost:5432/hira?sslmode=disable"
 	}
 
 	// Connect to database

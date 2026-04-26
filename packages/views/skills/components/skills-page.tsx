@@ -19,29 +19,29 @@ import type {
   AgentRuntime,
   MemberWithUser,
   Skill,
-} from "@multica/core/types";
+} from "@hira-vn/core/types";
 import { useQuery } from "@tanstack/react-query";
-import { timeAgo } from "@multica/core/utils";
-import { useAuthStore } from "@multica/core/auth";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { useWorkspacePaths } from "@multica/core/paths";
+import { timeAgo } from "@hira-vn/core/utils";
+import { useAuthStore } from "@hira-vn/core/auth";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
+import { useWorkspacePaths } from "@hira-vn/core/paths";
 import {
   agentListOptions,
   memberListOptions,
   selectSkillAssignments,
   skillListOptions,
-} from "@multica/core/workspace/queries";
-import { runtimeListOptions } from "@multica/core/runtimes";
-import { ActorAvatar } from "@multica/ui/components/common/actor-avatar";
-import { Button } from "@multica/ui/components/ui/button";
-import { Input } from "@multica/ui/components/ui/input";
-import { Skeleton } from "@multica/ui/components/ui/skeleton";
+} from "@hira-vn/core/workspace/queries";
+import { runtimeListOptions } from "@hira-vn/core/runtimes";
+import { ActorAvatar } from "@hira-vn/ui/components/common/actor-avatar";
+import { Button } from "@hira-vn/ui/components/ui/button";
+import { Input } from "@hira-vn/ui/components/ui/input";
+import { Skeleton } from "@hira-vn/ui/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@multica/ui/components/ui/tooltip";
-import { useScrollFade } from "@multica/ui/hooks/use-scroll-fade";
+} from "@hira-vn/ui/components/ui/tooltip";
+import { useScrollFade } from "@hira-vn/ui/hooks/use-scroll-fade";
 import { AppLink, useNavigation } from "../../navigation";
 import { PageHeader } from "../../layout/page-header";
 import { canEditSkill } from "../hooks/use-can-edit-skill";
@@ -515,7 +515,7 @@ export default function SkillsPage() {
             <p className="text-base text-foreground">
               Instructions any agent in this workspace can use.{" "}
               <a
-                href="https://multica.ai/docs/skills"
+                href="https://hira.vn/docs/skills"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs text-muted-foreground underline decoration-muted-foreground/30 underline-offset-4 transition-colors hover:text-foreground"

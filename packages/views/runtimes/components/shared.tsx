@@ -1,5 +1,5 @@
 import { Monitor, Cloud, Wifi, WifiOff } from "lucide-react";
-import { Badge } from "@multica/ui/components/ui/badge";
+import { Badge } from "@hira-vn/ui/components/ui/badge";
 
 export function RuntimeModeIcon({ mode }: { mode: string }) {
   return mode === "cloud" ? (

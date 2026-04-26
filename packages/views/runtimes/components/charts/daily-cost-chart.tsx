@@ -10,7 +10,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
-} from "@multica/ui/components/ui/chart";
+} from "@hira-vn/ui/components/ui/chart";
 import type { DailyCostData } from "../../utils";
 
 const costChartConfig = {

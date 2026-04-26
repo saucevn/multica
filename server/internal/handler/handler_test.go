@@ -13,11 +13,11 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/multica-ai/multica/server/internal/analytics"
-	"github.com/multica-ai/multica/server/internal/events"
-	"github.com/multica-ai/multica/server/internal/realtime"
-	"github.com/multica-ai/multica/server/internal/service"
-	db "github.com/multica-ai/multica/server/pkg/db/generated"
+	"github.com/hira-vn/hira/server/internal/analytics"
+	"github.com/hira-vn/hira/server/internal/events"
+	"github.com/hira-vn/hira/server/internal/realtime"
+	"github.com/hira-vn/hira/server/internal/service"
+	db "github.com/hira-vn/hira/server/pkg/db/generated"
 )
 
 var testHandler *Handler
@@ -27,7 +27,7 @@ var testWorkspaceID string
 var testRuntimeID string
 
 const (
-	handlerTestEmail         = "handler-test@multica.ai"
+	handlerTestEmail         = "handler-test@hira.vn"
 	handlerTestName          = "Handler Test User"
 	handlerTestWorkspaceSlug = "handler-tests"
 )
@@ -36,7 +36,7 @@ func TestMain(m *testing.M) {
 	ctx := context.Background()
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		dbURL = "postgres://multica:multica@localhost:5432/multica?sslmode=disable"
+		dbURL = "postgres://hira:hira@localhost:5432/hira?sslmode=disable"
 	}
 
 	pool, err := pgxpool.New(ctx, dbURL)
@@ -1013,7 +1013,7 @@ func TestCreateWorkspaceInvalidSlugReturnsBadRequest(t *testing.T) {
 
 func TestSendCode(t *testing.T) {
 	w := httptest.NewRecorder()
-	body := map[string]string{"email": "sendcode-test@multica.ai"}
+	body := map[string]string{"email": "sendcode-test@hira.vn"}
 	var buf bytes.Buffer
 	json.NewEncoder(&buf).Encode(body)
 	req := httptest.NewRequest("POST", "/auth/send-code", &buf)
@@ -1030,7 +1030,7 @@ func TestSendCode(t *testing.T) {
 	}
 
 	t.Cleanup(func() {
-		testPool.Exec(context.Background(), `DELETE FROM verification_code WHERE email = $1`, "sendcode-test@multica.ai")
+		testPool.Exec(context.Background(), `DELETE FROM verification_code WHERE email = $1`, "sendcode-test@hira.vn")
 	})
 }
 
@@ -1045,7 +1045,7 @@ func TestSendCodeDbError(t *testing.T) {
 	cancel()
 
 	w := httptest.NewRecorder()
-	body := map[string]string{"email": "dberror-test@multica.ai"}
+	body := map[string]string{"email": "dberror-test@hira.vn"}
 	var buf bytes.Buffer
 	json.NewEncoder(&buf).Encode(body)
 	req := httptest.NewRequest("POST", "/auth/send-code", &buf)
@@ -1068,7 +1068,7 @@ func TestSendCodeDbError(t *testing.T) {
 }
 
 func TestSendCodeRateLimit(t *testing.T) {
-	const email = "ratelimit-test@multica.ai"
+	const email = "ratelimit-test@hira.vn"
 	t.Cleanup(func() {
 		testPool.Exec(context.Background(), `DELETE FROM verification_code WHERE email = $1`, email)
 	})
@@ -1098,7 +1098,7 @@ func TestSendCodeRateLimit(t *testing.T) {
 }
 
 func TestVerifyCode(t *testing.T) {
-	const email = "verify-test@multica.ai"
+	const email = "verify-test@hira.vn"
 	ctx := context.Background()
 
 	t.Cleanup(func() {
@@ -1154,7 +1154,7 @@ func TestVerifyCode(t *testing.T) {
 }
 
 func TestVerifyCodeWrongCode(t *testing.T) {
-	const email = "wrong-code-test@multica.ai"
+	const email = "wrong-code-test@hira.vn"
 	ctx := context.Background()
 
 	t.Cleanup(func() {
@@ -1182,7 +1182,7 @@ func TestVerifyCodeWrongCode(t *testing.T) {
 }
 
 func TestVerifyCodeBruteForceProtection(t *testing.T) {
-	const email = "bruteforce-test@multica.ai"
+	const email = "bruteforce-test@hira.vn"
 	ctx := context.Background()
 
 	t.Cleanup(func() {
@@ -1232,7 +1232,7 @@ func TestVerifyCodeBruteForceProtection(t *testing.T) {
 }
 
 func TestVerifyCodeNewUserHasNoWorkspace(t *testing.T) {
-	const email = "workspace-verify-test@multica.ai"
+	const email = "workspace-verify-test@hira.vn"
 	ctx := context.Background()
 
 	t.Cleanup(func() {

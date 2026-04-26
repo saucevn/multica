@@ -2,12 +2,12 @@
 
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { Input } from "@multica/ui/components/ui/input";
-import { Label } from "@multica/ui/components/ui/label";
-import { Button } from "@multica/ui/components/ui/button";
-import { Card, CardContent } from "@multica/ui/components/ui/card";
-import { useCreateWorkspace } from "@multica/core/workspace/mutations";
-import type { Workspace } from "@multica/core/types";
+import { Input } from "@hira-vn/ui/components/ui/input";
+import { Label } from "@hira-vn/ui/components/ui/label";
+import { Button } from "@hira-vn/ui/components/ui/button";
+import { Card, CardContent } from "@hira-vn/ui/components/ui/card";
+import { useCreateWorkspace } from "@hira-vn/core/workspace/mutations";
+import type { Workspace } from "@hira-vn/core/types";
 import {
   WORKSPACE_SLUG_CONFLICT_ERROR,
   WORKSPACE_SLUG_FORMAT_ERROR,
@@ -86,7 +86,7 @@ export function CreateWorkspaceForm({ onSuccess }: CreateWorkspaceFormProps) {
           <Label htmlFor="ws-slug">Workspace URL</Label>
           <div className="flex items-center gap-0 rounded-md border bg-background focus-within:ring-2 focus-within:ring-ring">
             <span className="pl-3 text-sm text-muted-foreground select-none">
-              multica.ai/
+              hira.vn/
             </span>
             <Input
               id="ws-slug"

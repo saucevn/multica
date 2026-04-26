@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Save, LogOut } from "lucide-react";
-import { Input } from "@multica/ui/components/ui/input";
-import { Textarea } from "@multica/ui/components/ui/textarea";
-import { Label } from "@multica/ui/components/ui/label";
-import { Button } from "@multica/ui/components/ui/button";
-import { Card, CardContent } from "@multica/ui/components/ui/card";
+import { Input } from "@hira-vn/ui/components/ui/input";
+import { Textarea } from "@hira-vn/ui/components/ui/textarea";
+import { Label } from "@hira-vn/ui/components/ui/label";
+import { Button } from "@hira-vn/ui/components/ui/button";
+import { Card, CardContent } from "@hira-vn/ui/components/ui/card";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -16,25 +16,25 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
-} from "@multica/ui/components/ui/alert-dialog";
+} from "@hira-vn/ui/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useAuthStore } from "@multica/core/auth";
-import { useLeaveWorkspace, useDeleteWorkspace } from "@multica/core/workspace/mutations";
-import { useWorkspaceId } from "@multica/core/hooks";
+import { useAuthStore } from "@hira-vn/core/auth";
+import { useLeaveWorkspace, useDeleteWorkspace } from "@hira-vn/core/workspace/mutations";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
 import {
   memberListOptions,
   workspaceKeys,
   workspaceListOptions,
-} from "@multica/core/workspace/queries";
-import { api } from "@multica/core/api";
+} from "@hira-vn/core/workspace/queries";
+import { api } from "@hira-vn/core/api";
 import {
   resolvePostAuthDestination,
   useCurrentWorkspace,
   useHasOnboarded,
-} from "@multica/core/paths";
-import { setCurrentWorkspace } from "@multica/core/platform";
-import type { Workspace } from "@multica/core/types";
+} from "@hira-vn/core/paths";
+import { setCurrentWorkspace } from "@hira-vn/core/platform";
+import type { Workspace } from "@hira-vn/core/types";
 import { useNavigation } from "../../navigation";
 import { DeleteWorkspaceDialog } from "./delete-workspace-dialog";
 

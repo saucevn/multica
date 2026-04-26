@@ -4,24 +4,24 @@ import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { useDefaultLayout, usePanelRef } from "react-resizable-panels";
 import { Check, ChevronRight, Link2, ListTodo, MoreHorizontal, PanelRight, Pin, PinOff, Trash2, UserMinus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { cn } from "@multica/ui/lib/utils";
+import { cn } from "@hira-vn/ui/lib/utils";
 import { toast } from "sonner";
-import type { Issue, IssueStatus, ProjectStatus, ProjectPriority } from "@multica/core/types";
-import { useAuthStore } from "@multica/core/auth";
-import { projectDetailOptions } from "@multica/core/projects/queries";
-import { useUpdateProject, useDeleteProject } from "@multica/core/projects/mutations";
-import { pinListOptions } from "@multica/core/pins";
-import { useCreatePin, useDeletePin } from "@multica/core/pins";
-import { myIssueListOptions, childIssueProgressOptions, type MyIssuesFilter } from "@multica/core/issues/queries";
-import { useUpdateIssue } from "@multica/core/issues/mutations";
-import { memberListOptions, agentListOptions } from "@multica/core/workspace/queries";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { useCurrentWorkspace, useWorkspacePaths } from "@multica/core/paths";
-import { useActorName } from "@multica/core/workspace/hooks";
-import { PROJECT_STATUS_ORDER, PROJECT_STATUS_CONFIG, PROJECT_PRIORITY_ORDER, PROJECT_PRIORITY_CONFIG } from "@multica/core/projects/config";
-import { BOARD_STATUSES } from "@multica/core/issues/config";
-import { createIssueViewStore } from "@multica/core/issues/stores/view-store";
-import { ViewStoreProvider, useViewStore } from "@multica/core/issues/stores/view-store-context";
+import type { Issue, IssueStatus, ProjectStatus, ProjectPriority } from "@hira-vn/core/types";
+import { useAuthStore } from "@hira-vn/core/auth";
+import { projectDetailOptions } from "@hira-vn/core/projects/queries";
+import { useUpdateProject, useDeleteProject } from "@hira-vn/core/projects/mutations";
+import { pinListOptions } from "@hira-vn/core/pins";
+import { useCreatePin, useDeletePin } from "@hira-vn/core/pins";
+import { myIssueListOptions, childIssueProgressOptions, type MyIssuesFilter } from "@hira-vn/core/issues/queries";
+import { useUpdateIssue } from "@hira-vn/core/issues/mutations";
+import { memberListOptions, agentListOptions } from "@hira-vn/core/workspace/queries";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
+import { useCurrentWorkspace, useWorkspacePaths } from "@hira-vn/core/paths";
+import { useActorName } from "@hira-vn/core/workspace/hooks";
+import { PROJECT_STATUS_ORDER, PROJECT_STATUS_CONFIG, PROJECT_PRIORITY_ORDER, PROJECT_PRIORITY_CONFIG } from "@hira-vn/core/projects/config";
+import { BOARD_STATUSES } from "@hira-vn/core/issues/config";
+import { createIssueViewStore } from "@hira-vn/core/issues/stores/view-store";
+import { ViewStoreProvider, useViewStore } from "@hira-vn/core/issues/stores/view-store-context";
 import { filterIssues } from "../../issues/utils/filter";
 import { getProjectIssueMetrics } from "./project-issue-metrics";
 import { ActorAvatar } from "../../common/actor-avatar";
@@ -32,29 +32,29 @@ import { IssuesHeader } from "../../issues/components/issues-header";
 import { BoardView } from "../../issues/components/board-view";
 import { ListView } from "../../issues/components/list-view";
 import { BatchActionToolbar } from "../../issues/components/batch-action-toolbar";
-import { Skeleton } from "@multica/ui/components/ui/skeleton";
-import { Button } from "@multica/ui/components/ui/button";
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@multica/ui/components/ui/resizable";
-import { Sheet, SheetContent } from "@multica/ui/components/ui/sheet";
-import { useIsMobile } from "@multica/ui/hooks/use-mobile";
+import { Skeleton } from "@hira-vn/ui/components/ui/skeleton";
+import { Button } from "@hira-vn/ui/components/ui/button";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@hira-vn/ui/components/ui/resizable";
+import { Sheet, SheetContent } from "@hira-vn/ui/components/ui/sheet";
+import { useIsMobile } from "@hira-vn/ui/hooks/use-mobile";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@multica/ui/components/ui/dropdown-menu";
+} from "@hira-vn/ui/components/ui/dropdown-menu";
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-} from "@multica/ui/components/ui/popover";
+} from "@hira-vn/ui/components/ui/popover";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "@multica/ui/components/ui/tooltip";
-import { EmojiPicker } from "@multica/ui/components/common/emoji-picker";
+} from "@hira-vn/ui/components/ui/tooltip";
+import { EmojiPicker } from "@hira-vn/ui/components/common/emoji-picker";
 import { PageHeader } from "../../layout/page-header";
 import {
   AlertDialog,
@@ -65,7 +65,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@multica/ui/components/ui/alert-dialog";
+} from "@hira-vn/ui/components/ui/alert-dialog";
 
 // ---------------------------------------------------------------------------
 // Property row — sidebar property display
@@ -224,7 +224,7 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
 
   // Sidebar panel
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({
-    id: "multica_project_detail_layout",
+    id: "hira_project_detail_layout",
   });
   const sidebarRef = usePanelRef();
   const [sidebarOpen, setSidebarOpen] = useState(true);

@@ -31,7 +31,7 @@ func TestGeminiStaticModelsExposesAliasesAndGemini3(t *testing.T) {
 	// Gemini CLI has no `models list` subcommand, so we expose the
 	// CLI's own aliases (auto / pro / flash / flash-lite) plus
 	// explicit version pins including Gemini 3. Regression guard
-	// for multica-ai/multica#1503 — Gemini 3 must be selectable.
+	// for hira-vn/hira#1503 — Gemini 3 must be selectable.
 	models := geminiStaticModels()
 	ids := map[string]Model{}
 	for _, m := range models {

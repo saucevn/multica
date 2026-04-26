@@ -1,13 +1,13 @@
 {
-  "name": "multica",
+  "name": "hira",
   "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev:web": "turbo dev --filter=@multica/web",
-    "dev:docs": "turbo dev --filter=@multica/docs",
-    "dev:desktop": "turbo dev --filter=@multica/desktop",
-    "dev:desktop:staging": "turbo dev:staging --filter=@multica/desktop",
+    "dev:web": "turbo dev --filter=@hira-vn/web",
+    "dev:docs": "turbo dev --filter=@hira-vn/docs",
+    "dev:desktop": "turbo dev --filter=@hira-vn/desktop",
+    "dev:desktop:staging": "turbo dev:staging --filter=@hira-vn/desktop",
     "build": "turbo build",
     "typecheck": "turbo typecheck",
     "test": "turbo test",

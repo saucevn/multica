@@ -1,7 +1,7 @@
 "use client";
 
-import { Input } from "@multica/ui/components/ui/input";
-import { cn } from "@multica/ui/lib/utils";
+import { Input } from "@hira-vn/ui/components/ui/input";
+import { cn } from "@hira-vn/ui/lib/utils";
 
 const OTHER_INPUT_MAX_LENGTH = 80;
 

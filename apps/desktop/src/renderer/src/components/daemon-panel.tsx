@@ -7,15 +7,15 @@ import {
   ChevronDown,
   X,
 } from "lucide-react";
-import { cn } from "@multica/ui/lib/utils";
-import { Button } from "@multica/ui/components/ui/button";
+import { cn } from "@hira-vn/ui/lib/utils";
+import { Button } from "@hira-vn/ui/components/ui/button";
 import { toast } from "sonner";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
-} from "@multica/ui/components/ui/sheet";
+} from "@hira-vn/ui/components/ui/sheet";
 import type { DaemonStatus, DaemonState } from "../../../shared/daemon-types";
 import { DAEMON_STATE_COLORS, DAEMON_STATE_LABELS } from "../../../shared/daemon-types";
 

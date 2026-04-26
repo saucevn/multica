@@ -10,7 +10,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/multica-ai/multica/server/internal/cli"
+	"github.com/hira-vn/hira/server/internal/cli"
 )
 
 var workspaceCmd = &cobra.Command{
@@ -51,7 +51,7 @@ func runWorkspaceList(cmd *cobra.Command, _ []string) error {
 	serverURL := resolveServerURL(cmd)
 	token := resolveToken(cmd)
 	if token == "" {
-		return fmt.Errorf("not authenticated: run 'multica login' first")
+		return fmt.Errorf("not authenticated: run 'hira login' first")
 	}
 
 	client := cli.NewAPIClient(serverURL, "", token)
@@ -89,7 +89,7 @@ func workspaceIDFromArgs(cmd *cobra.Command, args []string) string {
 func runWorkspaceGet(cmd *cobra.Command, args []string) error {
 	wsID := workspaceIDFromArgs(cmd, args)
 	if wsID == "" {
-		return fmt.Errorf("workspace ID is required: pass as argument or set MULTICA_WORKSPACE_ID")
+		return fmt.Errorf("workspace ID is required: pass as argument or set HIRA_WORKSPACE_ID")
 	}
 
 	client, err := newAPIClient(cmd)
@@ -135,7 +135,7 @@ func runWorkspaceGet(cmd *cobra.Command, args []string) error {
 func runWorkspaceMembers(cmd *cobra.Command, args []string) error {
 	wsID := workspaceIDFromArgs(cmd, args)
 	if wsID == "" {
-		return fmt.Errorf("workspace ID is required: pass as argument or set MULTICA_WORKSPACE_ID")
+		return fmt.Errorf("workspace ID is required: pass as argument or set HIRA_WORKSPACE_ID")
 	}
 
 	client, err := newAPIClient(cmd)

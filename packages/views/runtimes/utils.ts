@@ -1,4 +1,4 @@
-import type { RuntimeUsage } from "@multica/core/types";
+import type { RuntimeUsage } from "@hira-vn/core/types";
 
 // ---------------------------------------------------------------------------
 // Formatting helpers

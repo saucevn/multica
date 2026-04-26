@@ -1,5 +1,5 @@
-import { cn } from "@multica/ui/lib/utils";
-import type { AgentRuntime } from "@multica/core/types";
+import { cn } from "@hira-vn/ui/lib/utils";
+import type { AgentRuntime } from "@hira-vn/core/types";
 import { ProviderLogo } from "../../runtimes/components/provider-logo";
 
 /**

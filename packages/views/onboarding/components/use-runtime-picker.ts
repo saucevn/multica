@@ -2,12 +2,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useWSEvent } from "@multica/core/realtime";
+import { useWSEvent } from "@hira-vn/core/realtime";
 import {
   runtimeKeys,
   runtimeListOptions,
-} from "@multica/core/runtimes/queries";
-import type { AgentRuntime } from "@multica/core/types";
+} from "@hira-vn/core/runtimes/queries";
+import type { AgentRuntime } from "@hira-vn/core/types";
 
 /**
  * Step 3's runtime data layer, shared by Desktop (`StepRuntimeConnect`)

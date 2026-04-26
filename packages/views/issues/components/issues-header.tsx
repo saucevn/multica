@@ -18,7 +18,7 @@ import {
   UserMinus,
   UserPen,
 } from "lucide-react";
-import { Button } from "@multica/ui/components/ui/button";
+import { Button } from "@hira-vn/ui/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -31,37 +31,37 @@ import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
-} from "@multica/ui/components/ui/dropdown-menu";
+} from "@hira-vn/ui/components/ui/dropdown-menu";
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-} from "@multica/ui/components/ui/popover";
-import { Switch } from "@multica/ui/components/ui/switch";
+} from "@hira-vn/ui/components/ui/popover";
+import { Switch } from "@hira-vn/ui/components/ui/switch";
 import {
   ALL_STATUSES,
   STATUS_CONFIG,
   PRIORITY_ORDER,
   PRIORITY_CONFIG,
-} from "@multica/core/issues/config";
+} from "@hira-vn/core/issues/config";
 import { StatusIcon, PriorityIcon } from ".";
 import { useQuery } from "@tanstack/react-query";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { memberListOptions, agentListOptions } from "@multica/core/workspace/queries";
-import { projectListOptions } from "@multica/core/projects/queries";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
+import { memberListOptions, agentListOptions } from "@hira-vn/core/workspace/queries";
+import { projectListOptions } from "@hira-vn/core/projects/queries";
 import { ActorAvatar } from "../../common/actor-avatar";
 import {
   SORT_OPTIONS,
   CARD_PROPERTY_OPTIONS,
   type ActorFilterValue,
-} from "@multica/core/issues/stores/view-store";
-import { useViewStore, useViewStoreApi } from "@multica/core/issues/stores/view-store-context";
+} from "@hira-vn/core/issues/stores/view-store";
+import { useViewStore, useViewStoreApi } from "@hira-vn/core/issues/stores/view-store-context";
 import {
   useIssuesScopeStore,
   type IssuesScope,
-} from "@multica/core/issues/stores/issues-scope-store";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
-import type { Issue } from "@multica/core/types";
+} from "@hira-vn/core/issues/stores/issues-scope-store";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@hira-vn/ui/components/ui/tooltip";
+import type { Issue } from "@hira-vn/core/types";
 
 // ---------------------------------------------------------------------------
 // HoverCheck — shadcn official pattern (PR #6862)

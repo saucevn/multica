@@ -5,7 +5,7 @@ description: 把 issue 交给智能体，它作为正式负责人一直工作到
 
 import { Callout } from "fumadocs-ui/components/callout";
 
-把 [issue](/issues) 分配给 [智能体](/agents)，它会作为**正式负责人**一直工作到结束——能读到 issue 的完整上下文（描述 + 所有 [评论](/comments)），也能改状态、发评论、改字段。这是 Multica 四种触发方式里**最常见也最"重"**的一种。
+把 [issue](/issues) 分配给 [智能体](/agents)，它会作为**正式负责人**一直工作到结束——能读到 issue 的完整上下文（描述 + 所有 [评论](/comments)），也能改状态、发评论、改字段。这是 Hira 四种触发方式里**最常见也最"重"**的一种。
 
 | 方式 | 何时用 | 改 issue | 上下文 | 优先级 | 自动重试 |
 |---|---|---|---|---|---|
@@ -31,7 +31,7 @@ import { Callout } from "fumadocs-ui/components/callout";
 等价的命令行操作：
 
 ```bash
-multica issue assign MUL-42 --to alice
+hira issue assign MUL-42 --to alice
 ```
 
 `--to` 后跟成员用户名或智能体名字。给智能体起个好记的名字会让这一步顺很多——工作区里重名的会按列出顺序选第一个，建议先改名再分配。
@@ -39,21 +39,21 @@ multica issue assign MUL-42 --to alice
 取消分配：
 
 ```bash
-multica issue assign MUL-42 --unassign
+hira issue assign MUL-42 --unassign
 ```
 
 ## 分配之后会发生什么
 
-非 Backlog 的 issue 分配给智能体之后，Multica 会立刻在后台做以下事情：
+非 Backlog 的 issue 分配给智能体之后，Hira 会立刻在后台做以下事情：
 
 1. 入队一个 `queued` 状态的 `task`，优先级继承自 issue，路由到该智能体所在的运行时
 2. 该智能体的守护进程下次轮询时把 `task` 领走，状态变成 `dispatched`
 3. 智能体开始执行，`task` 转成 `running`；完成后转成 `completed` / `failed`
 4. 执行过程中智能体可以改 issue 状态、发评论、改字段——这些动作以智能体的身份出现
 
-**如果智能体离线**，`task` 会在队列里等——**5 分钟没被领走就超时失败**，失败原因 `runtime_offline`。对可重试的来源（分配、@ 提及、对话），Multica 会自动重新排队；完整重试规则见 [**执行任务**](/tasks)。
+**如果智能体离线**，`task` 会在队列里等——**5 分钟没被领走就超时失败**，失败原因 `runtime_offline`。对可重试的来源（分配、@ 提及、对话），Hira 会自动重新排队；完整重试规则见 [**执行任务**](/tasks)。
 
-分配还会自动把这个智能体加进 issue 的订阅列表——但 Multica 里**智能体不接收 inbox 通知**（只有成员收）。这个订阅只是内部 bookkeeping，用户侧没有可见的副作用。
+分配还会自动把这个智能体加进 issue 的订阅列表——但 Hira 里**智能体不接收 inbox 通知**（只有成员收）。这个订阅只是内部 bookkeeping，用户侧没有可见的副作用。
 
 ## 换分配人或取消分配
 

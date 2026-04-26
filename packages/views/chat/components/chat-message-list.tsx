@@ -2,20 +2,20 @@
 
 import { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { cn } from "@multica/ui/lib/utils";
-import { Skeleton } from "@multica/ui/components/ui/skeleton";
+import { cn } from "@hira-vn/ui/lib/utils";
+import { Skeleton } from "@hira-vn/ui/components/ui/skeleton";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@multica/ui/components/ui/collapsible";
+} from "@hira-vn/ui/components/ui/collapsible";
 import { Loader2, ChevronRight, ChevronDown, Brain, AlertCircle } from "lucide-react";
-import { useScrollFade } from "@multica/ui/hooks/use-scroll-fade";
-import { useAutoScroll } from "@multica/ui/hooks/use-auto-scroll";
-import { taskMessagesOptions } from "@multica/core/chat/queries";
-import { Markdown } from "@multica/views/common/markdown";
-import type { ChatMessage, TaskMessagePayload } from "@multica/core/types";
-import type { ChatTimelineItem } from "@multica/core/chat";
+import { useScrollFade } from "@hira-vn/ui/hooks/use-scroll-fade";
+import { useAutoScroll } from "@hira-vn/ui/hooks/use-auto-scroll";
+import { taskMessagesOptions } from "@hira-vn/core/chat/queries";
+import { Markdown } from "@hira-vn/views/common/markdown";
+import type { ChatMessage, TaskMessagePayload } from "@hira-vn/core/types";
+import type { ChatTimelineItem } from "@hira-vn/core/chat";
 
 // ─── Public component ────────────────────────────────────────────────────
 

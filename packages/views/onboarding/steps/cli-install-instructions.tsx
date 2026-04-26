@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { Check, Copy, Terminal } from "lucide-react";
-import { Card, CardContent } from "@multica/ui/components/ui/card";
+import { Card, CardContent } from "@hira-vn/ui/components/ui/card";
 
 const INSTALL_CMD =
-  "curl -fsSL https://raw.githubusercontent.com/multica-ai/multica/main/scripts/install.sh | bash";
-const SETUP_CMD = "multica setup";
+  "curl -fsSL https://raw.githubusercontent.com/hira-vn/hira/main/scripts/install.sh | bash";
+const SETUP_CMD = "hira setup";
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -53,7 +53,7 @@ function Step({ n, label, cmd }: { n: number; label: string; cmd: string }) {
 /**
  * CLI install instructions — two copy-and-run commands. Hardcoded because
  * there's nothing environmental to infer: step 1 is the public install
- * script, step 2 is the cloud `multica setup` which the CLI itself knows
+ * script, step 2 is the cloud `hira setup` which the CLI itself knows
  * the endpoints for. Local development tests a self-host variant by
  * typing the extended command directly in the terminal; no need to
  * thread env vars through React.
@@ -67,7 +67,7 @@ export function CliInstallInstructions() {
           Code, Codex, Cursor, …) for the daemon to do real work. Also
           works on servers and remote dev boxes.
         </p>
-        <Step n={1} label="Install the Multica CLI" cmd={INSTALL_CMD} />
+        <Step n={1} label="Install the Hira CLI" cmd={INSTALL_CMD} />
         <Step n={2} label="Start the daemon" cmd={SETUP_CMD} />
       </CardContent>
     </Card>

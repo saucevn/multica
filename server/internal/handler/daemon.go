@@ -16,11 +16,11 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/multica-ai/multica/server/internal/analytics"
-	"github.com/multica-ai/multica/server/internal/middleware"
-	db "github.com/multica-ai/multica/server/pkg/db/generated"
-	"github.com/multica-ai/multica/server/pkg/protocol"
-	"github.com/multica-ai/multica/server/pkg/redact"
+	"github.com/hira-vn/hira/server/internal/analytics"
+	"github.com/hira-vn/hira/server/internal/middleware"
+	db "github.com/hira-vn/hira/server/pkg/db/generated"
+	"github.com/hira-vn/hira/server/pkg/protocol"
+	"github.com/hira-vn/hira/server/pkg/redact"
 )
 
 // ---------------------------------------------------------------------------
@@ -113,7 +113,7 @@ type DaemonRegisterRequest struct {
 	// and tasks keep working without manual intervention.
 	LegacyDaemonIDs []string `json:"legacy_daemon_ids"`
 	DeviceName      string   `json:"device_name"`
-	CLIVersion      string   `json:"cli_version"` // multica CLI version
+	CLIVersion      string   `json:"cli_version"` // hira CLI version
 	LaunchedBy      string   `json:"launched_by"` // "desktop" when spawned by the Electron app
 	Runtimes        []struct {
 		Name    string `json:"name"`
@@ -870,7 +870,7 @@ func (h *Handler) ClaimTaskByRuntime(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Workspace isolation check: the daemon uses this response's workspace_id
-	// as the only authority for MULTICA_WORKSPACE_ID in the agent env. An
+	// as the only authority for HIRA_WORKSPACE_ID in the agent env. An
 	// empty value would make the CLI silently fall back to the user-global
 	// config and talk to whatever workspace the user happened to last
 	// configure; a value that doesn't match the runtime's workspace means

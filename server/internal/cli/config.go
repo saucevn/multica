@@ -8,7 +8,23 @@ import (
 	"path/filepath"
 )
 
-const defaultCLIConfigPath = ".multica/config.json"
+const defaultCLIConfigPath = ".hira/config.json"
+
+// CheckLegacyConfigDir aborts the CLI if the user still has a ~/.multica/
+// directory from the pre-rebrand binary. We refuse to silently shadow it so
+// the user is forced to migrate state to ~/.hira/ explicitly.
+func CheckLegacyConfigDir() error {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return nil
+	}
+	legacy := filepath.Join(home, ".multica")
+	info, err := os.Stat(legacy)
+	if err != nil || !info.IsDir() {
+		return nil
+	}
+	return fmt.Errorf("legacy config detected at %s — move or delete it, then re-run from ~/.hira/", legacy)
+}
 
 // CLIConfig holds persistent CLI settings.
 type CLIConfig struct {
@@ -24,8 +40,8 @@ func CLIConfigPath() (string, error) {
 }
 
 // CLIConfigPathForProfile returns the config file path for the given profile.
-// An empty profile returns the default path (~/.multica/config.json).
-// A named profile returns ~/.multica/profiles/<name>/config.json.
+// An empty profile returns the default path (~/.hira/config.json).
+// A named profile returns ~/.hira/profiles/<name>/config.json.
 func CLIConfigPathForProfile(profile string) (string, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -34,20 +50,20 @@ func CLIConfigPathForProfile(profile string) (string, error) {
 	if profile == "" {
 		return filepath.Join(home, defaultCLIConfigPath), nil
 	}
-	return filepath.Join(home, ".multica", "profiles", profile, "config.json"), nil
+	return filepath.Join(home, ".hira", "profiles", profile, "config.json"), nil
 }
 
 // ProfileDir returns the base directory for a profile's state files (pid, log).
-// An empty profile returns ~/.multica/. A named profile returns ~/.multica/profiles/<name>/.
+// An empty profile returns ~/.hira/. A named profile returns ~/.hira/profiles/<name>/.
 func ProfileDir(profile string) (string, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return "", fmt.Errorf("resolve profile dir: %w", err)
 	}
 	if profile == "" {
-		return filepath.Join(home, ".multica"), nil
+		return filepath.Join(home, ".hira"), nil
 	}
-	return filepath.Join(home, ".multica", "profiles", profile), nil
+	return filepath.Join(home, ".hira", "profiles", profile), nil
 }
 
 // LoadCLIConfig reads the CLI config from disk (default profile).

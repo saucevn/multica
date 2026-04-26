@@ -1,4 +1,4 @@
-import type { AgentStatus } from "@multica/core/types";
+import type { AgentStatus } from "@hira-vn/core/types";
 import {
   Clock,
   CheckCircle2,

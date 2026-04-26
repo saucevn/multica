@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useCallback, useMemo } from "react";
-import { useConfigStore } from "@multica/core/config";
+import { useConfigStore } from "@hira-vn/core/config";
 import { createEnDict } from "./en";
 import { createZhDict } from "./zh";
 import type { LandingDict, Locale } from "./types";
@@ -11,7 +11,7 @@ const dictionaryFactories: Record<Locale, (allowSignup: boolean) => LandingDict>
   zh: createZhDict,
 };
 
-const COOKIE_NAME = "multica-locale";
+const COOKIE_NAME = "hira-locale";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
 
 type LocaleContextValue = {

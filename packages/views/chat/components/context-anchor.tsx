@@ -3,22 +3,22 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Focus } from "lucide-react";
-import type { ContextAnchor } from "@multica/core/chat";
-import { useChatStore } from "@multica/core/chat";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { issueDetailOptions } from "@multica/core/issues/queries";
-import { projectDetailOptions } from "@multica/core/projects/queries";
-import { inboxListOptions } from "@multica/core/inbox/queries";
-import { Button } from "@multica/ui/components/ui/button";
+import type { ContextAnchor } from "@hira-vn/core/chat";
+import { useChatStore } from "@hira-vn/core/chat";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
+import { issueDetailOptions } from "@hira-vn/core/issues/queries";
+import { projectDetailOptions } from "@hira-vn/core/projects/queries";
+import { inboxListOptions } from "@hira-vn/core/inbox/queries";
+import { Button } from "@hira-vn/ui/components/ui/button";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "@multica/ui/components/ui/tooltip";
+} from "@hira-vn/ui/components/ui/tooltip";
 import { IssueChip } from "../../issues/components/issue-chip";
 import { ProjectChip } from "../../projects/components/project-chip";
 import { AppLink, useNavigation } from "../../navigation";
-import { useWorkspacePaths } from "@multica/core/paths";
+import { useWorkspacePaths } from "@hira-vn/core/paths";
 
 /**
  * Format a derived ContextAnchor as the markdown prefix prepended to the
@@ -170,12 +170,12 @@ export function ContextAnchorButton() {
   const isBright = focusMode && hasAnchor;
 
   const tooltipText = isDisabled
-    ? "Nothing to share with Multica on this page"
+    ? "Nothing to share with Hira on this page"
     : focusMode && candidate
       ? candidate.type === "issue"
-        ? `Multica knows you're viewing ${candidate.label} · Click to turn off`
-        : `Multica knows you're viewing project "${candidate.label}" · Click to turn off`
-      : "Let Multica know what you're viewing";
+        ? `Hira knows you're viewing ${candidate.label} · Click to turn off`
+        : `Hira knows you're viewing project "${candidate.label}" · Click to turn off`
+      : "Let Hira know what you're viewing";
 
   return (
     <Tooltip>
@@ -188,7 +188,7 @@ export function ContextAnchorButton() {
             onClick={() => setFocusMode(!focusMode)}
             disabled={isDisabled}
             aria-label={
-              focusMode ? "Stop sharing current page" : "Share current page with Multica"
+              focusMode ? "Stop sharing current page" : "Share current page with Hira"
             }
             aria-pressed={focusMode}
           />
@@ -221,8 +221,8 @@ export function ContextAnchorCard() {
 
   const tooltipText =
     candidate.type === "issue"
-      ? `Multica knows you're viewing ${candidate.label}${candidate.subtitle ? ` — ${candidate.subtitle}` : ""}`
-      : `Multica knows you're viewing project "${candidate.label}"`;
+      ? `Hira knows you're viewing ${candidate.label}${candidate.subtitle ? ` — ${candidate.subtitle}` : ""}`
+      : `Hira knows you're viewing project "${candidate.label}"`;
 
   // Same pattern as IssueMentionCard: wrap the pure chip in an AppLink and
   // layer cursor + hover affordance onto the chip. Makes the anchor feel

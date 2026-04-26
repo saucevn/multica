@@ -8,11 +8,11 @@ const mockResolveRuntimeLocalSkillImport = vi.hoisted(() => vi.fn());
 const mockRuntimeListOptions = vi.hoisted(() => vi.fn());
 const mockRuntimeLocalSkillsOptions = vi.hoisted(() => vi.fn());
 
-vi.mock("@multica/core/hooks", () => ({
+vi.mock("@hira-vn/core/hooks", () => ({
   useWorkspaceId: () => "ws-1",
 }));
 
-vi.mock("@multica/core/auth", () => {
+vi.mock("@hira-vn/core/auth", () => {
   const stateUser = { id: "user-1", email: "u@example.com", name: "User" };
   const useAuthStore = (selector?: (s: { user: typeof stateUser }) => unknown) => {
     const state = { user: stateUser };
@@ -21,7 +21,7 @@ vi.mock("@multica/core/auth", () => {
   return { useAuthStore };
 });
 
-vi.mock("@multica/core/runtimes", () => ({
+vi.mock("@hira-vn/core/runtimes", () => ({
   runtimeListOptions: (...args: unknown[]) => mockRuntimeListOptions(...args),
   runtimeLocalSkillsOptions: (...args: unknown[]) =>
     mockRuntimeLocalSkillsOptions(...args),

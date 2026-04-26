@@ -2,17 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { Save, Plus, Trash2 } from "lucide-react";
-import { Input } from "@multica/ui/components/ui/input";
-import { Button } from "@multica/ui/components/ui/button";
-import { Card, CardContent } from "@multica/ui/components/ui/card";
+import { Input } from "@hira-vn/ui/components/ui/input";
+import { Button } from "@hira-vn/ui/components/ui/button";
+import { Card, CardContent } from "@hira-vn/ui/components/ui/card";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useAuthStore } from "@multica/core/auth";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { useCurrentWorkspace } from "@multica/core/paths";
-import { memberListOptions, workspaceKeys } from "@multica/core/workspace/queries";
-import { api } from "@multica/core/api";
-import type { Workspace, WorkspaceRepo } from "@multica/core/types";
+import { useAuthStore } from "@hira-vn/core/auth";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
+import { useCurrentWorkspace } from "@hira-vn/core/paths";
+import { memberListOptions, workspaceKeys } from "@hira-vn/core/workspace/queries";
+import { api } from "@hira-vn/core/api";
+import type { Workspace, WorkspaceRepo } from "@hira-vn/core/types";
 
 export function RepositoriesTab() {
   const user = useAuthStore((s) => s.user);

@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"log/slog"
 
-	"github.com/multica-ai/multica/server/internal/events"
-	"github.com/multica-ai/multica/server/internal/handler"
-	"github.com/multica-ai/multica/server/internal/util"
-	db "github.com/multica-ai/multica/server/pkg/db/generated"
-	"github.com/multica-ai/multica/server/pkg/protocol"
+	"github.com/hira-vn/hira/server/internal/events"
+	"github.com/hira-vn/hira/server/internal/handler"
+	"github.com/hira-vn/hira/server/internal/util"
+	db "github.com/hira-vn/hira/server/pkg/db/generated"
+	"github.com/hira-vn/hira/server/pkg/protocol"
 )
 
 // mention represents a parsed @mention from markdown content (local alias).

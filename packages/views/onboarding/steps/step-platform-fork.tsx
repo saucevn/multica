@@ -6,8 +6,8 @@ import {
   captureDownloadIntent,
   captureEvent,
   setPersonProperties,
-} from "@multica/core/analytics";
-import { Button } from "@multica/ui/components/ui/button";
+} from "@hira-vn/core/analytics";
+import { Button } from "@hira-vn/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -15,11 +15,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@multica/ui/components/ui/dialog";
-import { useScrollFade } from "@multica/ui/hooks/use-scroll-fade";
-import { cn } from "@multica/ui/lib/utils";
-import type { AgentRuntime } from "@multica/core/types";
-import { DragStrip } from "@multica/views/platform";
+} from "@hira-vn/ui/components/ui/dialog";
+import { useScrollFade } from "@hira-vn/ui/hooks/use-scroll-fade";
+import { cn } from "@hira-vn/ui/lib/utils";
+import type { AgentRuntime } from "@hira-vn/core/types";
+import { DragStrip } from "@hira-vn/views/platform";
 import { StepHeader } from "../components/step-header";
 import { RuntimeAsidePanel } from "../components/runtime-aside-panel";
 import { CompactRuntimeRow } from "../components/compact-runtime-row";
@@ -492,7 +492,7 @@ function CliWaitingStatus({ dialogOpen }: { dialogOpen: boolean }) {
     return () => window.clearInterval(id);
   }, [dialogOpen]);
 
-  // Stage thresholds are rough — `multica setup` typical flow is
+  // Stage thresholds are rough — `hira setup` typical flow is
   //   ~1s save config → browser-tab auth (user-driven, 5–30s) →
   //   ~2s daemon boot → immediate WS register. So under 15s means
   //   "still normal", 15–45s means "probably stuck on browser auth",
@@ -534,7 +534,7 @@ function CliWaitingStatus({ dialogOpen }: { dialogOpen: boolean }) {
         {stage === "normal" && (
           <>
             Run the command above. As soon as{" "}
-            <span className="font-mono">multica setup</span> finishes
+            <span className="font-mono">hira setup</span> finishes
             browser sign-in and the daemon starts, your runtime will
             appear here automatically (usually 10–30 seconds).
           </>
@@ -542,14 +542,14 @@ function CliWaitingStatus({ dialogOpen }: { dialogOpen: boolean }) {
         {stage === "midway" && (
           <>
             Still listening. Make sure you finished the browser tab that{" "}
-            <span className="font-mono">multica setup</span> opened — it
+            <span className="font-mono">hira setup</span> opened — it
             needs you to approve the sign-in before the daemon can start.
           </>
         )}
         {stage === "slow" && (
           <>
             Taking longer than usual. Check the terminal where you ran{" "}
-            <span className="font-mono">multica setup</span> for errors.
+            <span className="font-mono">hira setup</span> for errors.
           </>
         )}
         {stage === "stalled" && (

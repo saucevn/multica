@@ -3,29 +3,29 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { sanitizeNextUrl, useAuthStore } from "@multica/core/auth";
-import { useConfigStore } from "@multica/core/config";
-import { workspaceKeys } from "@multica/core/workspace/queries";
+import { sanitizeNextUrl, useAuthStore } from "@hira-vn/core/auth";
+import { useConfigStore } from "@hira-vn/core/config";
+import { workspaceKeys } from "@hira-vn/core/workspace/queries";
 import {
   paths,
   resolvePostAuthDestination,
   useHasOnboarded,
-} from "@multica/core/paths";
-import { api } from "@multica/core/api";
-import type { Workspace } from "@multica/core/types";
+} from "@hira-vn/core/paths";
+import { api } from "@hira-vn/core/api";
+import type { Workspace } from "@hira-vn/core/types";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-} from "@multica/ui/components/ui/card";
-import { Button } from "@multica/ui/components/ui/button";
+} from "@hira-vn/ui/components/ui/card";
+import { Button } from "@hira-vn/ui/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { captureDownloadIntent } from "@multica/core/analytics";
+import { captureDownloadIntent } from "@hira-vn/core/analytics";
 import { setLoggedInCookie } from "@/features/auth/auth-cookie";
 import Link from "next/link";
-import { LoginPage, validateCliCallback } from "@multica/views/auth";
+import { LoginPage, validateCliCallback } from "@hira-vn/views/auth";
 
 function LoginPageContent() {
   const router = useRouter();
@@ -63,7 +63,7 @@ function LoginPageContent() {
         .issueCliToken()
         .then(({ token }) => {
           setDesktopToken(token);
-          window.location.href = `multica://auth/callback?token=${encodeURIComponent(token)}`;
+          window.location.href = `hira://auth/callback?token=${encodeURIComponent(token)}`;
         })
         .catch((err) => {
           setDesktopError(
@@ -130,10 +130,10 @@ function LoginPageContent() {
       <div className="flex min-h-screen items-center justify-center">
         <Card className="w-full max-w-sm">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Opening Multica</CardTitle>
+            <CardTitle className="text-2xl">Opening Hira</CardTitle>
             <CardDescription>
               {desktopToken
-                ? "You should see a prompt to open the Multica desktop app. If nothing happens, click the button below."
+                ? "You should see a prompt to open the Hira desktop app. If nothing happens, click the button below."
                 : "Preparing Desktop sign-in..."}
             </CardDescription>
           </CardHeader>
@@ -142,10 +142,10 @@ function LoginPageContent() {
               <Button
                 variant="outline"
                 onClick={() => {
-                  window.location.href = `multica://auth/callback?token=${encodeURIComponent(desktopToken)}`;
+                  window.location.href = `hira://auth/callback?token=${encodeURIComponent(desktopToken)}`;
                 }}
               >
-                Open Multica Desktop
+                Open Hira Desktop
               </Button>
             ) : (
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />

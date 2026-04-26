@@ -19,8 +19,8 @@ func TestReleaseAssetCandidates(t *testing.T) {
 			goos:          "darwin",
 			goarch:        "arm64",
 			wantAssets: []string{
-				"multica-cli-1.2.3-darwin-arm64.tar.gz",
-				"multica_darwin_arm64.tar.gz",
+				"hira-cli-1.2.3-darwin-arm64.tar.gz",
+				"hira_darwin_arm64.tar.gz",
 			},
 		},
 		{
@@ -29,8 +29,8 @@ func TestReleaseAssetCandidates(t *testing.T) {
 			goos:          "linux",
 			goarch:        "amd64",
 			wantAssets: []string{
-				"multica-cli-1.2.3-linux-amd64.tar.gz",
-				"multica_linux_amd64.tar.gz",
+				"hira-cli-1.2.3-linux-amd64.tar.gz",
+				"hira_linux_amd64.tar.gz",
 			},
 		},
 		{
@@ -39,8 +39,8 @@ func TestReleaseAssetCandidates(t *testing.T) {
 			goos:          "windows",
 			goarch:        "amd64",
 			wantAssets: []string{
-				"multica-cli-1.2.3-windows-amd64.zip",
-				"multica_windows_amd64.zip",
+				"hira-cli-1.2.3-windows-amd64.zip",
+				"hira_windows_amd64.zip",
 			},
 		},
 	}
@@ -63,29 +63,29 @@ func TestReleaseAssetCandidates(t *testing.T) {
 func TestFindReleaseAsset(t *testing.T) {
 	t.Run("prefers versioned asset when both names exist", func(t *testing.T) {
 		assets := []GitHubReleaseAsset{
-			{Name: "multica_darwin_amd64.tar.gz", BrowserDownloadURL: "old"},
-			{Name: "multica-cli-1.2.3-darwin-amd64.tar.gz", BrowserDownloadURL: "new"},
+			{Name: "hira_darwin_amd64.tar.gz", BrowserDownloadURL: "old"},
+			{Name: "hira-cli-1.2.3-darwin-amd64.tar.gz", BrowserDownloadURL: "new"},
 		}
 
 		got, err := findReleaseAsset(assets, "v1.2.3", "darwin", "amd64")
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
-		if got.Name != "multica-cli-1.2.3-darwin-amd64.tar.gz" {
+		if got.Name != "hira-cli-1.2.3-darwin-amd64.tar.gz" {
 			t.Fatalf("asset mismatch: got %q", got.Name)
 		}
 	})
 
 	t.Run("falls back to legacy asset when versioned is absent", func(t *testing.T) {
 		assets := []GitHubReleaseAsset{
-			{Name: "multica_linux_amd64.tar.gz", BrowserDownloadURL: "old"},
+			{Name: "hira_linux_amd64.tar.gz", BrowserDownloadURL: "old"},
 		}
 
 		got, err := findReleaseAsset(assets, "1.2.3", "linux", "amd64")
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
-		if got.Name != "multica_linux_amd64.tar.gz" {
+		if got.Name != "hira_linux_amd64.tar.gz" {
 			t.Fatalf("asset mismatch: got %q", got.Name)
 		}
 	})

@@ -1,5 +1,5 @@
-import type { IssuePriority } from "@multica/core/types";
-import { PRIORITY_CONFIG } from "@multica/core/issues/config";
+import type { IssuePriority } from "@hira-vn/core/types";
+import { PRIORITY_CONFIG } from "@hira-vn/core/issues/config";
 
 export function PriorityIcon({
   priority,

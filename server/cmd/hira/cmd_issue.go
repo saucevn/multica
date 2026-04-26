@@ -12,7 +12,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/multica-ai/multica/server/internal/cli"
+	"github.com/hira-vn/hira/server/internal/cli"
 )
 
 var issueCmd = &cobra.Command{
@@ -1101,7 +1101,7 @@ type assigneeMatch struct {
 
 func resolveAssignee(ctx context.Context, client *cli.APIClient, name string) (string, string, error) {
 	if client.WorkspaceID == "" {
-		return "", "", fmt.Errorf("workspace ID is required to resolve assignees; use --workspace-id or set MULTICA_WORKSPACE_ID")
+		return "", "", fmt.Errorf("workspace ID is required to resolve assignees; use --workspace-id or set HIRA_WORKSPACE_ID")
 	}
 
 	input := strings.TrimSpace(name)

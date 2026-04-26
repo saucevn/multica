@@ -51,10 +51,10 @@ func releaseAssetCandidates(targetVersion, goos, goarch string) []string {
 	version := strings.TrimPrefix(tag, "v")
 	ext := releaseArchiveExtension(goos)
 	// Prefer the versioned name (current scheme); fall back to the legacy
-	// `multica_{os}_{arch}` name for releases that still ship it.
+	// `hira_{os}_{arch}` name for releases that still ship it.
 	return []string{
-		fmt.Sprintf("multica-cli-%s-%s-%s.%s", version, goos, goarch, ext),
-		fmt.Sprintf("multica_%s_%s.%s", goos, goarch, ext),
+		fmt.Sprintf("hira-cli-%s-%s-%s.%s", version, goos, goarch, ext),
+		fmt.Sprintf("hira_%s_%s.%s", goos, goarch, ext),
 	}
 }
 
@@ -73,7 +73,7 @@ func findReleaseAsset(assets []GitHubReleaseAsset, targetVersion, goos, goarch s
 
 func fetchReleaseByTag(tag string) (*GitHubRelease, error) {
 	client := &http.Client{Timeout: 10 * time.Second}
-	req, err := http.NewRequest(http.MethodGet, "https://api.github.com/repos/multica-ai/multica/releases/tags/"+tag, nil)
+	req, err := http.NewRequest(http.MethodGet, "https://api.github.com/repos/hira-vn/hira/releases/tags/"+tag, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -96,10 +96,10 @@ func fetchReleaseByTag(tag string) (*GitHubRelease, error) {
 	return &release, nil
 }
 
-// FetchLatestRelease fetches the latest release tag from the multica GitHub repo.
+// FetchLatestRelease fetches the latest release tag from the hira GitHub repo.
 func FetchLatestRelease() (*GitHubRelease, error) {
 	client := &http.Client{Timeout: 10 * time.Second}
-	req, err := http.NewRequest(http.MethodGet, "https://api.github.com/repos/multica-ai/multica/releases/latest", nil)
+	req, err := http.NewRequest(http.MethodGet, "https://api.github.com/repos/hira-vn/hira/releases/latest", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func FetchLatestRelease() (*GitHubRelease, error) {
 	return &release, nil
 }
 
-// IsBrewInstall checks whether the running multica binary was installed via Homebrew.
+// IsBrewInstall checks whether the running hira binary was installed via Homebrew.
 func IsBrewInstall() bool {
 	exePath, err := os.Executable()
 	if err != nil {
@@ -155,10 +155,10 @@ func GetBrewPrefix() string {
 	return strings.TrimSpace(string(out))
 }
 
-// UpdateViaBrew runs `brew upgrade multica-ai/tap/multica`.
+// UpdateViaBrew runs `brew upgrade hira-vn/tap/hira`.
 // Returns the combined output and any error.
 func UpdateViaBrew() (string, error) {
-	cmd := exec.Command("brew", "upgrade", "multica-ai/tap/multica")
+	cmd := exec.Command("brew", "upgrade", "hira-vn/tap/hira")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return string(out), fmt.Errorf("brew upgrade failed: %w", err)
@@ -216,9 +216,9 @@ func UpdateViaDownloadWithTimeout(targetVersion string, downloadTimeout time.Dur
 	}
 
 	// Extract the binary from the archive.
-	binaryName := "multica"
+	binaryName := "hira"
 	if runtime.GOOS == "windows" {
-		binaryName = "multica.exe"
+		binaryName = "hira.exe"
 	}
 	var binaryData []byte
 	if runtime.GOOS == "windows" {
@@ -232,7 +232,7 @@ func UpdateViaDownloadWithTimeout(targetVersion string, downloadTimeout time.Dur
 
 	// Atomic replace: write to temp file, then rename over the original.
 	dir := filepath.Dir(exePath)
-	tmpFile, err := os.CreateTemp(dir, "multica-update-*")
+	tmpFile, err := os.CreateTemp(dir, "hira-update-*")
 	if err != nil {
 		return "", fmt.Errorf("create temp file: %w", err)
 	}

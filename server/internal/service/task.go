@@ -12,13 +12,13 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/multica-ai/multica/server/internal/events"
-	"github.com/multica-ai/multica/server/internal/mention"
-	"github.com/multica-ai/multica/server/internal/realtime"
-	"github.com/multica-ai/multica/server/internal/util"
-	db "github.com/multica-ai/multica/server/pkg/db/generated"
-	"github.com/multica-ai/multica/server/pkg/protocol"
-	"github.com/multica-ai/multica/server/pkg/redact"
+	"github.com/hira-vn/hira/server/internal/events"
+	"github.com/hira-vn/hira/server/internal/mention"
+	"github.com/hira-vn/hira/server/internal/realtime"
+	"github.com/hira-vn/hira/server/internal/util"
+	db "github.com/hira-vn/hira/server/pkg/db/generated"
+	"github.com/hira-vn/hira/server/pkg/protocol"
+	"github.com/hira-vn/hira/server/pkg/redact"
 )
 
 type TaskService struct {
@@ -34,7 +34,7 @@ func NewTaskService(q *db.Queries, tx TxStarter, hub *realtime.Hub, bus *events.
 
 // EnqueueTaskForIssue creates a queued task for an agent-assigned issue.
 // No context snapshot is stored — the agent fetches all data it needs at
-// runtime via the multica CLI.
+// runtime via the hira CLI.
 func (s *TaskService) EnqueueTaskForIssue(ctx context.Context, issue db.Issue, triggerCommentID ...pgtype.UUID) (db.AgentTaskQueue, error) {
 	if !issue.AssigneeID.Valid {
 		slog.Error("task enqueue failed", "issue_id", util.UUIDToString(issue.ID), "error", "issue has no assignee")
@@ -147,7 +147,7 @@ func (s *TaskService) EnqueueChatTask(ctx context.Context, chatSession db.ChatSe
 // Before #1587 this path was "cancel rows and return" — issue-status flips
 // (e.g. user marks the issue `done` or `cancelled` while a task is still
 // running) left the agent stuck at status="working" indefinitely, requiring a
-// manual `multica agent update <id> --status idle` to unwedge. Matches the
+// manual `hira agent update <id> --status idle` to unwedge. Matches the
 // pattern already used by CancelTask and RerunIssue.
 func (s *TaskService) CancelTasksForIssue(ctx context.Context, issueID pgtype.UUID) error {
 	cancelled, err := s.Queries.CancelAgentTasksByIssue(ctx, issueID)

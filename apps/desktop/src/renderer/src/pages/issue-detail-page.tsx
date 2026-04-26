@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { IssueDetail } from "@multica/views/issues/components";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { issueDetailOptions } from "@multica/core/issues/queries";
+import { IssueDetail } from "@hira-vn/views/issues/components";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
+import { issueDetailOptions } from "@hira-vn/core/issues/queries";
 import { useDocumentTitle } from "@/hooks/use-document-title";
 
 export function IssueDetailPage() {

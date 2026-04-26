@@ -12,13 +12,13 @@ import {
   Trash2,
   UserMinus,
 } from "lucide-react";
-import type { Issue } from "@multica/core/types";
+import type { Issue } from "@hira-vn/core/types";
 import {
   ALL_STATUSES,
   STATUS_CONFIG,
   PRIORITY_ORDER,
   PRIORITY_CONFIG,
-} from "@multica/core/issues/config";
+} from "@hira-vn/core/issues/config";
 import { StatusIcon } from "../components/status-icon";
 import { PriorityIcon } from "../components/priority-icon";
 import { ActorAvatar } from "../../common/actor-avatar";
@@ -28,14 +28,14 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
   DropdownMenuSeparator,
-} from "@multica/ui/components/ui/dropdown-menu";
+} from "@hira-vn/ui/components/ui/dropdown-menu";
 import {
   ContextMenuItem,
   ContextMenuSub,
   ContextMenuSubTrigger,
   ContextMenuSubContent,
   ContextMenuSeparator,
-} from "@multica/ui/components/ui/context-menu";
+} from "@hira-vn/ui/components/ui/context-menu";
 import type { UseIssueActionsResult } from "./use-issue-actions";
 
 // Both Dropdown and Context menu wrappers expose an API-compatible surface

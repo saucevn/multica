@@ -1,15 +1,15 @@
 import { Server, ArrowUpCircle, ChevronDown, Check, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import type { AgentRuntime, MemberWithUser } from "@multica/core/types";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { memberListOptions } from "@multica/core/workspace/queries";
+import type { AgentRuntime, MemberWithUser } from "@hira-vn/core/types";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
+import { memberListOptions } from "@hira-vn/core/workspace/queries";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-} from "@multica/ui/components/ui/dropdown-menu";
+} from "@hira-vn/ui/components/ui/dropdown-menu";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { PageHeader } from "../../layout/page-header";
 import { ProviderLogo } from "./provider-logo";
@@ -231,7 +231,7 @@ export function RuntimeList({
             <p className="mt-1 text-xs text-muted-foreground text-center">
               Run{" "}
               <code className="rounded bg-muted px-1 py-0.5">
-                multica daemon start
+                hira daemon start
               </code>{" "}
               to register a local runtime.
             </p>

@@ -13,11 +13,11 @@
   "iconLibrary": "lucide",
   "rtl": false,
   "aliases": {
-    "components": "@multica/ui/components",
-    "utils": "@multica/ui/lib/utils",
-    "ui": "@multica/ui/components/ui",
-    "lib": "@multica/ui/lib",
-    "hooks": "@multica/ui/hooks"
+    "components": "@hira-vn/ui/components",
+    "utils": "@hira-vn/ui/lib/utils",
+    "ui": "@hira-vn/ui/components/ui",
+    "lib": "@hira-vn/ui/lib",
+    "hooks": "@hira-vn/ui/hooks"
   },
   "menuColor": "default",
   "menuAccent": "subtle",

@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { NewWorkspacePage } from "@multica/views/workspace/new-workspace-page";
-import { InvitePage } from "@multica/views/invite";
-import { OnboardingFlow } from "@multica/views/onboarding";
-import { useNavigation } from "@multica/views/navigation";
-import { paths } from "@multica/core/paths";
-import { workspaceListOptions } from "@multica/core/workspace/queries";
+import { NewWorkspacePage } from "@hira-vn/views/workspace/new-workspace-page";
+import { InvitePage } from "@hira-vn/views/invite";
+import { OnboardingFlow } from "@hira-vn/views/onboarding";
+import { useNavigation } from "@hira-vn/views/navigation";
+import { paths } from "@hira-vn/core/paths";
+import { workspaceListOptions } from "@hira-vn/core/workspace/queries";
 import { useWindowOverlayStore } from "@/stores/window-overlay-store";
 
 /**

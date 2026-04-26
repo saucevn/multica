@@ -5,14 +5,14 @@ import { createLogger } from "../logger";
 
 const logger = createLogger("chat.store");
 
-const AGENT_STORAGE_KEY = "multica:chat:selectedAgentId";
-const SESSION_STORAGE_KEY = "multica:chat:activeSessionId";
+const AGENT_STORAGE_KEY = "hira:chat:selectedAgentId";
+const SESSION_STORAGE_KEY = "hira:chat:activeSessionId";
 /** Drafts are stored as one JSON blob per workspace: { [sessionId]: text }. */
-const DRAFTS_KEY = "multica:chat:drafts";
+const DRAFTS_KEY = "hira:chat:drafts";
 /** Placeholder sessionId for a chat that hasn't been created yet. */
 export const DRAFT_NEW_SESSION = "__new__";
 /** Focus mode is a personal preference — global across workspaces/sessions. */
-const FOCUS_MODE_KEY = "multica:chat:focusMode";
+const FOCUS_MODE_KEY = "hira:chat:focusMode";
 
 function readDrafts(storage: StorageAdapter, key: string): Record<string, string> {
   const raw = storage.getItem(key);

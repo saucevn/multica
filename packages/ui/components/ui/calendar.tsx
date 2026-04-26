@@ -8,8 +8,8 @@ import {
   type Locale,
 } from "react-day-picker"
 
-import { cn } from "@multica/ui/lib/utils"
-import { Button, buttonVariants } from "@multica/ui/components/ui/button"
+import { cn } from "@hira-vn/ui/lib/utils"
+import { Button, buttonVariants } from "@hira-vn/ui/components/ui/button"
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from "lucide-react"
 
 function Calendar({

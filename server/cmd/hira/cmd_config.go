@@ -6,12 +6,12 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/multica-ai/multica/server/internal/cli"
+	"github.com/hira-vn/hira/server/internal/cli"
 )
 
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "Manage configuration for multica",
+	Short: "Manage configuration for hira",
 	RunE:  runConfigShow,
 }
 

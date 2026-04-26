@@ -43,10 +43,10 @@ vi.mock("next/navigation", () => ({
 // web wrapper uses useAuthStore((s) => s.user/isLoading). Keep the real
 // sanitizeNextUrl so the redirect-sanitization rules are exercised rather
 // than silently drifting behind a mock reimplementation.
-vi.mock("@multica/core/auth", async () => {
+vi.mock("@hira-vn/core/auth", async () => {
   const actual =
-    await vi.importActual<typeof import("@multica/core/auth")>(
-      "@multica/core/auth",
+    await vi.importActual<typeof import("@hira-vn/core/auth")>(
+      "@hira-vn/core/auth",
     );
   authStateRef.state.sendCode = mockSendCode;
   authStateRef.state.verifyCode = mockVerifyCode;
@@ -64,7 +64,7 @@ vi.mock("@/features/auth/auth-cookie", () => ({
 }));
 
 // Mock api
-vi.mock("@multica/core/api", () => ({
+vi.mock("@hira-vn/core/api", () => ({
   api: {
     listWorkspaces: vi.fn().mockResolvedValue([]),
     verifyCode: vi.fn(),
@@ -87,7 +87,7 @@ describe("LoginPage", () => {
   it("renders login form with email input and continue button", () => {
     render(<LoginPage />, { wrapper: createWrapper() });
 
-    expect(screen.getByText("Sign in to Multica")).toBeInTheDocument();
+    expect(screen.getByText("Sign in to Hira")).toBeInTheDocument();
     expect(screen.getByText("Enter your email to get a login code")).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(
@@ -108,11 +108,11 @@ describe("LoginPage", () => {
     const user = userEvent.setup();
     render(<LoginPage />, { wrapper: createWrapper() });
 
-    await user.type(screen.getByLabelText("Email"), "test@multica.ai");
+    await user.type(screen.getByLabelText("Email"), "test@hira.vn");
     await user.click(screen.getByRole("button", { name: "Continue" }));
 
     await waitFor(() => {
-      expect(mockSendCode).toHaveBeenCalledWith("test@multica.ai");
+      expect(mockSendCode).toHaveBeenCalledWith("test@hira.vn");
     });
   });
 
@@ -121,7 +121,7 @@ describe("LoginPage", () => {
     const user = userEvent.setup();
     render(<LoginPage />, { wrapper: createWrapper() });
 
-    await user.type(screen.getByLabelText("Email"), "test@multica.ai");
+    await user.type(screen.getByLabelText("Email"), "test@hira.vn");
     await user.click(screen.getByRole("button", { name: "Continue" }));
 
     await waitFor(() => {
@@ -134,7 +134,7 @@ describe("LoginPage", () => {
     const user = userEvent.setup();
     render(<LoginPage />, { wrapper: createWrapper() });
 
-    await user.type(screen.getByLabelText("Email"), "test@multica.ai");
+    await user.type(screen.getByLabelText("Email"), "test@hira.vn");
     await user.click(screen.getByRole("button", { name: "Continue" }));
 
     await waitFor(() => {
@@ -147,7 +147,7 @@ describe("LoginPage", () => {
     const user = userEvent.setup();
     render(<LoginPage />, { wrapper: createWrapper() });
 
-    await user.type(screen.getByLabelText("Email"), "test@multica.ai");
+    await user.type(screen.getByLabelText("Email"), "test@hira.vn");
     await user.click(screen.getByRole("button", { name: "Continue" }));
 
     await waitFor(() => {
@@ -158,10 +158,10 @@ describe("LoginPage", () => {
   // Regression: MUL-1080 — if the user is already authenticated on the web
   // and the Desktop app redirects them to /login?platform=desktop, the web
   // must exchange the cookie session for a bearer token and hand it off via
-  // the multica:// deep link, not silently redirect to the workspace page.
+  // the hira:// deep link, not silently redirect to the workspace page.
   it("mints a token and deep-links to Desktop when already logged in with platform=desktop", async () => {
     searchParamsState.params = new URLSearchParams({ platform: "desktop" });
-    authStateRef.state.user = { id: "u1", email: "test@multica.ai" };
+    authStateRef.state.user = { id: "u1", email: "test@hira.vn" };
     mockIssueCliToken.mockImplementation(() =>
       Promise.resolve({ token: "handoff-jwt" }),
     );
@@ -181,11 +181,11 @@ describe("LoginPage", () => {
       });
       await waitFor(() => {
         expect(hrefSetter).toHaveBeenCalledWith(
-          "multica://auth/callback?token=handoff-jwt",
+          "hira://auth/callback?token=handoff-jwt",
         );
       });
       expect(
-        await screen.findByRole("button", { name: "Open Multica Desktop" }),
+        await screen.findByRole("button", { name: "Open Hira Desktop" }),
       ).toBeInTheDocument();
     } finally {
       Object.defineProperty(window, "location", {

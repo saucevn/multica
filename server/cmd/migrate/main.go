@@ -7,8 +7,8 @@ import (
 	"os"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/multica-ai/multica/server/internal/logger"
-	"github.com/multica-ai/multica/server/internal/migrations"
+	"github.com/hira-vn/hira/server/internal/logger"
+	"github.com/hira-vn/hira/server/internal/migrations"
 )
 
 func main() {
@@ -27,7 +27,7 @@ func main() {
 
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		dbURL = "postgres://multica:multica@localhost:5432/multica?sslmode=disable"
+		dbURL = "postgres://hira:hira@localhost:5432/hira?sslmode=disable"
 	}
 
 	ctx := context.Background()

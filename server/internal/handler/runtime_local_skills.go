@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/multica-ai/multica/server/pkg/protocol"
+	"github.com/hira-vn/hira/server/pkg/protocol"
 )
 
 type RuntimeLocalSkillRequestStatus string

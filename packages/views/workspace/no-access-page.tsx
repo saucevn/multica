@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@multica/ui/components/ui/button";
-import { paths } from "@multica/core/paths";
+import { Button } from "@hira-vn/ui/components/ui/button";
+import { paths } from "@hira-vn/core/paths";
 import { useNavigation } from "../navigation";
 import { useLogout } from "../auth";
 import { DragStrip } from "../platform";

@@ -17,12 +17,12 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/multica-ai/multica/server/internal/cli"
+	"github.com/hira-vn/hira/server/internal/cli"
 )
 
 var authCmd = &cobra.Command{
 	Use:   "auth",
-	Short: "Authenticate multica with Multica",
+	Short: "Authenticate hira with Hira",
 }
 
 var authStatusCmd = &cobra.Command{
@@ -48,7 +48,7 @@ func init() {
 }
 
 func resolveToken(cmd *cobra.Command) string {
-	if v := strings.TrimSpace(os.Getenv("MULTICA_TOKEN")); v != "" {
+	if v := strings.TrimSpace(os.Getenv("HIRA_TOKEN")); v != "" {
 		return v
 	}
 	profile := resolveProfile(cmd)
@@ -57,7 +57,7 @@ func resolveToken(cmd *cobra.Command) string {
 }
 
 func resolveAppURL(cmd *cobra.Command) string {
-	for _, key := range []string{"MULTICA_APP_URL", "FRONTEND_ORIGIN"} {
+	for _, key := range []string{"HIRA_APP_URL", "FRONTEND_ORIGIN"} {
 		if val := strings.TrimSpace(os.Getenv(key)); val != "" {
 			return strings.TrimRight(val, "/")
 		}
@@ -67,7 +67,7 @@ func resolveAppURL(cmd *cobra.Command) string {
 	if err == nil && cfg.AppURL != "" {
 		return strings.TrimRight(cfg.AppURL, "/")
 	}
-	fmt.Fprintln(os.Stderr, "No app URL configured. Run 'multica setup' first.")
+	fmt.Fprintln(os.Stderr, "No app URL configured. Run 'hira setup' first.")
 	os.Exit(1)
 	return "" // unreachable
 }
@@ -366,7 +366,7 @@ func runAuthStatus(cmd *cobra.Command, _ []string) error {
 	serverURL := resolveServerURL(cmd)
 
 	if token == "" {
-		fmt.Fprintln(os.Stderr, "Not authenticated. Run 'multica login' to authenticate.")
+		fmt.Fprintln(os.Stderr, "Not authenticated. Run 'hira login' to authenticate.")
 		return nil
 	}
 
@@ -380,7 +380,7 @@ func runAuthStatus(cmd *cobra.Command, _ []string) error {
 		Email string `json:"email"`
 	}
 	if err := client.GetJSON(ctx, "/api/me", &me); err != nil {
-		fmt.Fprintf(os.Stderr, "Token is invalid or expired: %v\nRun 'multica login' to re-authenticate.\n", err)
+		fmt.Fprintf(os.Stderr, "Token is invalid or expired: %v\nRun 'hira login' to re-authenticate.\n", err)
 		return nil
 	}
 
@@ -398,7 +398,7 @@ const callbackSuccessHTML = `<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Multica — Authenticated</title>
+<title>Hira — Authenticated</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   @media (prefers-color-scheme: dark) {

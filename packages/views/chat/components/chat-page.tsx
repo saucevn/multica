@@ -3,11 +3,11 @@
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { History, Plus, Bot, ChevronDown, Check } from "lucide-react";
-import { cn } from "@multica/ui/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@multica/ui/components/ui/avatar";
-import { Button } from "@multica/ui/components/ui/button";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
-import { Popover, PopoverContent, PopoverTrigger } from "@multica/ui/components/ui/popover";
+import { cn } from "@hira-vn/ui/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@hira-vn/ui/components/ui/avatar";
+import { Button } from "@hira-vn/ui/components/ui/button";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@hira-vn/ui/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@hira-vn/ui/components/ui/popover";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,21 +16,21 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@multica/ui/components/ui/dropdown-menu";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { useAuthStore } from "@multica/core/auth";
-import { agentListOptions, memberListOptions } from "@multica/core/workspace/queries";
-import { canAssignAgent } from "@multica/views/issues/components";
-import { api } from "@multica/core/api";
+} from "@hira-vn/ui/components/ui/dropdown-menu";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
+import { useAuthStore } from "@hira-vn/core/auth";
+import { agentListOptions, memberListOptions } from "@hira-vn/core/workspace/queries";
+import { canAssignAgent } from "@hira-vn/views/issues/components";
+import { api } from "@hira-vn/core/api";
 import {
   chatSessionsOptions,
   allChatSessionsOptions,
   chatMessagesOptions,
   pendingChatTaskOptions,
   chatKeys,
-} from "@multica/core/chat/queries";
-import { useCreateChatSession, useMarkChatSessionRead } from "@multica/core/chat/mutations";
-import { useChatStore } from "@multica/core/chat";
+} from "@hira-vn/core/chat/queries";
+import { useCreateChatSession, useMarkChatSessionRead } from "@hira-vn/core/chat/mutations";
+import { useChatStore } from "@hira-vn/core/chat";
 import { PageHeader } from "../../layout/page-header";
 import { ChatMessageList, ChatMessageSkeleton } from "./chat-message-list";
 import { ChatInput } from "./chat-input";
@@ -40,8 +40,8 @@ import {
   buildAnchorMarkdown,
   useRouteAnchorCandidate,
 } from "./context-anchor";
-import { createLogger } from "@multica/core/logger";
-import type { Agent, ChatMessage, ChatSession } from "@multica/core/types";
+import { createLogger } from "@hira-vn/core/logger";
+import type { Agent, ChatMessage, ChatSession } from "@hira-vn/core/types";
 
 const uiLogger = createLogger("chat.ui");
 const apiLogger = createLogger("chat.api");
@@ -282,7 +282,7 @@ export function ChatPage() {
 
 /**
  * Popover-based history list. Per product direction, session history lives
- * inside the Chat tab — not in the global sidebar — so that Multica doesn't
+ * inside the Chat tab — not in the global sidebar — so that Hira doesn't
  * read as "just another chat app." The trigger is a History icon in the
  * page header.
  */
@@ -486,7 +486,7 @@ function EmptyState({
     <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6 py-12">
       <div className="text-center space-y-1">
         <h3 className="text-xl font-semibold">
-          {agentName ? `Hi, I'm ${agentName}` : "Welcome to Multica"}
+          {agentName ? `Hi, I'm ${agentName}` : "Welcome to Hira"}
         </h3>
         <p className="text-sm text-muted-foreground">How can I help?</p>
       </div>

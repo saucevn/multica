@@ -1,8 +1,8 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { projectListOptions, projectDetailOptions } from "@multica/core/projects/queries";
-import { useWorkspaceId } from "@multica/core/hooks";
+import { projectListOptions, projectDetailOptions } from "@hira-vn/core/projects/queries";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
 
 /**
  * Compact presentational representation of a project —

@@ -1,6 +1,6 @@
 "use client";
 
-import { IssuesPage } from "@multica/views/issues/components";
+import { IssuesPage } from "@hira-vn/views/issues/components";
 
 export default function Page() {
   return <IssuesPage />;

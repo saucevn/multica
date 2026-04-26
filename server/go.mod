@@ -1,4 +1,4 @@
-module github.com/multica-ai/multica/server
+module github.com/hira-vn/hira/server
 
 go 1.26.1
 

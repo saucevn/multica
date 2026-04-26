@@ -4,15 +4,15 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import { api } from "@multica/core/api";
-import { useAuthStore } from "@multica/core/auth";
-import { useNavigation } from "@multica/views/navigation";
-import { useCurrentWorkspace, paths } from "@multica/core/paths";
-import type { QuestionnaireAnswers } from "@multica/core/onboarding";
-import { pinKeys } from "@multica/core/pins";
-import { projectKeys } from "@multica/core/projects";
-import { issueKeys } from "@multica/core/issues/queries";
-import { Button } from "@multica/ui/components/ui/button";
+import { api } from "@hira-vn/core/api";
+import { useAuthStore } from "@hira-vn/core/auth";
+import { useNavigation } from "@hira-vn/views/navigation";
+import { useCurrentWorkspace, paths } from "@hira-vn/core/paths";
+import type { QuestionnaireAnswers } from "@hira-vn/core/onboarding";
+import { pinKeys } from "@hira-vn/core/pins";
+import { projectKeys } from "@hira-vn/core/projects";
+import { issueKeys } from "@hira-vn/core/issues/queries";
+import { Button } from "@hira-vn/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@multica/ui/components/ui/dialog";
+} from "@hira-vn/ui/components/ui/dialog";
 import { buildImportPayload } from "../utils/starter-content-templates";
 
 /**
@@ -140,7 +140,7 @@ export function StarterContentPrompt() {
               Getting Started
             </span>{" "}
             project with short tasks that walk through how agents, issues,
-            and context work in Multica.
+            and context work in Hira.
           </DialogDescription>
         </DialogHeader>
 

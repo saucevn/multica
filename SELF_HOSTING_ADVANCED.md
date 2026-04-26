@@ -1,6 +1,6 @@
 # Self-Hosting — Advanced Configuration
 
-This document covers advanced configuration for self-hosted Multica deployments. For the quick start guide, see [SELF_HOSTING.md](SELF_HOSTING.md).
+This document covers advanced configuration for self-hosted Hira deployments. For the quick start guide, see [SELF_HOSTING.md](SELF_HOSTING.md).
 
 ## Configuration
 
@@ -10,7 +10,7 @@ All configuration is done via environment variables. Copy `.env.example` as a st
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `DATABASE_URL` | PostgreSQL connection string | `postgres://multica:multica@localhost:5432/multica?sslmode=disable` |
+| `DATABASE_URL` | PostgreSQL connection string | `postgres://hira:hira@localhost:5432/hira?sslmode=disable` |
 | `JWT_SECRET` | **Must change from default.** Secret key for signing JWT tokens. Use a long random string. | `openssl rand -hex 32` |
 | `FRONTEND_ORIGIN` | URL where the frontend is served (used for CORS) | `https://app.example.com` |
 
@@ -25,12 +25,12 @@ These have sensible defaults and only need to be set when tuning a large or cons
 
 ### Email (Required for Authentication)
 
-Multica uses email-based magic link authentication via [Resend](https://resend.com).
+Hira uses email-based magic link authentication via [Resend](https://resend.com).
 
 | Variable | Description |
 |----------|-------------|
 | `RESEND_API_KEY` | Your Resend API key |
-| `RESEND_FROM_EMAIL` | Sender email address (default: `noreply@multica.ai`) |
+| `RESEND_FROM_EMAIL` | Sender email address (default: `noreply@hira.vn`) |
 
 > **Note:** The dev master verification code `888888` is gated by `APP_ENV != "production"`. The Docker self-host stack defaults to `APP_ENV=production` (so `888888` is disabled), which protects publicly reachable instances. For local development without email configured, set `APP_ENV=development` in your `.env` to enable `888888` — never do this on a public instance.
 
@@ -89,35 +89,35 @@ These are configured on each user's machine, not on the server:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `MULTICA_SERVER_URL` | `ws://localhost:8080/ws` | WebSocket URL for daemon → server connection |
-| `MULTICA_APP_URL` | `http://localhost:3000` | Frontend URL for CLI login flow |
-| `MULTICA_DAEMON_POLL_INTERVAL` | `3s` | How often the daemon polls for tasks |
-| `MULTICA_DAEMON_HEARTBEAT_INTERVAL` | `15s` | Heartbeat frequency |
+| `HIRA_SERVER_URL` | `ws://localhost:8080/ws` | WebSocket URL for daemon → server connection |
+| `HIRA_APP_URL` | `http://localhost:3000` | Frontend URL for CLI login flow |
+| `HIRA_DAEMON_POLL_INTERVAL` | `3s` | How often the daemon polls for tasks |
+| `HIRA_DAEMON_HEARTBEAT_INTERVAL` | `15s` | Heartbeat frequency |
 
 Agent-specific overrides:
 
 | Variable | Description |
 |----------|-------------|
-| `MULTICA_CLAUDE_PATH` | Custom path to the `claude` binary |
-| `MULTICA_CLAUDE_MODEL` | Override the Claude model used |
-| `MULTICA_CODEX_PATH` | Custom path to the `codex` binary |
-| `MULTICA_CODEX_MODEL` | Override the Codex model used |
-| `MULTICA_OPENCODE_PATH` | Custom path to the `opencode` binary |
-| `MULTICA_OPENCODE_MODEL` | Override the OpenCode model used |
-| `MULTICA_OPENCLAW_PATH` | Custom path to the `openclaw` binary |
-| `MULTICA_OPENCLAW_MODEL` | Override the OpenClaw model used |
-| `MULTICA_HERMES_PATH` | Custom path to the `hermes` binary |
-| `MULTICA_HERMES_MODEL` | Override the Hermes model used |
-| `MULTICA_GEMINI_PATH` | Custom path to the `gemini` binary |
-| `MULTICA_GEMINI_MODEL` | Override the Gemini model used |
-| `MULTICA_PI_PATH` | Custom path to the `pi` binary |
-| `MULTICA_PI_MODEL` | Override the Pi model used |
-| `MULTICA_CURSOR_PATH` | Custom path to the `cursor-agent` binary |
-| `MULTICA_CURSOR_MODEL` | Override the Cursor Agent model used |
+| `HIRA_CLAUDE_PATH` | Custom path to the `claude` binary |
+| `HIRA_CLAUDE_MODEL` | Override the Claude model used |
+| `HIRA_CODEX_PATH` | Custom path to the `codex` binary |
+| `HIRA_CODEX_MODEL` | Override the Codex model used |
+| `HIRA_OPENCODE_PATH` | Custom path to the `opencode` binary |
+| `HIRA_OPENCODE_MODEL` | Override the OpenCode model used |
+| `HIRA_OPENCLAW_PATH` | Custom path to the `openclaw` binary |
+| `HIRA_OPENCLAW_MODEL` | Override the OpenClaw model used |
+| `HIRA_HERMES_PATH` | Custom path to the `hermes` binary |
+| `HIRA_HERMES_MODEL` | Override the Hermes model used |
+| `HIRA_GEMINI_PATH` | Custom path to the `gemini` binary |
+| `HIRA_GEMINI_MODEL` | Override the Gemini model used |
+| `HIRA_PI_PATH` | Custom path to the `pi` binary |
+| `HIRA_PI_MODEL` | Override the Pi model used |
+| `HIRA_CURSOR_PATH` | Custom path to the `cursor-agent` binary |
+| `HIRA_CURSOR_MODEL` | Override the Cursor Agent model used |
 
 ## Database Setup
 
-Multica requires PostgreSQL 17 with the pgvector extension.
+Hira requires PostgreSQL 17 with the pgvector extension.
 
 ### Using Docker Compose (Recommended)
 
@@ -254,7 +254,7 @@ NEXT_PUBLIC_WS_URL=wss://api.example.com/ws
 
 ## LAN / Non-localhost Access
 
-By default, Multica works on `localhost`. If you access it from another machine on the LAN (e.g. `http://192.168.1.100:3000`), you need to tell the backend to accept that origin:
+By default, Hira works on `localhost`. If you access it from another machine on the LAN (e.g. `http://192.168.1.100:3000`), you need to tell the backend to accept that origin:
 
 ```bash
 # .env — replace with your server's LAN IP
@@ -315,5 +315,5 @@ docker compose -f docker-compose.selfhost.yml pull
 docker compose -f docker-compose.selfhost.yml up -d
 ```
 
-Pin `MULTICA_IMAGE_TAG` in `.env` to an exact release like `v0.2.4` if you want to stay on a specific version. Migrations run automatically on backend startup. They are idempotent — running them multiple times has no effect.
+Pin `HIRA_IMAGE_TAG` in `.env` to an exact release like `v0.2.4` if you want to stay on a specific version. Migrations run automatically on backend startup. They are idempotent — running them multiple times has no effect.
 If the selected GHCR tag has not been published yet, fall back to `docker compose -f docker-compose.selfhost.yml -f docker-compose.selfhost.build.yml up -d --build`.

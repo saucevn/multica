@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	db "github.com/multica-ai/multica/server/pkg/db/generated"
+	db "github.com/hira-vn/hira/server/pkg/db/generated"
 )
 
 type skillCreateInput struct {

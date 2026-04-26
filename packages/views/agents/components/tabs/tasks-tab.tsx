@@ -2,12 +2,12 @@
 
 import { useMemo, useState, useEffect } from "react";
 import { ListTodo } from "lucide-react";
-import type { Agent, AgentTask, Issue } from "@multica/core/types";
-import { Skeleton } from "@multica/ui/components/ui/skeleton";
-import { api } from "@multica/core/api";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { useWorkspacePaths } from "@multica/core/paths";
-import { issueDetailOptions } from "@multica/core/issues/queries";
+import type { Agent, AgentTask, Issue } from "@hira-vn/core/types";
+import { Skeleton } from "@hira-vn/ui/components/ui/skeleton";
+import { api } from "@hira-vn/core/api";
+import { useWorkspaceId } from "@hira-vn/core/hooks";
+import { useWorkspacePaths } from "@hira-vn/core/paths";
+import { issueDetailOptions } from "@hira-vn/core/issues/queries";
 import { useQueries } from "@tanstack/react-query";
 import { AppLink } from "../../../navigation";
 import { taskStatusConfig } from "../../config";
