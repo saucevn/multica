@@ -1,71 +1,71 @@
 {
   "page": {
-    "title": "Inbox",
-    "back": "Inbox"
+    "title": "Hộp thư",
+    "back": "Hộp thư"
   },
   "menu": {
-    "mark_all_read": "Mark all as read",
-    "archive_all": "Archive all",
-    "archive_all_read": "Archive all read",
-    "archive_completed": "Archive completed"
+    "mark_all_read": "Đánh dấu tất cả đã đọc",
+    "archive_all": "Lưu trữ tất cả",
+    "archive_all_read": "Lưu trữ tất cả đã đọc",
+    "archive_completed": "Lưu trữ đã hoàn tất"
   },
   "list": {
-    "empty": "No notifications",
-    "mark_done_tooltip": "Mark as done",
-    "archive_tooltip": "Archive",
+    "empty": "Không có thông báo",
+    "mark_done_tooltip": "Đánh dấu hoàn tất",
+    "archive_tooltip": "Lưu trữ",
     "time": {
-      "just_now": "just now",
-      "minutes": "{{count}}m",
-      "hours": "{{count}}h",
-      "days": "{{count}}d"
+      "just_now": "vừa xong",
+      "minutes": "{{count}}ph",
+      "hours": "{{count}}g",
+      "days": "{{count}}n"
     }
   },
   "detail": {
-    "select_prompt": "Select a notification to view details",
-    "empty": "Your inbox is empty",
-    "original_input": "Original input",
-    "edit_advanced": "Edit as advanced form",
-    "archive": "Archive"
+    "select_prompt": "Chọn một thông báo để xem chi tiết",
+    "empty": "Hộp thư của bạn trống",
+    "original_input": "Đầu vào gốc",
+    "edit_advanced": "Sửa dạng nâng cao",
+    "archive": "Lưu trữ"
   },
   "types": {
-    "issue_assigned": "Assigned",
-    "unassigned": "Unassigned",
-    "assignee_changed": "Assignee changed",
-    "status_changed": "Status changed",
-    "priority_changed": "Priority changed",
-    "start_date_changed": "Start date changed",
-    "due_date_changed": "Due date changed",
-    "new_comment": "New comment",
-    "mentioned": "Mentioned",
-    "review_requested": "Review requested",
-    "task_completed": "Task completed",
-    "task_failed": "Task failed",
-    "agent_blocked": "Agent blocked",
-    "agent_completed": "Agent completed",
-    "reaction_added": "Reacted",
-    "quick_create_done": "Created with agent",
-    "quick_create_failed": "Create with agent failed"
+    "issue_assigned": "Được giao",
+    "unassigned": "Đã gỡ giao",
+    "assignee_changed": "Người phụ trách thay đổi",
+    "status_changed": "Trạng thái thay đổi",
+    "priority_changed": "Mức ưu tiên thay đổi",
+    "start_date_changed": "Ngày bắt đầu thay đổi",
+    "due_date_changed": "Hạn chót thay đổi",
+    "new_comment": "Bình luận mới",
+    "mentioned": "Được đề cập",
+    "review_requested": "Yêu cầu duyệt",
+    "task_completed": "Tác vụ hoàn tất",
+    "task_failed": "Tác vụ thất bại",
+    "agent_blocked": "Agent bị chặn",
+    "agent_completed": "Agent hoàn tất",
+    "reaction_added": "Đã thả cảm xúc",
+    "quick_create_done": "Đã tạo bằng Agent",
+    "quick_create_failed": "Tạo bằng Agent thất bại"
   },
   "labels": {
-    "set_status_to": "Set status to",
-    "set_priority_to": "Set priority to",
-    "assigned_to": "Assigned to {{name}}",
-    "removed_assignee": "Removed assignee",
-    "set_start_date_to": "Set start date to {{date}}",
-    "removed_start_date": "Removed start date",
-    "set_due_date_to": "Set due date to {{date}}",
-    "removed_due_date": "Removed due date",
-    "reacted_to_comment": "Reacted {{emoji}} to your comment",
-    "created_with_agent": "Created with agent: {{identifier}}",
-    "failed_with_detail": "Failed: {{detail}}"
+    "set_status_to": "Đặt trạng thái thành",
+    "set_priority_to": "Đặt mức ưu tiên thành",
+    "assigned_to": "Giao cho {{name}}",
+    "removed_assignee": "Đã gỡ người phụ trách",
+    "set_start_date_to": "Đặt ngày bắt đầu là {{date}}",
+    "removed_start_date": "Đã gỡ ngày bắt đầu",
+    "set_due_date_to": "Đặt hạn chót là {{date}}",
+    "removed_due_date": "Đã gỡ hạn chót",
+    "reacted_to_comment": "Đã thả {{emoji}} cho bình luận của bạn",
+    "created_with_agent": "Đã tạo bằng Agent: {{identifier}}",
+    "failed_with_detail": "Thất bại: {{detail}}"
   },
   "errors": {
-    "mark_read_failed": "Failed to mark as read",
-    "archive_failed": "Failed to archive",
-    "mark_done_failed": "Failed to mark as done",
-    "mark_all_read_failed": "Failed to mark all as read",
-    "archive_all_failed": "Failed to archive all",
-    "archive_all_read_failed": "Failed to archive read items",
-    "archive_completed_failed": "Failed to archive completed"
+    "mark_read_failed": "Không thể đánh dấu đã đọc",
+    "archive_failed": "Không thể lưu trữ",
+    "mark_done_failed": "Không thể đánh dấu hoàn tất",
+    "mark_all_read_failed": "Không thể đánh dấu tất cả đã đọc",
+    "archive_all_failed": "Không thể lưu trữ tất cả",
+    "archive_all_read_failed": "Không thể lưu trữ các mục đã đọc",
+    "archive_completed_failed": "Không thể lưu trữ đã hoàn tất"
   }
 }

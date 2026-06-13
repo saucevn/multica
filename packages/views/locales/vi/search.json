@@ -1,44 +1,44 @@
 {
-  "title": "Search",
-  "description": "Search pages, issues, projects, and members",
-  "placeholder": "Type a command or search...",
+  "title": "Tìm kiếm",
+  "description": "Tìm kiếm trang, công việc, dự án và thành viên",
+  "placeholder": "Nhập lệnh hoặc tìm kiếm...",
   "groups": {
-    "pages": "Pages",
-    "commands": "Commands",
-    "members": "Members",
-    "projects": "Projects",
-    "issues": "Issues",
-    "recent": "Recent"
+    "pages": "Trang",
+    "commands": "Lệnh",
+    "members": "Thành viên",
+    "projects": "Dự án",
+    "issues": "Công việc",
+    "recent": "Gần đây"
   },
   "pages": {
-    "inbox": "Inbox",
-    "my_issues": "My Issues",
-    "issues": "Issues",
-    "projects": "Projects",
-    "agents": "Agents",
-    "runtimes": "Runtimes",
-    "skills": "Skills",
-    "settings": "Settings"
+    "inbox": "Hộp thư",
+    "my_issues": "Công việc của tôi",
+    "issues": "Công việc",
+    "projects": "Dự án",
+    "agents": "Agent",
+    "runtimes": "Runtime",
+    "skills": "Skill",
+    "settings": "Cài đặt"
   },
   "commands": {
-    "current_theme_aria": "Current theme",
-    "new_issue": "New Issue",
-    "new_project": "New Project",
-    "copy_issue_link": "Copy Issue Link",
-    "copy_identifier": "Copy Identifier ({{identifier}})",
-    "switch_to_light": "Switch to Light Theme",
-    "switch_to_dark": "Switch to Dark Theme",
-    "use_system_theme": "Use System Theme"
+    "current_theme_aria": "Chủ đề hiện tại",
+    "new_issue": "Công việc mới",
+    "new_project": "Dự án mới",
+    "copy_issue_link": "Sao chép liên kết công việc",
+    "copy_identifier": "Sao chép mã định danh ({{identifier}})",
+    "switch_to_light": "Chuyển sang chủ đề sáng",
+    "switch_to_dark": "Chuyển sang chủ đề tối",
+    "use_system_theme": "Dùng chủ đề hệ thống"
   },
   "toast": {
-    "link_copied": "Link copied",
-    "copied_identifier": "Copied {{identifier}}"
+    "link_copied": "Đã sao chép liên kết",
+    "copied_identifier": "Đã sao chép {{identifier}}"
   },
   "empty": {
-    "no_results": "No results found.",
-    "type_to_search": "Type to search issues and projects"
+    "no_results": "Không tìm thấy kết quả.",
+    "type_to_search": "Nhập để tìm kiếm công việc và dự án"
   },
   "trigger": {
-    "label": "Search..."
+    "label": "Tìm kiếm..."
   }
 }
