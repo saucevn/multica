@@ -39,6 +39,7 @@ Every upstream-owned file this fork edits. New fork-owned files (`locales/vi/**`
 | apps/web/features/landing/i18n/types.ts | +vi in localeLabels + locales array | Re-apply (required for typecheck) |
 | apps/web/app/globals.css | +@import brand.css (after base.css) | Re-apply 1 line |
 | apps/desktop/src/renderer/src/globals.css | +@import brand.css (after base.css) | Re-apply 1 line |
+| packages/ui/package.json | +"./styles/brand.css" in exports (required by desktop's package-path import) | Re-apply 1 line |
 | apps/web/public/favicon.svg | Hira "h." mark | merge=ours (auto) |
 | server/internal/service/email.go | sender noreply@hira.vn; VI verification + invitation subjects/bodies; appURL app.hira.vn; CTA indigo | Take upstream, re-apply 6 strings |
 | server/internal/service/email_test.go | invitation subject expectation → VI/Hira | Re-apply 1 assertion |
