@@ -35,6 +35,8 @@ the SAME commit.
 | apps/desktop/src/renderer/src/App.tsx | +vi in HTML_LANG | Re-apply 1 line |
 | packages/views/onboarding/templates/index.ts | +vi→en content fallback | Re-apply 1 line |
 | apps/web/lib/use-cases-i18n.ts | +vi UseCaseText block | Re-apply block |
+| apps/web/app/globals.css | +@import brand.css (after base.css) | Re-apply 1 line |
+| apps/desktop/src/renderer/src/globals.css | +@import brand.css (after base.css) | Re-apply 1 line |
 
 ## Upstream sync playbook
 <!-- filled in by the final task -->
