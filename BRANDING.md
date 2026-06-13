@@ -110,8 +110,12 @@ make check                                         # full pipeline (typecheck + 
    adds an `en` key/namespace that `vi` doesn't have yet. To resolve:
    - New namespace: `cp packages/views/locales/en/<ns>.json packages/views/locales/vi/`,
      register it in `locales/index.ts` (import + RESOURCES), then translate.
-   - New keys in an existing namespace: the keys arrive in `vi` via the merge if you took
-     upstream's `en` shape; translate the new values. Keep placeholders + both plural forms.
+   - New keys in an existing namespace: the merge updates `en` (and `ja`/`ko`/`zh-Hans`,
+     which upstream owns) but does NOT touch `vi/<ns>.json` (fork-owned), so `vi` falls
+     behind. Copy the new keys from `en/<ns>.json` into `vi/<ns>.json` and translate them.
+     Keep `{{placeholders}}` and both plural forms. The failing parity test prints the exact
+     missing keys. (Verified live: an upstream merge added 19 `agents.json` keys to `en`,
+     and parity flagged all 19 as missing from `vi`.)
 3. **`.gitattributes` `merge=ours`** — brand assets (favicon, desktop icons, logos) are never
    overwritten by upstream. Requires `git config merge.ours.driver true` once per clone.
 
