@@ -37,6 +37,14 @@ the SAME commit.
 | apps/web/lib/use-cases-i18n.ts | +vi UseCaseText block | Re-apply block |
 | apps/web/app/globals.css | +@import brand.css (after base.css) | Re-apply 1 line |
 | apps/desktop/src/renderer/src/globals.css | +@import brand.css (after base.css) | Re-apply 1 line |
+| apps/web/public/favicon.svg | Hira "h." mark | merge=ours (auto) |
+| apps/web/app/layout.tsx (metadata) | Hira title/description/siteName/metadataBase=app.hira.vn/locale=vi_VN; removed twitter block | Take upstream then re-apply Hira metadata |
+
+> **In-app brand glyph (MulticaIcon) intentionally NOT swapped.** It is a monochrome
+> `currentColor` clip-path used as a loading spinner (animate-spin/pulse) and themed glyph
+> across 11 call sites; replacing it with the colored "h." mark would break spinners and
+> `text-white`/`text-foreground` contexts. A dedicated monochrome Hira glyph is a separate
+> design task. The colored "h." mark lives in `favicon.svg` (tab/PWA/OS icon).
 
 ## Upstream sync playbook
 <!-- filled in by the final task -->

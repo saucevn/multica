@@ -60,26 +60,21 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.multica.ai"),
+  metadataBase: new URL("https://app.hira.vn"),
   title: {
-    default: "Multica — Project Management for Human + Agent Teams",
-    template: "%s | Multica",
+    default: "Hira — Quản lý công việc cho đội ngũ Người + AI",
+    template: "%s | Hira",
   },
   description:
-    "Open-source platform that turns coding agents into real teammates. Assign tasks, track progress, compound skills.",
+    "Nền tảng biến coding agent thành đồng đội thực thụ. Giao việc, theo dõi tiến độ, tích lũy kỹ năng.",
   icons: {
     icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
     shortcut: ["/favicon.svg"],
   },
   openGraph: {
     type: "website",
-    siteName: "Multica",
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-    site: "@multica_hq",
-    creator: "@multica_hq",
+    siteName: "Hira",
+    locale: "vi_VN",
   },
   alternates: {
     canonical: "/",
