@@ -23,6 +23,8 @@ the SAME commit.
 | File | Change | Conflict policy |
 |---|---|---|
 <!-- tasks append rows here as they touch upstream files -->
+| packages/core/i18n/types.ts | +"vi" in SupportedLocale + SUPPORTED_LOCALES (2 lines) | Re-apply 2 lines on conflict |
+| packages/core/i18n/pick-locale.test.ts | +1 it() block for vi | Keep both sides (additive) |
 
 ## Upstream sync playbook
 <!-- filled in by the final task -->
