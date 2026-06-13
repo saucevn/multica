@@ -50,6 +50,12 @@ Every upstream-owned file this fork edits. New fork-owned files (`locales/vi/**`
 > `text-white`/`text-foreground` contexts. A dedicated monochrome Hira glyph is a separate
 > design task. The colored "h." mark lives in `favicon.svg` (tab/PWA/OS icon).
 
+> **Emails are Vietnamese-only by design.** `email.go` sends verification + invitation
+> emails in Vietnamese to every recipient regardless of their `language` preference. This is
+> intentional for the Vietnamese-market deployment (upstream was hardcoded English-only and
+> equally not locale-aware). If this fork ever needs multi-language emails, make `email.go`
+> select the template by the recipient's locale — that is a new feature, not a sync concern.
+
 > **Desktop OS-packaging rebrand DEFERRED** (web-only deployment). The desktop renderer
 > already gets Vietnamese + the indigo palette via the rows above. When shipping a desktop
 > build, rebrand `apps/desktop/{package.json, electron-builder.yml, src/main/index.ts}`
