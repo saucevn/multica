@@ -25,6 +25,8 @@ the SAME commit.
 <!-- tasks append rows here as they touch upstream files -->
 | packages/core/i18n/types.ts | +"vi" in SupportedLocale + SUPPORTED_LOCALES (2 lines) | Re-apply 2 lines on conflict |
 | packages/core/i18n/pick-locale.test.ts | +1 it() block for vi | Keep both sides (additive) |
+| server/internal/handler/auth.go | +"vi" in supportedLanguages | Re-apply 1 line |
+| server/internal/handler/user_language_test.go | +1 test for vi | Keep both sides |
 
 ## Upstream sync playbook
 <!-- filled in by the final task -->
