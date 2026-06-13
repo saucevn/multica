@@ -9,6 +9,9 @@ docs/superpowers/plans/2026-06-13-viet-hoa-multica.md
 > back to this file. To pull upstream features, run `scripts/sync-upstream.sh`
 > (see *Upstream sync playbook* below) — don't merge upstream by hand unless you
 > have to.
+>
+> **Deploying / migrating from the old Hira v1?** See [`docs/fork/MIGRATION.md`](docs/fork/MIGRATION.md)
+> (deploy via `make selfhost-build`, not the upstream GHCR images) + `scripts/migrate-v1-data.sh`.
 
 ## 3-layer principle
 
