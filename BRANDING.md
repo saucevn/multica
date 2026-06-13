@@ -39,6 +39,8 @@ the SAME commit.
 | apps/desktop/src/renderer/src/globals.css | +@import brand.css (after base.css) | Re-apply 1 line |
 | apps/web/public/favicon.svg | Hira "h." mark | merge=ours (auto) |
 | apps/web/app/layout.tsx (metadata) | Hira title/description/siteName/metadataBase=app.hira.vn/locale=vi_VN; removed twitter block | Take upstream then re-apply Hira metadata |
+| server/internal/service/email.go | sender noreply@hira.vn; VI verification + invitation subjects/bodies; appURL app.hira.vn; CTA indigo | Take upstream then re-apply 6 strings |
+| server/internal/service/email_test.go | invitation subject expectation → VI/Hira | Re-apply 1 assertion |
 
 > **In-app brand glyph (MulticaIcon) intentionally NOT swapped.** It is a monochrome
 > `currentColor` clip-path used as a loading spinner (animate-spin/pulse) and themed glyph
