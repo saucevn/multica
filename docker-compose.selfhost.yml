@@ -68,6 +68,14 @@ services:
       GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI:-http://localhost:${FRONTEND_PORT:-3000}/auth/callback}
       S3_BUCKET: ${S3_BUCKET:-}
       S3_REGION: ${S3_REGION:-us-west-2}
+      # Static credentials for S3-compatible backends (Cloudflare R2, MinIO,
+      # Backblaze B2, Wasabi). REQUIRED for self-host: without them the AWS SDK
+      # falls back to the (empty) default credential chain and every PutObject
+      # is unauthenticated, so uploads fail with HTTP 500 even though S3_BUCKET
+      # is set. AWS-hosted deployments that use an instance/task IAM role can
+      # leave these empty.
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
       AWS_ENDPOINT_URL: ${AWS_ENDPOINT_URL:-}
       ATTACHMENT_DOWNLOAD_MODE: ${ATTACHMENT_DOWNLOAD_MODE:-auto}
       ATTACHMENT_DOWNLOAD_URL_TTL: ${ATTACHMENT_DOWNLOAD_URL_TTL:-30m}

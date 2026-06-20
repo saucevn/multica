@@ -50,6 +50,7 @@ Every upstream-owned file this fork edits. New fork-owned files (`locales/vi/**`
 | apps/desktop/src/renderer/src/globals.css | +@import brand.css (after base.css) | Re-apply 1 line |
 | packages/ui/package.json | +"./styles/brand.css" in exports (required by desktop's package-path import) | Re-apply 1 line |
 | scripts/local-env.sh | derive+export NEXT_PUBLIC_API_URL/NEXT_PUBLIC_WS_URL so `make dev` proxies /api to the backend, not itself (general dev-tooling bugfix; good upstream candidate) | Keep ours; drop if upstream fixes it |
+| docker-compose.selfhost.yml | pass AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY through to the backend container so S3-compatible (R2/MinIO) uploads authenticate — upstream omits them and self-host PutObject fails with HTTP 500 (general infra bugfix; good upstream candidate) | Re-apply 2 env lines; drop if upstream fixes it |
 | apps/web/public/favicon.svg | Hira "h." mark | merge=ours (auto) |
 | server/internal/service/email.go | sender noreply@hira.vn; VI verification + invitation subjects/bodies; appURL app.hira.vn; CTA indigo | Take upstream, re-apply 6 strings |
 | server/internal/service/email_test.go | invitation subject expectation → VI/Hira | Re-apply 1 assertion |
