@@ -9,6 +9,13 @@
     "archive_all_read": "Lưu trữ tất cả đã đọc",
     "archive_completed": "Lưu trữ đã hoàn tất"
   },
+  "context_menu": {
+    "mark_read": "Đánh dấu đã đọc",
+    "mark_unread": "Đánh dấu chưa đọc",
+    "archive": "Lưu trữ",
+    "unarchive": "Bỏ lưu trữ",
+    "open_in_new_tab": "Mở trong tab mới"
+  },
   "list": {
     "empty": "Không có thông báo",
     "mark_done_tooltip": "Đánh dấu hoàn tất",
@@ -18,17 +25,23 @@
       "minutes": "{{count}}ph",
       "hours": "{{count}}g",
       "days": "{{count}}n"
-    }
+    },
+    "archived_title": "Đã lưu trữ",
+    "archived_empty": "Không có thông báo đã lưu trữ",
+    "unarchive_tooltip": "Bỏ lưu trữ",
+    "actions_aria": "Thao tác thông báo"
   },
   "detail": {
     "select_prompt": "Chọn một thông báo để xem chi tiết",
     "empty": "Hộp thư của bạn trống",
     "original_input": "Đầu vào gốc",
     "edit_advanced": "Sửa dạng nâng cao",
-    "archive": "Lưu trữ"
+    "archive": "Lưu trữ",
+    "unarchive": "Bỏ lưu trữ"
   },
   "types": {
     "issue_assigned": "Được giao",
+    "issue_subscribed": "Đã theo dõi",
     "unassigned": "Đã gỡ giao",
     "assignee_changed": "Người phụ trách thay đổi",
     "status_changed": "Trạng thái thay đổi",
@@ -44,7 +57,8 @@
     "agent_completed": "Agent hoàn tất",
     "reaction_added": "Đã thả cảm xúc",
     "quick_create_done": "Đã tạo bằng Agent",
-    "quick_create_failed": "Tạo bằng Agent thất bại"
+    "quick_create_failed": "Tạo bằng Agent thất bại",
+    "quick_create_unconfirmed": "Tạo với agent chưa xác nhận"
   },
   "labels": {
     "set_status_to": "Đặt trạng thái thành",
@@ -59,13 +73,20 @@
     "created_with_agent": "Đã tạo bằng Agent: {{identifier}}",
     "failed_with_detail": "Thất bại: {{detail}}"
   },
+  "toasts": {
+    "archived": "Đã lưu trữ thông báo",
+    "unarchived": "Đã khôi phục thông báo"
+  },
   "errors": {
     "mark_read_failed": "Không thể đánh dấu đã đọc",
+    "mark_unread_failed": "Không đánh dấu chưa đọc được",
     "archive_failed": "Không thể lưu trữ",
     "mark_done_failed": "Không thể đánh dấu hoàn tất",
     "mark_all_read_failed": "Không thể đánh dấu tất cả đã đọc",
     "archive_all_failed": "Không thể lưu trữ tất cả",
     "archive_all_read_failed": "Không thể lưu trữ các mục đã đọc",
-    "archive_completed_failed": "Không thể lưu trữ đã hoàn tất"
+    "archive_completed_failed": "Không thể lưu trữ đã hoàn tất",
+    "unarchive_failed": "Không bỏ lưu trữ được",
+    "archived_load_failed": "Không tải được thông báo đã lưu trữ"
   }
 }

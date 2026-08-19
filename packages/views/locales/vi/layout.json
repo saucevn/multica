@@ -1,6 +1,7 @@
 {
   "nav": {
     "inbox": "Hộp thư",
+    "chat": "Chat",
     "my_issues": "Công việc của tôi",
     "issues": "Công việc",
     "projects": "Dự án",
@@ -12,11 +13,27 @@
     "skills": "Skill",
     "settings": "Cài đặt"
   },
+  "tab": {
+    "issue": "Issue",
+    "project": "Dự án",
+    "autopilot": "Autopilot",
+    "agent": "Agent",
+    "member": "Thành viên",
+    "squad": "Squad",
+    "skill": "Skill",
+    "machine": "Máy",
+    "runtime": "Runtime",
+    "attachment": "Tệp đính kèm",
+    "create_agent": "Tạo Agent",
+    "unknown": "Trang không xác định"
+  },
   "help": {
     "trigger": "Trợ giúp",
     "docs": "Tài liệu",
     "changelog": "Nhật ký thay đổi",
-    "feedback": "Phản hồi"
+    "discord": "Discord",
+    "feedback": "Phản hồi",
+    "server_version": "Phiên bản máy chủ {{version}}"
   },
   "workspace_loader": {
     "loading_workspace": "Đang tải workspace…",
@@ -36,6 +53,10 @@
     "pinned_label": "Đã ghim",
     "workspace_group": "Workspace",
     "configure_group": "Cấu hình",
-    "unread_overflow": "99+"
+    "unread_overflow": "99+",
+    "discord_card": {
+      "title": "Tham gia Discord của chúng tôi",
+      "dismiss": "Bỏ qua"
+    }
   }
 }

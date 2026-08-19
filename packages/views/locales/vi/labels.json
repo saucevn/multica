@@ -1,3 +1,10 @@
 {
-  "remove_label": "Gỡ nhãn {{name}}"
+  "remove_label": "Gỡ nhãn {{name}}",
+  "resource_picker": {
+    "empty": "Chưa có nhãn",
+    "add": "Thêm nhãn",
+    "search": "Tìm nhãn...",
+    "no_labels": "Hãy tạo nhãn trong Cài đặt trước",
+    "no_results": "Không có nhãn phù hợp"
+  }
 }

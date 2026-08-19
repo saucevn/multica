@@ -3,7 +3,17 @@
     "title": "Squads",
     "new_button": "Squad mới",
     "empty_no_squads": "Chưa có Squad nào. Tạo một cái để bắt đầu.",
-    "empty_no_match": "Không có Squad nào khớp với bộ lọc."
+    "empty_no_match": "Không có Squad nào khớp với bộ lọc.",
+    "table": {
+      "name": "Squad",
+      "leader": "Trưởng nhóm",
+      "members": "Thành viên",
+      "creator": "Người tạo",
+      "created": "Ngày tạo"
+    },
+    "no_matches": "Không có squad phù hợp",
+    "row_menu": "Thao tác squad",
+    "archive_action": "Lưu trữ"
   },
   "inspector": {
     "details_section": "Chi tiết",
@@ -14,7 +24,8 @@
     "description": "\"{{name}}\" sẽ được lưu trữ. Các công việc hiện đang được giao cho Squad này sẽ được chuyển cho người dẫn đầu. Không thể hoàn tác — hãy tạo Squad mới nếu bạn cần định tuyến lại.",
     "cancel": "Hủy",
     "confirm": "Lưu trữ",
-    "archiving": "Đang lưu trữ…"
+    "archiving": "Đang lưu trữ…",
+    "success": "Đã lưu trữ squad"
   },
   "name_editor": {
     "cancel": "Hủy"
@@ -41,7 +52,6 @@
   },
   "members_tab": {
     "section_title": "Thành viên",
-    "section_count_one": "{{count}} thành viên trong Squad này",
     "section_count_other": "{{count}} thành viên trong Squad này",
     "add_member_button": "Thêm thành viên",
     "create_agent_button": "Tạo Agent",
@@ -62,15 +72,28 @@
     "unavailable": "Squad không khả dụng",
     "detail_link": "Chi tiết →",
     "archived": "Đã lưu trữ",
-    "member_count_one": "{{count}} thành viên",
     "member_count_other": "{{count}} thành viên",
     "members_section": "Thành viên",
-    "more_members_one": "+{{count}} nữa",
     "more_members_other": "+{{count}} nữa"
   },
   "instructions_tab": {
     "description": "Hướng dẫn Squad được đưa vào prompt của Agent dẫn đầu mỗi khi làm việc trên công việc được giao cho Squad này. Dùng để cung cấp cho người dẫn đầu các hướng dẫn chung của Squad, quy ước làm việc, hoặc ngữ cảnh cần tuân theo mọi tác vụ.",
     "unsaved_changes": "Thay đổi chưa lưu",
     "save_button": "Lưu"
+  },
+  "scope": {
+    "mine": "Của tôi",
+    "all": "Tất cả"
+  },
+  "toolbar": {
+    "display": "Hiển thị",
+    "sort_by": "Sắp xếp theo",
+    "direction_asc": "Tăng dần",
+    "direction_desc": "Giảm dần",
+    "section_columns": "Cột",
+    "result_count_title": "Squad phù hợp / tổng số squad",
+    "filter_label": "Bộ lọc",
+    "filter_active_count_other": "{{count}} bộ lọc",
+    "clear_filters": "Xóa bộ lọc"
   }
 }

@@ -1,4 +1,36 @@
 {
+  "avatar_upload": {
+    "change": "Đổi ảnh đại diện",
+    "remove": "Gỡ",
+    "select_image": "Vui lòng chọn một tệp ảnh.",
+    "updated": "Đã cập nhật ảnh đại diện",
+    "failed": "Không tải lên được ảnh đại diện",
+    "upload_image": "Tải ảnh lên",
+    "emoji_label": "Emoji",
+    "more_emojis": "Thêm emoji…",
+    "emoji_loading": "Đang tải…"
+  },
+  "avatar_crop": {
+    "title": "Sửa ảnh đại diện",
+    "zoom": "Thu phóng",
+    "zoom_in": "Phóng to",
+    "zoom_out": "Thu nhỏ",
+    "rotate": "Xoay",
+    "reset": "Đặt lại",
+    "cancel": "Hủy",
+    "apply": "Lưu",
+    "uploading": "Đang tải lên…",
+    "loading": "Đang tải…",
+    "load_failed": "Không tải được ảnh"
+  },
+  "color_picker": {
+    "saturation": "Độ bão hòa và độ sáng",
+    "hue": "Tông màu",
+    "hex": "Mã màu hex",
+    "eyedropper": "Lấy màu từ màn hình",
+    "presets": "Màu dựng sẵn",
+    "random": "Ngẫu nhiên"
+  },
   "save": "Lưu",
   "cancel": "Hủy",
   "delete": "Xóa",
@@ -24,5 +56,72 @@
     "error_already_bound": "Tài khoản Lark này đã được liên kết với một người dùng Hira khác. Việc chuyển tài khoản phải thực hiện qua bước hủy liên kết trước.",
     "error_not_member": "Bạn đang đăng nhập vào tài khoản Hira không phải thành viên của workspace này.",
     "error_unknown": "Đã xảy ra lỗi. Hãy thử lại, và nếu sự cố vẫn tiếp diễn, hãy liên hệ quản trị viên workspace."
+  },
+  "slack_bind": {
+    "page_title": "Liên kết tài khoản Slack của bạn",
+    "redeeming": "Đang liên kết tài khoản của bạn…",
+    "needs_auth_description": "Hãy đăng nhập Hira để hoàn tất liên kết. Token trong liên kết sẽ gắn tài khoản Slack của bạn với người dùng Hira này, nên bạn phải đăng nhập trước.",
+    "sign_in": "Đăng nhập",
+    "done_title": "Đã liên kết xong.",
+    "done_description": "Tin nhắn tiếp theo bạn gửi cho bot trên Slack sẽ đi thẳng tới agent. Bạn có thể đóng tab này.",
+    "error_title": "Không hoàn tất được liên kết",
+    "error_admin_hint": "Nếu tình trạng này lặp lại, hãy nhắn cho bot trên Slack lần nữa để lấy liên kết mới.",
+    "error_missing_token": "Liên kết thiếu token. Hãy nhắn cho bot trên Slack lần nữa để lấy liên kết mới.",
+    "error_expired": "Liên kết này không hợp lệ hoặc đã hết hạn (liên kết có hiệu lực 15 phút). Hãy nhắn cho bot lần nữa để lấy liên kết mới.",
+    "error_already_bound": "Tài khoản Slack này đã được liên kết với một người dùng Hira khác. Việc chuyển tài khoản phải hủy liên kết tường minh trước.",
+    "error_not_member": "Bạn đang đăng nhập bằng tài khoản Hira không phải thành viên của workspace này.",
+    "error_unknown": "Đã xảy ra sự cố. Hãy thử lại, nếu vẫn còn thì liên hệ quản trị viên workspace."
+  },
+  "dingtalk_bind": {
+    "page_title": "Liên kết tài khoản DingTalk của bạn",
+    "redeeming": "Đang liên kết tài khoản của bạn…",
+    "needs_auth_description": "Hãy đăng nhập Hira để hoàn tất liên kết. Token trong liên kết sẽ gắn tài khoản DingTalk của bạn với người dùng Hira này, nên bạn phải đăng nhập trước.",
+    "sign_in": "Đăng nhập",
+    "done_title": "Đã liên kết xong.",
+    "done_description": "Tin nhắn tiếp theo bạn gửi cho bot trên DingTalk sẽ đi thẳng tới agent. Bạn có thể đóng tab này.",
+    "error_title": "Không hoàn tất được liên kết",
+    "error_admin_hint": "Nếu tình trạng này lặp lại, hãy nhắn cho bot trên DingTalk lần nữa để lấy liên kết mới.",
+    "error_missing_token": "Liên kết thiếu token. Hãy nhắn cho bot trên DingTalk lần nữa để lấy liên kết mới.",
+    "error_expired": "Liên kết này không hợp lệ hoặc đã hết hạn (liên kết có hiệu lực 15 phút). Hãy nhắn cho bot lần nữa để lấy liên kết mới.",
+    "error_already_bound": "Tài khoản DingTalk này đã được liên kết với một người dùng Hira khác. Việc chuyển tài khoản phải hủy liên kết tường minh trước.",
+    "error_not_member": "Bạn đang đăng nhập bằng tài khoản Hira không phải thành viên của workspace này.",
+    "error_unknown": "Đã xảy ra sự cố. Hãy thử lại, nếu vẫn còn thì liên hệ quản trị viên workspace."
+  },
+  "telegram_bind": {
+    "page_title": "Liên kết tài khoản Telegram của bạn",
+    "redeeming": "Đang liên kết tài khoản của bạn…",
+    "needs_auth_description": "Hãy đăng nhập Hira để hoàn tất liên kết. Token trong liên kết sẽ gắn tài khoản Telegram của bạn với người dùng Hira này, nên bạn phải đăng nhập trước.",
+    "sign_in": "Đăng nhập",
+    "done_title": "Đã liên kết xong.",
+    "done_description": "Tin nhắn tiếp theo bạn gửi cho bot trên Telegram sẽ đi thẳng tới agent. Bạn có thể đóng tab này.",
+    "error_title": "Không hoàn tất được liên kết",
+    "error_admin_hint": "Nếu tình trạng này lặp lại, hãy nhắn cho bot trên Telegram lần nữa để lấy liên kết mới.",
+    "error_missing_token": "Liên kết thiếu token. Hãy nhắn cho bot trên Telegram lần nữa để lấy liên kết mới.",
+    "error_expired": "Liên kết này không hợp lệ hoặc đã hết hạn (liên kết có hiệu lực 15 phút). Hãy nhắn cho bot lần nữa để lấy liên kết mới.",
+    "error_already_bound": "Tài khoản Telegram này đã được liên kết với một người dùng Hira khác. Việc chuyển tài khoản phải hủy liên kết tường minh trước.",
+    "error_not_member": "Bạn đang đăng nhập bằng tài khoản Hira không phải thành viên của workspace này.",
+    "error_unknown": "Đã xảy ra sự cố. Hãy thử lại, nếu vẫn còn thì liên hệ quản trị viên workspace."
+  },
+  "expandable_description": {
+    "expand": "Xem thêm",
+    "collapse": "Thu gọn"
+  },
+  "wecom_bind": {
+    "page_title": "Liên kết tài khoản Hira của bạn",
+    "redeeming": "Đang liên kết tài khoản của bạn…",
+    "needs_auth_description": "Hãy đăng nhập Hira để hoàn tất liên kết. Token trong liên kết sẽ gắn danh tính WeCom của bạn với người dùng Hira này, nên bạn phải đăng nhập trước.",
+    "sign_in": "Đăng nhập",
+    "done_title": "Đã liên kết xong.",
+    "done_description": "Tin nhắn tiếp theo bạn gửi cho bot thông minh trên WeCom sẽ đi thẳng tới agent. Bạn có thể đóng tab này.",
+    "error_title": "Không hoàn tất được liên kết",
+    "error_admin_hint": "Nếu tình trạng này lặp lại, hãy nhắn cho bot thông minh trên WeCom lần nữa để lấy liên kết mới.",
+    "error_missing_token": "Liên kết thiếu token. Hãy nhắn cho bot thông minh trên WeCom lần nữa để lấy liên kết mới.",
+    "error_expired": "Liên kết này không hợp lệ hoặc đã hết hạn (liên kết có hiệu lực 15 phút). Hãy nhắn cho bot thông minh lần nữa để lấy liên kết mới.",
+    "error_already_bound": "Danh tính WeCom này đã được liên kết với một người dùng Hira khác. Việc chuyển tài khoản phải hủy liên kết tường minh trước.",
+    "error_not_member": "Bạn đang đăng nhập bằng tài khoản Hira không phải thành viên của workspace này.",
+    "error_unknown": "Đã xảy ra sự cố. Hãy thử lại, nếu vẫn còn thì liên hệ quản trị viên workspace."
+  },
+  "navigation": {
+    "open_in_new_tab": "Mở trong tab mới"
   }
 }

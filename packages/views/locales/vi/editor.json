@@ -7,8 +7,14 @@
     "highlight": "Tô sáng",
     "link": "Liên kết",
     "list": "Danh sách",
+    "task_list": "Danh sách việc cần làm",
     "quote": "Trích dẫn",
     "url_aria_label": "URL",
+    "link_edit": {
+      "apply": "Áp dụng liên kết",
+      "remove": "Gỡ liên kết",
+      "close": "Đóng trình sửa liên kết"
+    },
     "heading_dropdown": {
       "text": "Văn bản",
       "normal_text": "Văn bản thường",
@@ -33,7 +39,18 @@
     "copy_link": "Sao chép liên kết",
     "delete": "Xóa",
     "link_copied": "Đã sao chép liên kết",
-    "copy_link_failed": "Sao chép liên kết thất bại"
+    "copy_link_failed": "Sao chép liên kết thất bại",
+    "canvas_label": "Khung ảnh. Kéo để di chuyển, cuộn để phóng to, nhấp đúp để bật/tắt kích thước thật.",
+    "previous": "Ảnh trước",
+    "next": "Ảnh sau",
+    "sequence_position": "{{index}} / {{total}}",
+    "unavailable": "Ảnh đó không còn khả dụng — đã bỏ qua."
+  },
+  "canvas": {
+    "zoom_in": "Phóng to",
+    "zoom_out": "Thu nhỏ",
+    "zoom_fit": "Vừa khung",
+    "zoom_actual": "Kích thước thật"
   },
   "attachment": {
     "download_failed": "Không thể lấy liên kết tải về. Thử lại sau.",
@@ -60,7 +77,8 @@
     "no_results": "Không có kết quả",
     "group_current": "Trang hiện tại",
     "group_recent": "Đã xem gần đây",
-    "group_search": "Kết quả tìm kiếm"
+    "group_search": "Kết quả tìm kiếm",
+    "group_cancelled": "Đã hủy"
   },
   "slash_command": {
     "no_skills_configured": "Chưa có Skill nào được cài đặt",
@@ -78,11 +96,30 @@
   "file_card": {
     "uploading": "Đang tải lên {{filename}}"
   },
+  "upload": {
+    "failed": "Không tải lên được {{filename}}: {{reason}}",
+    "in_progress": "Đang tải lên…",
+    "interrupted": "Tải lên bị gián đoạn — tệp chưa được lưu. Hãy đính kèm lại.",
+    "remove": "Gỡ",
+    "uploading_label": "Đang tải lên {{filename}}…",
+    "failed_label": "Không tải lên được {{filename}}"
+  },
   "title_editor": {
     "title_aria_label": "Tiêu đề"
   },
   "mermaid": {
     "render_error": "Không thể hiển thị sơ đồ Mermaid.",
-    "rendering": "Đang hiển thị sơ đồ…"
+    "rendering": "Đang hiển thị sơ đồ…",
+    "viewer_title": "Sơ đồ",
+    "canvas_label": "Khung sơ đồ. Kéo để di chuyển, cuộn để phóng to.",
+    "open_viewer": "Mở trình xem sơ đồ",
+    "close_viewer": "Đóng",
+    "copy_source": "Sao chép mã nguồn sơ đồ",
+    "show_source": "Xem mã nguồn",
+    "show_diagram": "Xem sơ đồ",
+    "export": "Xuất",
+    "export_png": "Tải PNG",
+    "export_svg": "Tải SVG",
+    "export_source": "Tải .mmd"
   }
 }

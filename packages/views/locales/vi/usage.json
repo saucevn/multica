@@ -1,6 +1,10 @@
 {
   "title": "Mức sử dụng",
-  "subtitle": "Lượng token tiêu thụ và hoạt động của Agent trong workspace này.",
+  "tab_usage": "Mức dùng",
+  "header": {
+    "timezone_and_updated": "{{tz}} · cập nhật {{time}}",
+    "refresh": "Làm mới"
+  },
   "filter": {
     "project_label": "Dự án",
     "all_projects": "Tất cả dự án",
@@ -25,27 +29,73 @@
     "title_tokens": "Token hàng ngày",
     "title_time": "Thời gian chạy hàng ngày",
     "title_tasks": "Tác vụ hàng ngày",
+    "title_errors": "Lỗi theo ngày",
     "metric_cost": "Chi phí",
     "metric_tokens": "Token",
     "metric_time": "Thời gian",
     "metric_tasks": "Tác vụ",
-    "no_data": "Không có dữ liệu trong khoảng này."
+    "no_data": "Không có dữ liệu trong khoảng này.",
+    "metric_label": "Chỉ số"
   },
   "weekly": {
     "title_cost": "Chi phí hàng tuần",
     "title_tokens": "Token hàng tuần",
     "title_time": "Thời gian chạy hàng tuần",
     "title_tasks": "Tác vụ hàng tuần",
+    "title_errors": "Lỗi theo tuần",
     "partial_label": "{{range}} (một phần · {{covered}} / 7 ngày)"
+  },
+  "errors": {
+    "kpi_failed_label": "Tác vụ thất bại · {{days}} ngày",
+    "kpi_failed_hint": "Trên {{total}} lượt chạy",
+    "kpi_rate_label": "Tỷ lệ thất bại · {{days}} ngày",
+    "kpi_agents_label": "Agent bị ảnh hưởng · {{days}} ngày",
+    "kpi_agents_hint": "Tệ nhất {{name}} · {{count}}",
+    "tooltip_rate": "Tỷ lệ lỗi",
+    "class": {
+      "auth": "Xác thực",
+      "rate_limit": "Giới hạn tần suất",
+      "timeout": "Hết thời gian",
+      "provider": "Nhà cung cấp",
+      "runtime": "Runtime",
+      "agent": "Agent",
+      "other": "Khác"
+    },
+    "title": "Lỗi",
+    "summary": "{{failed}} trên {{total}} lượt chạy thất bại · {{rate}}",
+    "mix_title": "Cơ cấu lỗi · {{failed}}",
+    "mix_label": "Cơ cấu lỗi",
+    "codes_label": "Mã lỗi",
+    "by_agent": "Nhiều lỗi nhất",
+    "sort_label": "Xếp hạng theo",
+    "sort_failed": "Số lần thất bại",
+    "sort_rate": "Tỷ lệ",
+    "header_agent": "Agent",
+    "header_failed": "Thất bại",
+    "header_runs": "Lượt chạy",
+    "header_rate": "Tỷ lệ",
+    "other_agents": "Agent khác",
+    "low_sample": "Dưới {{count}} lượt chạy trong khoảng này — tỷ lệ không có ý nghĩa.",
+    "no_data": "Không có lượt chạy thất bại trong khoảng này.",
+    "show_reasons": "Hiện mã lỗi",
+    "hide_reasons": "Ẩn mã lỗi",
+    "show_all": "Hiện tất cả {{count}}",
+    "show_less": "Hiện {{count}} đầu"
   },
   "leaderboard": {
     "title": "Bảng xếp hạng",
     "caption": "{{count}} Agent",
+    "caption_with_deleted": "{{count}} agent · {{deleted}} đã xóa",
+    "sort_label": "Xếp hạng agent theo",
+    "deleted_agents": "Agent đã xóa",
+    "other_agents": "Agent khác",
     "header_agent": "Agent",
     "header_tokens": "Token",
     "header_cost": "Chi phí",
     "header_time": "Thời gian",
     "header_tasks": "Tác vụ",
+    "show_all": "Hiện tất cả",
+    "show_less": "Hiện {{count}} đầu",
     "no_data": "Không có hoạt động Agent trong khoảng này."
   },
   "empty": {
