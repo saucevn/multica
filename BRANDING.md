@@ -58,6 +58,9 @@ Every upstream-owned file this fork edits. New fork-owned files (`locales/vi/**`
 | apps/web/public/favicon.svg | Hira "h." mark | merge=ours (auto) |
 | server/internal/service/email.go | sender noreply@hira.vn; VI verification + invitation subjects/bodies; appURL app.hira.vn; CTA indigo | Take upstream, re-apply 6 strings |
 | server/internal/service/email_test.go | invitation subject expectation → VI/Hira; default-sender case wants noreply@hira.vn; truncation bound counts runes of the VI template (len() on the EN template made it vacuously true) | Re-apply 3 assertions |
+| e2e/navigation.spec.ts, e2e/issues.spec.ts | `toHaveTitle("… \| Multica")` → `"… \| Hira"` (4 assertions). The E2E suite asserts the browser title, so rebranding TITLE_SUFFIX breaks it — `make check` catches this at step 5, long after typecheck and unit tests pass | Re-apply 4 assertions |
+> Note: `e2e/auth.spec.ts` and `e2e/onboarding-smoke.spec.ts` also contain "Multica", but they assert **English** UI strings the fork never changes. Leave them alone.
+
 | README.md | +Tiếng Việt link in language nav; +Vietnamese "Bản fork cá nhân — Hira" notice block after the header | Take upstream, re-apply the 2 fork additions (top of file) |
 | AGENTS.md | Fork-notice banner prepended above upstream content (golden rules + pointers) | Keep our banner, take upstream body below it |
 | CLAUDE.md | Fork-notice blockquote inserted after the intro line (golden rules + pointers) | Keep our blockquote, take upstream body |
