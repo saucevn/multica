@@ -41,6 +41,9 @@ Every upstream-owned file this fork edits. New fork-owned files (`locales/vi/**`
 | packages/views/locales/index.ts | +25 vi imports + vi block in RESOURCES | Re-apply block |
 | packages/views/locales/{en,zh-Hans,ko,ja}/settings.json | +"vietnamese" language label key | Re-apply 1 key per file |
 | packages/views/settings/components/preferences-tab.tsx | +1 vi option in languageOptions | Re-apply 1 line |
+| apps/web/platform/document-title.ts | SITE_TITLE + TITLE_SUFFIX → Hira (upstream moved the brand name out of layout.tsx into these constants; they now drive `document.title` on EVERY workspace route via workspace-document-title.tsx, so leaving them unchanged shows "Issues \| Multica" in the tab) | Take upstream, re-apply 2 strings |
+| apps/web/platform/document-title.test.tsx | 9 " \| Multica" assertions → " \| Hira" | Re-apply (sed the suffix) |
+| packages/views/workspace/celestial-workspace-names.ts | +1 `vi:` line per entry (100 workspace-name suggestions). Proper names of stars/moons stay Latin (Vietnamese uses Latin script); planets, galaxies, nebulae and the 4 stars with common Vietnamese names are translated | Append `vi` after `ko` in each new entry; typecheck lists every missing one |
 | apps/web/app/layout.tsx | +vi in HTML_LANG; +vietnamese font subsets; Hira metadata (title/description/siteName/metadataBase=app.hira.vn/locale=vi_VN; twitter block removed) | Take upstream, re-apply 3 regions |
 | apps/desktop/src/renderer/src/App.tsx | +vi in HTML_LANG | Re-apply 1 line |
 | packages/views/onboarding/templates/index.ts | +vi→en content fallback | Re-apply 1 line |
@@ -53,7 +56,7 @@ Every upstream-owned file this fork edits. New fork-owned files (`locales/vi/**`
 | docker-compose.selfhost.yml | pass AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY through to the backend container so S3-compatible (R2/MinIO) uploads authenticate — upstream omits them and self-host PutObject fails with HTTP 500 (general infra bugfix; good upstream candidate) | Re-apply 2 env lines; drop if upstream fixes it |
 | apps/web/public/favicon.svg | Hira "h." mark | merge=ours (auto) |
 | server/internal/service/email.go | sender noreply@hira.vn; VI verification + invitation subjects/bodies; appURL app.hira.vn; CTA indigo | Take upstream, re-apply 6 strings |
-| server/internal/service/email_test.go | invitation subject expectation → VI/Hira | Re-apply 1 assertion |
+| server/internal/service/email_test.go | invitation subject expectation → VI/Hira; default-sender case wants noreply@hira.vn; truncation bound counts runes of the VI template (len() on the EN template made it vacuously true) | Re-apply 3 assertions |
 | README.md | +Tiếng Việt link in language nav; +Vietnamese "Bản fork cá nhân — Hira" notice block after the header | Take upstream, re-apply the 2 fork additions (top of file) |
 | AGENTS.md | Fork-notice banner prepended above upstream content (golden rules + pointers) | Keep our banner, take upstream body below it |
 | CLAUDE.md | Fork-notice blockquote inserted after the intro line (golden rules + pointers) | Keep our blockquote, take upstream body |
