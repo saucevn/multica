@@ -6,7 +6,7 @@ import { Toaster } from "@multica/ui/components/ui/sonner";
 import { cn } from "@multica/ui/lib/utils";
 import { WebProviders } from "@/components/web-providers";
 import type { SupportedLocale } from "@multica/core/i18n";
-import { RESOURCES } from "@multica/views/locales";
+import { resourcesForLocale } from "@multica/views/locales/resources-for-locale";
 import { getRequestLocale } from "@/lib/request-locale";
 import { SITE_TITLE, TITLE_TEMPLATE } from "@/platform/document-title";
 import {
@@ -132,7 +132,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const locale = await getRequestLocale();
-  const resources = { [locale]: RESOURCES[locale] };
+  const resources = resourcesForLocale(locale);
   const apiBaseUrl = resolveBrowserApiBaseUrl(process.env);
   const wsUrl = resolveBrowserWsUrl(process.env);
 

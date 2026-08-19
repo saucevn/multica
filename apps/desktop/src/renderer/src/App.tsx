@@ -24,7 +24,7 @@ import { useDaemonIPCBridge } from "./platform/daemon-ipc-bridge";
 import { syncDaemonOnLogin } from "./platform/daemon-login-sync";
 import { createDesktopLocaleAdapter } from "./platform/i18n-adapter";
 import { captureEvent } from "@multica/core/analytics";
-import { RESOURCES } from "@multica/views/locales";
+import { resourcesForLocale } from "@multica/views/locales/resources-for-locale";
 import { DesktopClientUsageReporter } from "./platform/client-usage-reporter";
 import { DiagnosticRouteReporter } from "./platform/diagnostic-route-reporter";
 import { flushFreezeBreadcrumb } from "./freeze-flush";
@@ -418,7 +418,7 @@ export default function App() {
   );
   const locale = useMemo(() => pickLocale(localeAdapter), [localeAdapter]);
   const resources = useMemo(
-    () => ({ [locale]: RESOURCES[locale] }),
+    () => resourcesForLocale(locale),
     [locale],
   );
 

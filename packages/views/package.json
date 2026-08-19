@@ -54,6 +54,7 @@
     "./i18n": "./i18n/index.ts",
     "./attachments": "./attachments/index.ts",
     "./locales": "./locales/index.ts",
+    "./locales/resources-for-locale": "./locales/resources-for-locale.ts",
     "./locales/*": "./locales/*"
   },
   "dependencies": {

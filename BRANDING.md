@@ -44,14 +44,15 @@ Every upstream-owned file this fork edits. New fork-owned files (`locales/vi/**`
 | apps/web/platform/document-title.ts | SITE_TITLE + TITLE_SUFFIX → Hira (upstream moved the brand name out of layout.tsx into these constants; they now drive `document.title` on EVERY workspace route via workspace-document-title.tsx, so leaving them unchanged shows "Issues \| Multica" in the tab) | Take upstream, re-apply 2 strings |
 | apps/web/platform/document-title.test.tsx | 9 " \| Multica" assertions → " \| Hira" | Re-apply (sed the suffix) |
 | packages/views/workspace/celestial-workspace-names.ts | +1 `vi:` line per entry (100 workspace-name suggestions). Proper names of stars/moons stay Latin (Vietnamese uses Latin script); planets, galaxies, nebulae and the 4 stars with common Vietnamese names are translated | Append `vi` after `ko` in each new entry; typecheck lists every missing one |
-| apps/web/app/layout.tsx | +vi in HTML_LANG; +vietnamese font subsets; Hira metadata (title/description/siteName/metadataBase=app.hira.vn/locale=vi_VN; twitter block removed) | Take upstream, re-apply 3 regions |
-| apps/desktop/src/renderer/src/App.tsx | +vi in HTML_LANG | Re-apply 1 line |
+| apps/web/app/layout.tsx | +vi in HTML_LANG; +vietnamese font subsets; Hira metadata (title/description/siteName/metadataBase=app.hira.vn/locale=vi_VN; twitter block removed); i18n resources via resourcesForLocale(locale) | Take upstream, re-apply 4 regions |
+| apps/desktop/src/renderer/src/App.tsx | +vi in HTML_LANG; i18n resources via resourcesForLocale(locale) so the en fallback bundle ships too | Re-apply 2 lines |
 | packages/views/onboarding/templates/index.ts | +vi→en content fallback | Re-apply 1 line |
 | apps/web/lib/use-cases-i18n.ts | +vi UseCaseText block | Re-apply block |
 | apps/web/features/landing/i18n/types.ts | +vi in localeLabels + locales array | Re-apply (required for typecheck) |
 | apps/web/app/globals.css | +@import brand.css (after base.css) | Re-apply 1 line |
 | apps/desktop/src/renderer/src/globals.css | +@import brand.css (after base.css) | Re-apply 1 line |
 | packages/ui/package.json | +"./styles/brand.css" in exports (required by desktop's package-path import) | Re-apply 1 line |
+| packages/views/package.json | +"./locales/resources-for-locale" in exports (the `./locales/*` wildcard maps literally, so the extensionless subpath needs its own entry) | Re-apply 1 line |
 | scripts/local-env.sh | derive+export NEXT_PUBLIC_API_URL/NEXT_PUBLIC_WS_URL so `make dev` proxies /api to the backend, not itself (general dev-tooling bugfix; good upstream candidate) | Keep ours; drop if upstream fixes it |
 | docker-compose.selfhost.yml | pass AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY through to the backend container so S3-compatible (R2/MinIO) uploads authenticate — upstream omits them and self-host PutObject fails with HTTP 500 (general infra bugfix; good upstream candidate) | Re-apply 2 env lines; drop if upstream fixes it |
 | apps/web/public/favicon.svg | Hira "h." mark | merge=ours (auto) |
