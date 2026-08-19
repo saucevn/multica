@@ -66,10 +66,133 @@
     "row_meta": "{{date}} · stripe: {{checkout}}",
     "stripe_empty": "—"
   },
+  "workspace": {
+    "title": "Thanh toán",
+    "description": "Quản lý gói, giới hạn, chỗ ngồi cho người và thanh toán Stripe của workspace này.",
+    "loading": "Đang tải thông tin thanh toán workspace",
+    "plan": {
+      "free": "Miễn phí",
+      "pro": "Pro",
+      "unknown": "Gói không xác định"
+    },
+    "status": {
+      "inactive": "Chưa kích hoạt",
+      "active": "Đang hoạt động",
+      "trialing": "Đang dùng thử",
+      "past_due": "Quá hạn",
+      "canceled": "Đã hủy",
+      "unknown": "Trạng thái không xác định"
+    },
+    "load_failed": {
+      "title": "Thanh toán tạm thời không khả dụng",
+      "description": "Chúng tôi không đọc được bản ghi đăng ký đáng tin cậy. Gói của bạn chưa bị thay đổi."
+    },
+    "actions": {
+      "retry": "Thử lại",
+      "upgrade": "Nâng cấp lên Pro",
+      "manage": "Quản lý thanh toán",
+      "refresh_seats": "Làm mới chỗ ngồi",
+      "cancel": "Hủy",
+      "continue_to_stripe": "Tiếp tục sang Stripe"
+    },
+    "errors": {
+      "action_title": "Thao tác thanh toán thất bại",
+      "temporarily_unavailable": "Thanh toán tạm thời không khả dụng. Hãy thử lại sau giây lát.",
+      "permission_changed": "Vai trò của bạn trong workspace không còn cho phép thao tác này. Hãy tải lại trang để xem quyền hiện tại.",
+      "checkout_response": "Không mở được trang thanh toán vì phản hồi từ máy chủ không đọc được. Hãy thử lại mà không đổi kỳ thanh toán đã chọn.",
+      "already_subscribed": "Workspace này đã có đăng ký. Gói hiện tại đã được làm mới.",
+      "checkout_failed": "Không tạo được phiên thanh toán. Hãy thử lại sau giây lát.",
+      "portal_response": "Không mở được Cổng thanh toán vì phản hồi từ máy chủ không đọc được.",
+      "portal_unavailable": "Cổng thanh toán không khả dụng cho workspace này. Gói hiện tại đã được làm mới.",
+      "portal_failed": "Không mở được Cổng thanh toán. Hãy thử lại sau giây lát.",
+      "reconcile_response": "Chỗ ngồi đã được làm mới nhưng không đọc được kết quả. Hãy tải lại trang để xác nhận số hiện tại.",
+      "reconcile_failed": "Không làm mới được chỗ ngồi. Thay đổi thành viên vẫn được lưu và hệ thống sẽ tự đối soát lại định kỳ."
+    },
+    "return": {
+      "cancel_title": "Đã hủy thanh toán",
+      "cancel_description": "Không có thay đổi gói nào.",
+      "portal_title": "Đã làm mới thông tin thanh toán",
+      "portal_description": "Bản ghi đăng ký mới nhất hiển thị bên dưới.",
+      "syncing_title": "Đang kích hoạt đăng ký của bạn",
+      "syncing_description": "Đã thanh toán xong. Chúng tôi đang chờ Stripe xác nhận thay đổi gói.",
+      "timeout_description": "Đã nhận thanh toán nhưng đăng ký vẫn đang đồng bộ. Hãy tải lại trang này sau giây lát.",
+      "active_title": "Pro đã kích hoạt",
+      "active_description": "Workspace này đã có quyền truy cập Pro."
+    },
+    "past_due": {
+      "title": "Thanh toán cần được xử lý",
+      "description": "Hãy mở Cổng thanh toán để cập nhật phương thức thanh toán và giữ quyền truy cập Pro."
+    },
+    "read_only": {
+      "title": "Quyền xem thanh toán",
+      "description": "Bạn có thể xem gói và giới hạn của workspace. Chỉ chủ sở hữu và quản trị viên mới mua hoặc quản lý được đăng ký."
+    },
+    "current": {
+      "title": "Gói hiện tại",
+      "plan": "Gói của workspace",
+      "plan_description": "Quyền lợi đang được áp dụng cho workspace này.",
+      "members": "Thành viên là người",
+      "members_description": "Agent và lời mời đang chờ không tính là chỗ ngồi.",
+      "member_count_other": "{{count}} thành viên",
+      "period_end": "Kỳ hiện tại kết thúc",
+      "period_end_description": "Ngày ghi nhận trong bản ghi đăng ký hiện tại."
+    },
+    "upgrade": {
+      "title": "Nâng cấp lên Pro",
+      "description": "Chọn kỳ thanh toán, sau đó xác nhận số chỗ ngồi và số tiền cuối cùng trên Stripe Checkout.",
+      "interval_label": "Kỳ thanh toán",
+      "monthly": "Hàng tháng",
+      "yearly": "Hàng năm",
+      "pro_for_team_other": "Pro cho {{count}} chỗ ngồi",
+      "price_loading": "Đang tải bảng giá đăng ký",
+      "unit_price": "{{price}} mỗi chỗ ngồi",
+      "estimated_monthly_total": "Ước tính tổng mỗi tháng: {{price}}",
+      "estimated_yearly_total": "Ước tính tổng mỗi năm: {{price}}",
+      "price_at_checkout": "Máy chủ đếm lại số thành viên là người trước khi mua. Stripe Checkout hiển thị giá mỗi chỗ ngồi và tổng tiền chính thức trước khi bạn trả tiền."
+    },
+    "management": {
+      "title": "Quản lý đăng ký",
+      "description": "Stripe quản lý an toàn phương thức thanh toán, hóa đơn và việc hủy.",
+      "portal": "Cổng thanh toán Stripe",
+      "portal_description": "Mở Stripe để quản lý đăng ký của workspace này.",
+      "portal_unavailable": "Không có Cổng thanh toán Stripe cho workspace này."
+    },
+    "limits": {
+      "title": "Mức dùng và giới hạn",
+      "description": "Giới hạn hiện tại được hiển thị mà không tự bịa ra tổng mức dùng khi máy chủ chưa cung cấp.",
+      "issues": "Tác vụ gần đây",
+      "issues_description": "Gói Miễn phí chỉ giữ lại các tác vụ hoạt động gần nhất. Gói Pro không giới hạn.",
+      "autopilots": "Tự động hóa thành công",
+      "autopilots_description": "Hạn mức gói Miễn phí đặt lại mỗi tháng dương lịch theo giờ UTC. Gói Pro không giới hạn.",
+      "unlimited": "Không giới hạn",
+      "per_month": "{{count}} / tháng"
+    },
+    "seats": {
+      "title": "Chỗ ngồi",
+      "description": "Mỗi thành viên là người đều tính một chỗ ngồi Pro. Agent và lời mời đang chờ thì không.",
+      "human_members": "Thành viên là người hiện tại",
+      "human_members_description": "Hãy làm mới sau khi thay đổi thành viên để yêu cầu hệ thống đối soát số lượng với Stripe.",
+      "updated": "Đã làm mới chỗ ngồi",
+      "reconciled": "Thành viên hiện tại: {{actual}} · chỗ ngồi tính phí: {{billed}}"
+    },
+    "confirm": {
+      "title": "Tiếp tục sang Stripe Checkout?",
+      "description": "Kỳ thanh toán: {{interval}}. Thành viên là người hiện tại: {{count}}. Stripe sẽ đếm lại chỗ ngồi và hiển thị số tiền cuối cùng trước khi thanh toán."
+    }
+  },
   "shared": {
     "request_failed": "Yêu cầu thất bại",
     "refresh": "Làm mới",
     "paging": "trang {{page}} / {{totalPages}} · {{total}} tổng cộng",
     "date_dash": "—"
+  },
+  "return_page": {
+    "redirecting": "Đang đưa bạn về trang thanh toán workspace…",
+    "load_failed_title": "Không mở được trang thanh toán workspace",
+    "load_failed_description": "Bạn đã quay lại từ Stripe, nhưng chúng tôi không tải được danh sách workspace để mở đúng trang thanh toán. Hãy vào Cài đặt workspace → Thanh toán để kiểm tra trạng thái hiện tại.",
+    "workspace_missing_title": "Không tìm thấy workspace đó",
+    "workspace_missing_description": "Bạn đã quay lại từ Stripe, nhưng workspace này không còn khả dụng với bạn — có thể nó đã bị xóa, hoặc quyền truy cập của bạn đã thay đổi. Hãy mở Thanh toán trong workspace bạn mong đợi để kiểm tra trạng thái hiện tại.",
+    "retry": "Thử lại",
+    "go_to_app": "Tới Hira"
   }
 }
