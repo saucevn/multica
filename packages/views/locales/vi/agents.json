@@ -494,7 +494,7 @@
       "empty_title": "Chưa có tham số nào",
       "empty_hint": "Thêm token đầu tiên để dựng lệnh khởi chạy.",
       "edit_aria": "Sửa tham số {{index}}",
-      "remove_aria": "Xóa tham số",
+      "remove_aria": "Xóa tham số {{index}}",
       "saved_toast": "Đã lưu tham số tùy chỉnh",
       "save_failed_toast": "Không thể lưu tham số tùy chỉnh"
     },

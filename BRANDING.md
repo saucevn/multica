@@ -111,7 +111,7 @@ make check                                         # full pipeline (typecheck + 
 # then: git switch main && git merge --no-ff sync/upstream-manual && git push
 ```
 
-### Three automated safety nets after a merge
+### Four automated safety nets after a merge
 1. **`pnpm typecheck`** — any new `Record<SupportedLocale, …>` map upstream adds will fail
    to compile until it has a `vi` entry. The compiler enumerates every wiring site for you.
 2. **`packages/views/locales/parity.test.ts`** — fails (and lists the keys) whenever upstream
@@ -121,10 +121,16 @@ make check                                         # full pipeline (typecheck + 
    - New keys in an existing namespace: the merge updates `en` (and `ja`/`ko`/`zh-Hans`,
      which upstream owns) but does NOT touch `vi/<ns>.json` (fork-owned), so `vi` falls
      behind. Copy the new keys from `en/<ns>.json` into `vi/<ns>.json` and translate them.
-     Keep `{{placeholders}}` and both plural forms. The failing parity test prints the exact
+     Keep `{{placeholders}}`. Drop the `_one` form — Vietnamese has only the `other`
+     plural category, and parity.test.ts fails on any `_one` key in `vi`. The failing parity test prints the exact
      missing keys. (Verified live: an upstream merge added 19 `agents.json` keys to `en`,
      and parity flagged all 19 as missing from `vi`.)
-3. **`.gitattributes` `merge=ours`** — brand assets (favicon, desktop icons, logos) are never
+3. **`packages/views/locales/vi-placeholder-parity.test.ts`** — fails when a `vi` string's
+   `{{interpolations}}` stop matching its `en` counterpart. Key-name parity (net 2) cannot see
+   this: upstream rewords an English string and drops a placeholder, the key name never
+   changes, and the fork-owned `vi` value keeps referring to a variable nobody passes — so a
+   literal `{{name}}` renders on screen. Two live cases in `issues.json` were found this way.
+4. **`.gitattributes` `merge=ours`** — brand assets (favicon, desktop icons, logos) are never
    overwritten by upstream. Requires `git config merge.ours.driver true` once per clone.
 
 ### Why this stays mergeable

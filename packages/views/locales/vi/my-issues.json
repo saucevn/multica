@@ -19,7 +19,6 @@
     "filter_button": "Lọc",
     "filter_status": "Trạng thái",
     "filter_priority": "Mức ưu tiên",
-    "issue_count_one": "{{count}} công việc",
     "issue_count_other": "{{count}} công việc",
     "reset_filters": "Đặt lại bộ lọc",
     "display_settings": "Cài đặt hiển thị",
