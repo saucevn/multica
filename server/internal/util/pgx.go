@@ -92,6 +92,17 @@ func TimestampToPtr(t pgtype.Timestamptz) *string {
 	return &s
 }
 
+// TimestampToNanoPtr preserves PostgreSQL's sub-second precision. New ordering
+// and cursor fields should use this instead of the legacy second-precision
+// TimestampToPtr so two activities in the same second remain distinguishable.
+func TimestampToNanoPtr(t pgtype.Timestamptz) *string {
+	if !t.Valid {
+		return nil
+	}
+	s := t.Time.Format(time.RFC3339Nano)
+	return &s
+}
+
 // DateToPtr formats a pgtype.Date as a date-only "YYYY-MM-DD" string, or nil
 // when unset. Issue start_date/due_date are calendar days with no time-of-day
 // or timezone, so they must never be rendered through an instant.
@@ -143,4 +154,18 @@ func Int8ToPtr(v pgtype.Int8) *int64 {
 		return nil
 	}
 	return &v.Int64
+}
+
+func Int4ToPtr(v pgtype.Int4) *int32 {
+	if !v.Valid {
+		return nil
+	}
+	return &v.Int32
+}
+
+func PtrToInt4(v *int32) pgtype.Int4 {
+	if v == nil {
+		return pgtype.Int4{}
+	}
+	return pgtype.Int4{Int32: *v, Valid: true}
 }

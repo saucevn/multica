@@ -28,19 +28,40 @@ grep -n "func IsReservedContentPath"    server/internal/skill/reserved.go
 | Legacy success: `201 Created` with bare `SkillWithFilesResponse` when `on_conflict` was omitted | `server/internal/handler/skill.go:1990` |
 | Route registration `r.Post("/import", h.ImportSkill)` | `server/cmd/server/router.go:874` |
 
-## CLI: `multica skill import --url`
+Note: `ImportSkill` now branches on content type. A multipart body routes to the
+archive path (below); a JSON body keeps the URL flow. Both converge on the shared
+`finishSkillImport` tail. Line numbers in this table predate that split — re-grep
+`func (h *Handler) ImportSkill` / `finishSkillImport` to re-derive.
+
+## Local archive import (`.skill` / `.zip`)
 
 | Behavior | File:line |
 |---|---|
-| `skill import` command def | `server/cmd/multica/cmd_skill.go:60-64` |
-| `--url` flag | `server/cmd/multica/cmd_skill.go:142` |
-| `--on-conflict` flag (default `fail`) | `server/cmd/multica/cmd_skill.go:143` |
-| `--output` flag (default `json`) | `server/cmd/multica/cmd_skill.go:144` |
+| `ImportSkill` branches to the archive path on multipart bodies | `server/internal/handler/skill.go:1924` (`if isMultipartForm(r)`) |
+| Shared create + conflict tail `finishSkillImport` (URL and archive) | `server/internal/handler/skill.go:1974` |
+| `isMultipartForm` content-type check | `server/internal/handler/skill_import_archive.go:26` |
+| `importSkillFromArchive` (multipart parse + `MaxBytesReader` + `on_conflict` + `file`) | `server/internal/handler/skill_import_archive.go:36` |
+| Upload cap `maxImportArchiveUploadSize` (16 MiB compressed) | `server/internal/handler/skill_import_archive.go:22` |
+| `parseSkillArchive` (zip decode, shallowest-`SKILL.md` root, frontmatter name, zip-slip + reserved + ignore filters) | `server/internal/handler/skill_import_archive.go:95` |
+| Reuses per-file / per-bundle / count caps via `importedSkill.addFile` | `server/internal/handler/skill.go:618` (`maxImportFileSize`/`maxImportTotalSize`/`maxImportFileCount` at `:579-583`) |
+| Name fallback (wrapper dir, then filename) | `server/internal/handler/skill_import_archive.go:201` |
+| Ignore filter (dotfiles, `__MACOSX`, license) | `server/internal/handler/skill_import_archive.go:218` |
+| Per-entry size-capped read | `server/internal/handler/skill_import_archive.go:234` |
+| Tests (parser units + handler multipart create/skip/reject) | `server/internal/handler/skill_import_archive_test.go` |
+
+## CLI: `multica skill import --url` / `--file`
+
+| Behavior | File:line |
+|---|---|
+| `skill import` command def | `server/cmd/multica/cmd_skill.go:59-63` |
+| `--url` flag | `server/cmd/multica/cmd_skill.go:143` |
+| `--file` flag (local `.skill` / `.zip`; mutually exclusive with `--url`) | `server/cmd/multica/cmd_skill.go:144` |
+| `--on-conflict` flag (default `fail`) | `server/cmd/multica/cmd_skill.go:145` |
+| `--output` flag (default `json`) | `server/cmd/multica/cmd_skill.go:146` |
 | `runSkillImport` | `server/cmd/multica/cmd_skill.go:412` |
-| Requires `--url` | `server/cmd/multica/cmd_skill.go:418-421` |
-| Reads and validates `--on-conflict` | `server/cmd/multica/cmd_skill.go:422-425` |
-| Sends `on_conflict` in the request body | `server/cmd/multica/cmd_skill.go:428-431` |
-| `POST /api/skills/import` | `server/cmd/multica/cmd_skill.go:436` |
+| Requires exactly one of `--url` / `--file` | `server/cmd/multica/cmd_skill.go:420-427` |
+| `--file` reads the archive and posts multipart via `ImportSkillFile` | `server/cmd/multica/cmd_skill.go:436-447`, client method `server/internal/cli/client.go:535` |
+| `POST /api/skills/import` (URL, JSON body) | `server/cmd/multica/cmd_skill.go:455` |
 | Structured HTTP error body handling | `server/cmd/multica/cmd_skill.go:437-440`, `handleSkillImportError` at `:454` |
 | Prints structured result (`json` or table) | `server/cmd/multica/cmd_skill.go:443`, helper at `:497` |
 
@@ -98,6 +119,24 @@ that omit `on_conflict` still receive a bare `SkillWithFilesResponse`.
 | CLI `agent skills set` def ("replaces all current assignments") | `server/cmd/multica/cmd_agent.go:118-123` |
 | `runAgentSkillsSet` → `PUT .../skills` | `server/cmd/multica/cmd_agent.go:772`; PUT `:790` |
 | CLI `agent skills list` | `server/cmd/multica/cmd_agent.go:740`; GET `:750` |
+
+## Updating an imported skill (`POST /api/skills/{id}/refresh`)
+
+| Behavior | File:line |
+|---|---|
+| `RefreshSkill` handler | `server/internal/handler/skill_refresh.go:120` |
+| Route `r.Post("/refresh", h.RefreshSkill)` | `server/cmd/server/router.go:1594` |
+| Reads stored provenance `config.origin.{type,source_url}` | `parseSkillOrigin`, `server/internal/handler/skill_refresh.go:32` |
+| Refreshable origins are `github` / `skills_sh` / `clawhub` only | `refreshableOriginSource`, `server/internal/handler/skill_refresh.go:57` |
+| Re-runs the matching import fetcher from the stored `source_url` | `fetchImportedSkillFromOrigin`, `server/internal/handler/skill_refresh.go:75` |
+| Non-refreshable origin → 422 | `errSkillNotRefreshable`, `server/internal/handler/skill_refresh.go:22` |
+| Permission: creator or workspace owner/admin, checked before the fetch | `server/internal/handler/skill_refresh.go:120` (body) — broader than import-overwrite's creator-only rule |
+| Merges only `config.origin`, preserving other config keys | `mergeSkillConfigOrigin`, `server/internal/handler/skill_refresh.go:99` |
+| In-place overwrite preserving id/creator/bindings, adopting upstream rename | `overwriteSkillWithFiles` with `NewName` + `AllowOverwrite`, `server/internal/handler/skill_create.go:119-122`, tx helper `:133` |
+| Upstream rename colliding with another skill → 409 | `errSkillOverwriteNameConflict`, `server/internal/handler/skill_create.go:104` |
+| Fetch failures map like import (413/502/503/504) | `importFetchErrorResponse` (grep in `server/internal/handler/skill.go`) |
+| CLI `skill refresh <id>` def / runner | `server/cmd/multica/cmd_skill.go:66`, `runSkillRefresh` at `:425` |
+| Handler tests | `server/internal/handler/skill_refresh_test.go` |
 
 ## Reserved primary-content filename (`SKILL.md`)
 
