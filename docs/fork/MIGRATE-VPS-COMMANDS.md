@@ -695,6 +695,111 @@ diff <(sed -n '/^  backend:/,/^    restart:/p' docker-compose.selfhost.yml | sed
 
 Xem chi tiết ở §6b của [`MIGRATE-VPS.md`](MIGRATE-VPS.md).
 
+## D4c. Bật lại agent runtime (nếu đổi ý so với quyết định ban đầu)
+
+Kế hoạch chốt lúc đầu là **bỏ hẳn** agent runtime. Nếu bật lại, đây là đường đi — và ba cái
+bẫy đã gặp thật.
+
+**1. `setup self-host` chỉ ghi config, KHÔNG đăng nhập.**
+
+```bash
+ssh saucevn@187.127.214.83 'multica setup self-host --server-url https://app2.hira.vn --app-url https://app2.hira.vn'
+```
+
+Trên VPS không có trình duyệt nên đừng dùng OAuth. Tạo personal access token trong web UI
+(Settings → Personal access tokens) rồi:
+
+```bash
+ssh -t saucevn@187.127.214.83 'multica login --token'
+```
+
+Để `--token` trống thì CLI hỏi tương tác — token không rơi vào `~/.bash_history`.
+
+**2. Auto-update kéo bản của UPSTREAM.** Nguồn hardcode trong
+`server/internal/cli/update.go`: `api.github.com/repos/multica-ai/multica/releases/latest`.
+Trên fork phải tắt, nếu không một ngày nào đó binary tự bị thay:
+
+```bash
+ssh saucevn@187.127.214.83 'multica daemon start --no-auto-update && sleep 3 && multica daemon status'
+```
+
+**3. Agent CLI phải cài, và PATH của systemd KHÔNG thấy nó.**
+
+VPS mới không có node/npm. Cài không cần sudo (sudo đòi mật khẩu):
+
+```bash
+ssh saucevn@187.127.214.83 'V=$(curl -s https://nodejs.org/dist/index.json | grep -o "\"version\":\"v22\.[0-9.]*\"" | head -1 | cut -d\" -f4) && cd /tmp && curl -fsSL -o node.tar.xz "https://nodejs.org/dist/$V/node-$V-linux-x64.tar.xz" && rm -rf ~/.local/node && mkdir -p ~/.local/node && tar -xJf node.tar.xz -C ~/.local/node --strip-components=1 && rm -f node.tar.xz && PATH=$HOME/.local/node/bin:$PATH npm install -g @anthropic-ai/claude-code && ~/.local/node/bin/claude --version'
+```
+
+> `npm` có shebang `#!/usr/bin/env node` nên phải set PATH ngay trong lệnh cài, không thì
+> `/usr/bin/env: 'node': No such file or directory`. Bản thân `claude` 2.x là ELF binary
+> nên lúc chạy không cần node.
+
+PATH của systemd service là `/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/snap/bin` —
+**không có** `~/.local/node/bin`, nên `exec.LookPath("claude")` của daemon sẽ trượt. Dùng env
+file riêng, **không** dùng `~/hira2/.env`: daemon không cần `POSTGRES_PASSWORD` hay
+`JWT_SECRET`, đừng nạp chúng vào process env vô cớ.
+
+```bash
+ssh saucevn@187.127.214.83 'umask 077; { echo "PATH=/home/saucevn/.local/node/bin:/usr/local/bin:/usr/bin:/bin"; echo "MULTICA_CLAUDE_PATH=/home/saucevn/.local/node/bin/claude"; grep -E "^(ANTHROPIC_API_KEY|OPENAI_API_KEY|GOOGLE_AI_KEY|MULTICA_CLAUDE_MODEL)=" ~/hira2/.env; echo "MULTICA_DAEMON_AUTO_UPDATE=false"; } > ~/.multica/daemon.env && chmod 600 ~/.multica/daemon.env'
+```
+
+**Kiểm tra API key trước khi tin runtime đã sẵn sàng** — `claude --version` chạy được không
+có nghĩa là gọi được model:
+
+```bash
+ssh saucevn@187.127.214.83 'set -a; . ~/.multica/daemon.env; set +a; timeout 90 claude -p "Reply with exactly: OK" 2>&1 | head -3'
+```
+
+Ra `Credit balance is too low` nghĩa là key hợp lệ nhưng tài khoản Anthropic hết tiền —
+runtime sẽ đăng ký thành công, dashboard hiện xanh, và **mọi task đều fail**. Nạp tiền, hoặc
+bỏ `ANTHROPIC_API_KEY` khỏi daemon.env và đăng nhập `claude` bằng tài khoản subscription.
+
+**4. systemd, đừng lặp lại `--foreground` gõ tay.** VPS cũ chạy kiểu đó 66 ngày: reboot là
+chết im, và log phình 1.8 GB vì không xoay vòng.
+
+```bash
+ssh -t saucevn@187.127.214.83 'sudo tee /etc/systemd/system/multica-daemon.service > /dev/null <<EOF
+[Unit]
+Description=Multica agent runtime daemon (hira2)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+User=saucevn
+EnvironmentFile=/home/saucevn/.multica/daemon.env
+ExecStart=/usr/local/bin/multica daemon start --foreground --no-auto-update
+Restart=always
+RestartSec=10
+StandardOutput=append:/home/saucevn/.multica/daemon.log
+StandardError=append:/home/saucevn/.multica/daemon.log
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo systemctl daemon-reload && sudo systemctl enable --now multica-daemon && sudo systemctl status multica-daemon --no-pager | head -12'
+```
+
+```bash
+ssh -t saucevn@187.127.214.83 'sudo tee /etc/logrotate.d/multica-daemon > /dev/null <<EOF
+/home/saucevn/.multica/daemon.log {
+	weekly
+	rotate 4
+	compress
+	missingok
+	notifempty
+	copytruncate
+}
+EOF
+echo ok'
+```
+
+> ⚠️ **Lệch phiên bản.** CLI/daemon trên VPS mới là `0.4.31` (bản upstream, build 20/08) nói
+> chuyện với backend build từ **tháng 6** (`65efc411`) — cách nhau ~1300 commit.
+> `/api/daemon/register` vẫn tồn tại (trả 401 khi thiếu auth) nên đường đăng ký cơ bản còn,
+> nhưng nếu `daemon status` báo lỗi lạ thì nghi chỗ này trước. Cách sửa là rebuild backend
+> từ `main` (§6.5 + §D4b), không phải hạ cấp CLI.
+
 ## D5. Xoay secret
 
 ⚠️ **v1 vẫn dùng chung `RESEND_API_KEY` và R2 keys.** Mỗi lần xoay phải cập nhật **cả hai**
