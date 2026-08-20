@@ -177,7 +177,8 @@ vào bundle client**. Trên bất kỳ hostname staging nào, trình duyệt v�
 `app2.hira.vn` → **VPS cũ**. Test trên domain tạm sẽ cho kết quả sai lệch một cách âm thầm;
 chỉ `/etc/hosts` mới verify được thật.
 
-Sau cutover, xoá 1 dòng `tls` → Caddy tiếp quản ACME bình thường (§6.3).
+Sau cutover, thay dòng `tls <file>` bằng khối ACME ép HTTP-01 (§6.3) — **không phải** chỉ xoá
+nó đi: hostname này đứng sau Cloudflare proxy nên tls-alpn-01 luôn thất bại.
 
 ---
 

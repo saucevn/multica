@@ -122,11 +122,60 @@ ssh saucevn@187.127.214.83 'cp /srv/lumi/Caddyfile /srv/lumi/Caddyfile.bak.$(dat
 ```
 
 ```bash
-ssh saucevn@187.127.214.83 "sed -i -E '/^(lms\.thichcay\.vn|lumi\.hira\.vn)[[:space:]]/s/^/# /' /srv/lumi/Caddyfile && grep -n 'thichcay\|hira.vn\|bebe.group' /srv/lumi/Caddyfile"
+ssh saucevn@187.127.214.83 'grep -n "^lms.thichcay.vn\|^lumi.hira.vn" /srv/lumi/Caddyfile'
 ```
 
-**Cổng kiểm tra:** 2 dòng `lms.thichcay.vn` và `lumi.hira.vn` phải có `# ` ở đầu; 2 dòng
-`lumi.bebe.group` và `lumi.thichcay.vn` **không được** đụng tới.
+**Đọc kỹ output trước khi sửa.** File thật dùng khối **nhiều dòng**:
+
+```
+lms.thichcay.vn {
+	import lumi_app
+}
+```
+
+Comment mỗi dòng mở khối sẽ để lại `import lumi_app` mồ côi và dấu `}` lạc — hỏng cấu trúc
+cả file. Phải comment **cả ba dòng** của mỗi khối.
+
+> 🔴 **KHÔNG dùng `sed -i`.** Xem "Bẫy inode" ngay dưới. Dùng `python3` (mở chế độ `w`,
+> truncate tại chỗ → giữ nguyên inode).
+
+```bash
+ssh saucevn@187.127.214.83 'python3 - <<PY
+import pathlib, re
+p = pathlib.Path("/srv/lumi/Caddyfile"); before = p.stat().st_ino
+s = p.read_text()
+for d in ("lms.thichcay.vn", "lumi.hira.vn"):
+    s = re.sub(r"(?m)^(" + re.escape(d) + r" \{\n(?:.*\n)*?\})",
+               lambda m: "".join("# " + l + "\n" for l in m.group(1).split("\n")), s)
+p.write_text(s)
+print("inode", before, "->", p.stat().st_ino, "|", "OK" if before == p.stat().st_ino else "ĐỔI — DỪNG LẠI")
+PY'
+```
+
+### 🔴 Cổng kiểm tra bắt buộc sau MỌI lần sửa Caddyfile — bẫy inode
+
+Docker bind-mount **một file** theo **inode**, không theo đường dẫn. `sed -i` ghi file tạm rồi
+rename đè → inode mới → **container đóng băng ở nội dung cũ vĩnh viễn**.
+
+Nguy hiểm nhất là nó **im lặng**: `caddy validate` và `caddy reload` chạy *trong container* đọc
+đúng file cũ đó, nên đều báo "Valid configuration" và reload không lỗi — trong khi thay đổi của
+bạn chưa bao giờ được nạp. Sự cố này đã xảy ra thật một lần: config production đứng yên ở bản
+cũ suốt cả quá trình cutover, và bài verify staging cho kết quả dương tính giả.
+
+```bash
+ssh saucevn@187.127.214.83 'echo -n "host      "; ls -i /srv/lumi/Caddyfile; echo -n "container "; docker exec lumi-prod-caddy-1 ls -i /etc/caddy/Caddyfile; docker exec lumi-prod-caddy-1 grep -c app2.hira.vn /etc/caddy/Caddyfile'
+```
+
+**Cổng kiểm tra:** hai inode phải **giống hệt nhau**. Lệch → mount đã đứt, mọi validate/reload
+từ giờ đều vô nghĩa cho tới khi recreate container:
+
+```bash
+ssh saucevn@187.127.214.83 'cd /srv/lumi && docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --no-deps --force-recreate caddy'
+```
+
+`--env-file .env.prod` là bắt buộc (không có sẽ lỗi `REDIS_PASSWORD is missing a value`);
+`--no-deps` để không đụng `frontend`; `--force-recreate` vì nếu không compose sẽ báo
+"Running" rồi bỏ qua.
 
 ```bash
 ssh saucevn@187.127.214.83 'docker exec lumi-prod-caddy-1 caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile'
@@ -361,17 +410,33 @@ curl -sI --resolve app2.hira.vn:443:187.127.214.83 https://app2.hira.vn | head -
 
 ---
 
-# PHẦN B — Verify staging bằng `/etc/hosts` (chưa đụng DNS)
+# PHẦN B — Verify staging (chưa đụng DNS)
+
+> 🔴 **KHÔNG dùng `/etc/hosts`.** Lần chạy thật đã cho **dương tính giả**: `dscacheutil
+> -flushcache` không kịp áp dụng cho lệnh `curl` ngay sau đó, request đi qua Cloudflare về
+> **VPS cũ** và trả 200 — trong khi VPS mới thậm chí chưa có site block nào. Ta đã verify
+> nhầm chính hệ thống đang định thay thế.
+>
+> `curl --resolve` ép IP ở tầng kết nối, không phụ thuộc resolver hay cache, nên là cách
+> duy nhất chứng minh được mình đang nói chuyện với origin mới.
 
 ```bash
-sudo sh -c 'echo "187.127.214.83 app2.hira.vn" >> /etc/hosts' && dscacheutil -flushcache; sudo killall -HUP mDNSResponder
+curl -sI --max-time 10 --resolve app2.hira.vn:443:187.127.214.83 https://app2.hira.vn | head -1
 ```
+
+**Cổng kiểm tra:** `HTTP/2 200`. Nếu ra `tlsv1 alert internal error` → Caddy không có cert cho
+SNI này, tức site block chưa được nạp (gần như chắc chắn là bẫy inode ở trên).
+
+Chứng minh request thật sự chạm origin mới — access log phải tăng:
 
 ```bash
-curl -sI https://app2.hira.vn | head -3; curl -s https://app2.hira.vn/health; echo
+ssh saucevn@187.127.214.83 'docker exec lumi-prod-caddy-1 sh -c "wc -l < /data/access-hira2.log"'
 ```
 
-Mở trình duyệt `https://app2.hira.vn` và kiểm tra **đủ 6 mục**:
+Chạy lại lệnh `curl --resolve` vài lần rồi đếm lại; số dòng phải tăng đúng bằng số request.
+
+Kiểm tra bằng trình duyệt: mở Chrome với hosts override **hoặc** đơn giản hơn là đợi tới sau
+cutover. Sáu mục chức năng cần đi qua:
 
 - [ ] Login bằng email + mã Resend
 - [ ] Workspace / issue / comment hiện đủ, khớp số ở §A8
@@ -380,20 +445,20 @@ Mở trình duyệt `https://app2.hira.vn` và kiểm tra **đủ 6 mục**:
 - [ ] **Realtime**: mở 2 tab cùng 1 issue, comment ở tab này hiện ngay ở tab kia
 - [ ] Tạo 1 issue mới rồi xoá → xác nhận ghi được xuống DB mới
 
-> Chrome bật "Secure DNS" sẽ bỏ qua `/etc/hosts`. Nếu trang không load, tắt nó ở
-> `chrome://settings/security`, hoặc test bằng Safari.
+Kiểm tra nhanh route backend không cần đăng nhập:
+
+```bash
+curl -s --max-time 10 --resolve app2.hira.vn:443:187.127.214.83 https://app2.hira.vn/health; echo; curl -sI --max-time 10 --resolve app2.hira.vn:443:187.127.214.83 https://app2.hira.vn/ws | head -1
+```
+
+`/health` phải trả `{"status":"ok"}` và `/ws` phải trả **405** — 405 chứng minh request tới
+được `hira-api` (endpoint WS từ chối GET thường), 502/404 nghĩa là route sai.
 
 ```bash
 ssh saucevn@187.127.214.83 'docker logs lumi-prod-caddy-1 --since 20m 2>&1 | grep -ci "challenge failed"'
 ```
 
-**Cổng kiểm tra:** `0` — dòng `tls` trong site block phải khiến Caddy **không** gọi ACME.
-
-Xoá hosts entry sau khi xong:
-
-```bash
-sudo sed -i '' '/187\.127\.214\.83 app2\.hira\.vn/d' /etc/hosts && grep -c app2.hira.vn /etc/hosts
-```
+**Cổng kiểm tra:** `0`.
 
 ---
 
@@ -437,6 +502,13 @@ A record từ `72.62.64.42` → `187.127.214.83`:
 
 Giữ nguyên trạng thái proxy (🟠) như đang có. Vì proxied nên hiệu lực gần như tức thì, không
 phải chờ TTL.
+
+> ⚠️ **Hai zone cấu hình SSL khác nhau** — đã xác minh bằng sự cố thật:
+> `bebe.group` để **Full** → `tls internal` (self-signed) được chấp nhận.
+> `hira.vn` để **Full (strict)** → `tls internal` bị từ chối với **HTTP 526**, bắt buộc cert thật.
+> Và vì cả hai zone đều proxied, **tls-alpn-01 không bao giờ dùng được** (Cloudflare terminate
+> TLS nên không thương lượng nổi ALPN `acme-tls/1` → LE trả 403 và Caddy lặp vô hạn).
+> Mọi site cần cert thật phải ép HTTP-01 bằng `disable_tlsalpn_challenge`.
 
 **C5.** Verify:
 
@@ -515,6 +587,21 @@ ssh saucevn@187.127.214.83 '(crontab -l 2>/dev/null; echo "15 3 * * * /home/sauc
 ```
 
 ## D3. Trả TLS về cho ACME (sau khi DNS ổn định vài ngày)
+
+> 🔴 **Xoá dòng `tls` là CHƯA ĐỦ.** `app2.hira.vn` đứng sau Cloudflare proxy nên tls-alpn-01
+> luôn fail; bỏ trống để Caddy tự chọn sẽ rơi vào vòng lặp fail và đốt quota LE. Phải thay
+> bằng khối ép HTTP-01 — đúng công thức đã chạy được cho `test.hira.vn`:
+>
+> ```
+> tls {
+> 	issuer acme {
+> 		disable_tlsalpn_challenge
+> 	}
+> }
+> ```
+>
+> Lưu ý có khoảng trống ngắn: bỏ cert file đi thì Caddy không còn cert nào cho hostname này
+> cho tới khi ACME cấp xong (~5–45 giây), trong lúc đó người dùng gặp 525. Làm vào giờ vắng.
 
 ```bash
 ssh saucevn@187.127.214.83 'cp /srv/lumi/Caddyfile /srv/lumi/Caddyfile.bak.$(date +%F-%H%M) && sed -i -E "\|^[[:space:]]*tls /data/hira2/|d" /srv/lumi/Caddyfile && grep -c "tls /data/hira2" /srv/lumi/Caddyfile; echo "(0 = da xoa xong)"'

@@ -1,5 +1,9 @@
 # Site block cho hira2 — APPEND vào cuối /srv/lumi/Caddyfile trên VPS mới.
 #
+# ⚠️ TRƯỚC KHI SỬA FILE NÀY TRÊN VPS: đọc "Bẫy inode" ở cuối file. Dùng `sed -i` lên
+#    Caddyfile đang được bind-mount sẽ âm thầm ngắt kết nối giữa file và container,
+#    và mọi `caddy validate` / `caddy reload` sau đó đều báo thành công GIẢ.
+#
 # KHÔNG dùng `import lumi_app`: snippet đó hardcode `reverse_proxy frontend:3000`
 # (trỏ về app hàng xóm) và X-Frame-Options SAMEORIGIN.
 #
@@ -7,7 +11,7 @@
 # cấp trên network dùng chung. Không dùng `frontend`/`backend`: xem chú thích đầu file
 # compose để biết vì sao.
 
-app2.hira.vn {
+(hira2_routes) {
 	encode zstd gzip
 
 	request_body {
@@ -15,18 +19,11 @@ app2.hira.vn {
 	}
 
 	header {
-		Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		X-Content-Type-Options "nosniff"
 		X-Frame-Options "DENY"
 		Referrer-Policy "strict-origin-when-cross-origin"
 		-Server
 	}
-
-	# GIAI ĐOẠN STAGING + CUTOVER: dùng cert copy từ VPS cũ, Caddy KHÔNG gọi ACME.
-	# Nhờ vậy có thể phục vụ app2.hira.vn trước khi DNS trỏ về máy này (verify bằng
-	# /etc/hosts), và cutover không có rủi ro xin cert thất bại.
-	# XOÁ đúng 1 dòng này sau khi cutover xong để Caddy tự xin + tự gia hạn.
-	tls /data/hira2/app2.hira.vn.crt /data/hira2/app2.hira.vn.key
 
 	# WebSocket phải đứng TRƯỚC mọi route khác.
 	# flush_interval -1 tắt buffering; thiếu nó thì comment/typing indicator bị trễ.
@@ -45,6 +42,21 @@ app2.hira.vn {
 	handle {
 		reverse_proxy hira-web:3000
 	}
+}
+
+# ─── Hostname chính ────────────────────────────────────────────────────────────
+# VPS cũ phục vụ BỐN hostname cho hira2, không phải một. Thiếu block nào thì
+# hostname đó chết ngay khi DNS trỏ về máy mới.
+app2.hira.vn {
+	header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+	# GIAI ĐOẠN CUTOVER: dùng cert copy từ VPS cũ, Caddy KHÔNG gọi ACME. Nhờ vậy
+	# cutover không có bước xin cert, và verify được trước khi đổi DNS.
+	# Thay bằng khối `tls { issuer acme { disable_tlsalpn_challenge } }` như
+	# test.hira.vn bên dưới sau khi DNS đã ổn định — xem "TLS theo zone".
+	tls /data/hira2/app2.hira.vn.crt /data/hira2/app2.hira.vn.key
+
+	import hira2_routes
 
 	# VPS cũ KHÔNG ghi access log cho app2.hira.vn — thêm lại ở đây.
 	log {
@@ -54,3 +66,52 @@ app2.hira.vn {
 		}
 	}
 }
+
+test.hira.vn {
+	tls {
+		issuer acme {
+			disable_tlsalpn_challenge
+		}
+	}
+	import hira2_routes
+}
+
+multica.bebe.group, hira.bebe.group {
+	tls internal
+	import hira2_routes
+}
+
+# ─── TLS theo zone: hai zone Cloudflare cấu hình KHÁC nhau ─────────────────────
+#
+# Cả bốn hostname đều đứng sau Cloudflare proxy (orange cloud). Hệ quả:
+#
+#  * tls-alpn-01 KHÔNG BAO GIỜ dùng được. Cloudflare terminate TLS nên không
+#    thương lượng được ALPN "acme-tls/1" → LE trả 403, Caddy thử lại vòng lặp và
+#    đốt quota failed-validation. Phải ép HTTP-01 bằng disable_tlsalpn_challenge.
+#    (HTTP-01 vẫn chạy: LE theo redirect sang HTTPS và không kiểm cert khi làm vậy.)
+#
+#  * zone bebe.group để SSL mode **Full** → cert self-signed được chấp nhận, nên
+#    `tls internal` đủ dùng (đúng như VPS cũ đang làm).
+#
+#  * zone hira.vn để SSL mode **Full (strict)** → `tls internal` bị từ chối với
+#    HTTP 526. Bắt buộc cert thật.
+#
+# ─── Bẫy inode (đã gây sự cố production một lần) ───────────────────────────────
+#
+# Docker bind-mount MỘT FILE theo inode, không theo đường dẫn. `sed -i` không sửa
+# tại chỗ — nó ghi file tạm rồi rename đè, tạo inode mới. Container vẫn giữ inode
+# cũ, tức đóng băng ở nội dung cũ vĩnh viễn.
+#
+# Nguy hiểm ở chỗ nó im lặng: `caddy validate` và `caddy reload` chạy TRONG
+# container đọc đúng file cũ đó, nên đều báo "Valid configuration" và reload
+# không lỗi — trong khi thay đổi của bạn chưa từng được nạp.
+#
+# An toàn (giữ inode): `cp nguồn đích` · `cat >> đích` · python `write_text`
+# Nguy hiểm (đổi inode): `sed -i` · `mv tạm đích`
+#
+# Sau MỌI lần sửa, so inode hai bên trước khi tin vào validate:
+#   ls -i /srv/lumi/Caddyfile
+#   docker exec lumi-prod-caddy-1 ls -i /etc/caddy/Caddyfile
+# Lệch nhau → recreate container để mount bám lại inode hiện tại:
+#   cd /srv/lumi && docker compose --env-file .env.prod -f docker-compose.prod.yml \
+#     up -d --no-deps --force-recreate caddy
