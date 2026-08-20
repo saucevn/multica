@@ -6,8 +6,11 @@
 # với nội dung đã rẽ nhánh — app nào boot trước sẽ khiến app kia `skip (already applied)`
 # những migration nó chưa từng chạy. Xem docs/fork/MIGRATE-VPS-COMMANDS.md §D7.
 #
-# ⚠️ File này viết mà KHÔNG đọc được .env/Dockerfile của app-hira (VPS cũ đòi mật khẩu).
-#    Ba chỗ đánh dấu VERIFY phải đối chiếu với v1 thật trước khi chạy.
+# Ba giả định ban đầu đã được ĐỐI CHIẾU với source thật của saucevn/app-hira:
+#   - service của v1 tên postgres/backend/frontend  -> phải đổi tên, xem chú thích network
+#   - Dockerfile.web ARG REMOTE_API_URL=http://backend:8080 -> frontend BAKE tên `backend`
+#     lúc build, nên alias đó bắt buộc phải có trên network nội bộ
+#   - DATABASE_URL của v1 trỏ host `postgres` -> alias `postgres` của hira2_internal khớp sẵn
 #
 # Chạy:  docker compose -f docker-compose.vps.yml up -d
 
@@ -21,8 +24,8 @@ x-logging: &logging
 
 services:
   apphira-api:
-    # VERIFY: tên:tag image thật của v1 — khảo sát thấy `multica-backend` (không tag :dev).
-    image: ${APPHIRA_BACKEND_IMAGE:-multica-backend:latest}
+    # Build từ source app-hira ngay trên VPS mới (xem docs/fork/MIGRATE-VPS-COMMANDS.md §D7)
+    image: ${APPHIRA_BACKEND_IMAGE:-apphira-backend:prod}
     ports:
       # Loopback ONLY. Trên VPS cũ v1 đang phơi 0.0.0.0:8080 và 0.0.0.0:5432 ra Internet;
       # đừng bê pattern đó sang đây. Docker chèn iptables rule TRƯỚC UFW nên "8082:8080"
@@ -33,8 +36,9 @@ services:
       # hira2-hira-db-1 trên network hira2_internal.
       DATABASE_URL: postgres://apphira:${APPHIRA_DB_PASSWORD:?APPHIRA_DB_PASSWORD is required}@postgres:5432/apphira?sslmode=disable
       PORT: "8080"
-      # VERIFY: các biến còn lại bê nguyên từ .env của v1 trên VPS cũ
-      # (/home/hira/hira/.env) — GIỮ JWT_SECRET để session và PAT không vỡ.
+      # Các biến còn lại đến từ env_file bên dưới — bê nguyên .env production của v1.
+      # GIỮ JWT_SECRET: v1 và hira2 đang dùng CHUNG một giá trị (đã đối chiếu hash),
+      # đổi là logout toàn bộ user của cả hai hệ thống.
     env_file:
       - .env
     volumes:
@@ -42,9 +46,9 @@ services:
     networks:
       internal:
         aliases:
-          # VERIFY: image frontend của v1 nhiều khả năng bake sẵn rewrite tới
-          # http://backend:8080 lúc build. Alias này CHỈ tồn tại trên network nội bộ
-          # của v1 nên không đụng alias `backend` của hira2.
+          # Dockerfile.web của v1 bake `http://backend:8080` vào routes-manifest lúc
+          # build (ARG REMOTE_API_URL) — restart không đổi được. Alias này CHỈ tồn tại
+          # trên network nội bộ của v1 nên không đụng alias `backend` của hira2.
           - backend
       hira2_db:
       edge:
@@ -52,13 +56,18 @@ services:
     logging: *logging
 
   apphira-web:
-    image: ${APPHIRA_WEB_IMAGE:-multica-frontend:latest}
+    image: ${APPHIRA_WEB_IMAGE:-apphira-web:prod}
     depends_on:
       - apphira-api
     ports:
       - "127.0.0.1:${APPHIRA_FRONTEND_PORT:-3002}:3000"
     environment:
       HOSTNAME: "0.0.0.0"
+      # BẮT BUỘC. `.env` của v1 có PORT=8080 cho backend, và env_file nạp nó vào MỌI
+      # container — Next.js lại dùng chính biến PORT đó cho listener của nó, nên frontend
+      # sẽ nghe 8080 thay vì 3000 và cổng publish 3002 trỏ vào chỗ không có ai.
+      # `environment` được ưu tiên hơn `env_file` nên dòng này ghi đè lại.
+      PORT: "3000"
     env_file:
       - .env
     networks:

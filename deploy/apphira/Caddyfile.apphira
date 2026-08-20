@@ -1,0 +1,74 @@
+# Site block cho stack v1 (app-hira) — APPEND vào cuối /srv/lumi/Caddyfile.
+#
+# ⚠️ Sửa Caddyfile bằng cách GIỮ INODE (`cat >>`, `cp`, python write_text).
+#    `sed -i` tạo inode mới và container sẽ đóng băng ở bản cũ — xem
+#    docs/fork/MIGRATE-VPS-COMMANDS.md §A2.
+#
+# Định tuyến sao chép nguyên từ Caddyfile production của v1: api.hira.vn phục vụ backend,
+# app.hira.vn chia /ws + /api/* + /auth/* + /uploads/* + /health cho backend, còn lại frontend.
+
+(apphira_routes) {
+	encode zstd gzip
+
+	request_body {
+		max_size 50MB
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	@ws path /ws /ws/*
+	handle @ws {
+		reverse_proxy apphira-api:8080 {
+			flush_interval -1
+		}
+	}
+
+	@api path /api/* /auth/* /uploads/* /health
+	handle @api {
+		reverse_proxy apphira-api:8080
+	}
+
+	handle {
+		reverse_proxy apphira-web:3000
+	}
+
+	log {
+		output file /data/access-apphira.log {
+			roll_size 10MiB
+			roll_keep 5
+		}
+	}
+}
+
+app.hira.vn {
+	# Zone hira.vn ở Full (strict): cert self-signed bị Cloudflare từ chối với 526.
+	# tls-alpn-01 không qua được CF proxy nên phải ép HTTP-01.
+	tls {
+		issuer acme {
+			disable_tlsalpn_challenge
+		}
+	}
+	import apphira_routes
+}
+
+api.hira.vn {
+	tls {
+		issuer acme {
+			disable_tlsalpn_challenge
+		}
+	}
+	# v1 cho api.hira.vn trỏ thẳng backend, không chia route.
+	encode zstd gzip
+	request_body {
+		max_size 50MB
+	}
+	reverse_proxy apphira-api:8080 {
+		flush_interval -1
+	}
+}

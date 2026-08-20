@@ -871,50 +871,62 @@ Phải ra `FATAL: permission denied for database "multica"`.
 
 ### Các bước còn lại
 
-**1. Chuyển image v1 sang** (chạy trong `tmux`):
+**1. Image: build trên VPS mới từ source, KHÔNG `docker save` từ VPS cũ.**
+
+Đường này không cần chạm VPS cũ chút nào. Đẩy source lên rồi build tại chỗ:
 
 ```bash
-ssh hira@72.62.64.42 "docker save multica-backend multica-frontend | gzip -1" | ssh saucevn@187.127.214.83 "gunzip | docker load"
-```
-
-**2. Copy `.env` của v1** và sửa đúng 3 chỗ — giữ `JWT_SECRET` (đổi là logout toàn bộ user v1):
-
-```bash
-ssh saucevn@187.127.214.83 'mkdir -p ~/apphira' && scp hira@72.62.64.42:/home/hira/hira/.env ~/apphira.env && chmod 600 ~/apphira.env
-```
-
-| Sửa | |
-|---|---|
-| `DATABASE_URL` | **xoá dòng** — compose set đè trỏ tới database `apphira` |
-| `POSTGRES_*` | **xoá** — v1 không còn container Postgres riêng |
-| `APPHIRA_DB_PASSWORD` | thêm, lấy từ `~/.apphira-db-password` |
-
-**3. Dump v1 → restore vào `apphira`:**
-
-```bash
-ssh hira@72.62.64.42 "docker exec multica-postgres-1 pg_dump -U multica -d multica -Fc" > ~/apphira.dump && ls -lh ~/apphira.dump && scp ~/apphira.dump saucevn@187.127.214.83:~/apphira/
+rsync -a --delete --exclude node_modules --exclude .git --exclude .turbo --exclude .next --exclude dist --exclude '.env*' ~/Github/app-hira/ saucevn@187.127.214.83:~/apphira/src/
 ```
 
 ```bash
-ssh saucevn@187.127.214.83 'PW=$(cat ~/.apphira-db-password); docker exec -i -e PGPASSWORD="$PW" hira2-hira-db-1 pg_restore -U apphira -h 127.0.0.1 -d apphira --no-owner --no-acl < ~/apphira/apphira.dump; echo "exit=$?"'
+ssh saucevn@187.127.214.83 'cd ~/apphira/src && docker build -f Dockerfile -t apphira-backend:prod . && nohup docker build -f Dockerfile.web --build-arg REMOTE_API_URL=http://backend:8080 --build-arg NEXT_PUBLIC_WS_URL=https://app.hira.vn/ws --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_ID= -t apphira-web:prod . > ~/apphira/build-web.log 2>&1 &'
 ```
 
-**Cổng kiểm tra** — số liệu v1 theo khảo sát: user 17 · workspace 12 · issue 1311 ·
-comment 1825 · attachment 69 · `schema_migrations` 68.
+> Build args lấy từ `docker-compose.selfhost.yml` của v1. `NEXT_PUBLIC_WS_URL` **bake vào
+> bundle client** lúc build nên phải đúng `https://app.hira.vn/ws` ngay từ đầu — sai thì
+> restart không sửa được, phải build lại.
+>
+> Thực đo: backend ~2 phút, frontend ~9 phút trên 2 vCPU; swap 4 GB gần như không đụng tới
+> (đỉnh 512 KiB). Đừng dùng `pgrep -f "docker build"` để chờ — chuỗi lệnh giám sát tự khớp
+> chính nó và vòng lặp không bao giờ thoát.
 
-**4. Khởi động stack:**
+**2. `.env`**: bê nguyên `.env` production của v1, bỏ `DATABASE_URL` và `POSTGRES_*`
+(không còn container Postgres riêng), thêm `APPHIRA_DB_PASSWORD`.
+
+> Nếu file gốc là RTF (xuất từ TextEdit): `textutil -convert txt -stdout f.rtf` rồi cắt `\`
+> cuối dòng, nếu không mọi giá trị dài thêm 1 ký tự — JWT_SECRET thành 65 ký tự và **mọi
+> session sẽ hỏng một cách khó hiểu**. Đối chiếu bằng hash với `.env` của hira2 trước khi tin.
+
+**3. Dữ liệu: lấy từ backup R2, không cần VPS cũ** (cho chặng dựng thử):
 
 ```bash
-scp deploy/apphira/docker-compose.vps.yml saucevn@187.127.214.83:~/apphira/ && scp ~/apphira.env saucevn@187.127.214.83:~/apphira/.env
+ssh saucevn@187.127.214.83 'LATEST=$(rclone lsf r2:hira-uploads/hira-backups/ | sort | tail -1) && rclone copy "r2:hira-uploads/hira-backups/$LATEST" ~/apphira/ && ls -lh ~/apphira/'
 ```
+
+Restore, đổi owner ngay trong luồng — dump do role `multica` tạo, mà trên instance dùng chung
+đó là superuser của hira2; restore nguyên xi sẽ khiến bảng của v1 do `multica` sở hữu và phá
+mô hình cách ly:
 
 ```bash
-ssh saucevn@187.127.214.83 'cd ~/apphira && docker compose -f docker-compose.vps.yml up -d && sleep 15 && docker compose -f docker-compose.vps.yml ps && curl -s 127.0.0.1:8082/health'
+ssh saucevn@187.127.214.83 'PW=$(cat ~/.apphira-db-password); gzip -cd ~/apphira/hira-db-*.sql.gz | sed -E "s/OWNER TO multica;/OWNER TO apphira;/g" | docker exec -i -e PGPASSWORD="$PW" hira2-hira-db-1 psql -U apphira -h 127.0.0.1 -d apphira -q 2>&1 | grep -ci "^ERROR"'
 ```
 
-> ⚠️ Ba chỗ đánh dấu **VERIFY** trong `deploy/apphira/docker-compose.vps.yml` phải đối chiếu
-> với v1 thật trước khi chạy: tên:tag image, alias `backend` mà frontend v1 bake lúc build,
-> và danh sách env. File đó viết mà không đọc được `.env`/`Dockerfile` của app-hira.
+Chỉ được phép còn lỗi `must be owner of extension` (COMMENT/ALTER EXTENSION — vô hại vì
+extension đã cài sẵn bằng superuser).
+
+**Cổng kiểm tra** — thực đo sau restore: `schema_migrations` 68 · user 17 · workspace 12 ·
+issue 1311 · comment 1825 · attachment 69 · 6 bảng `knowledge_*` · mọi bảng owner `apphira`.
+
+**4. Khởi động:**
+
+```bash
+scp deploy/apphira/docker-compose.vps.yml saucevn@187.127.214.83:~/apphira/ && ssh saucevn@187.127.214.83 'cd ~/apphira && docker compose -f docker-compose.vps.yml up -d && sleep 20 && curl -s 127.0.0.1:8082/health && curl -sI 127.0.0.1:3002 | head -1'
+```
+
+> 🔴 `.env` của v1 có `PORT=8080` cho backend, và `env_file` nạp nó vào **mọi** container —
+> Next.js dùng chính biến `PORT` đó cho listener nên frontend sẽ nghe 8080 và cổng publish
+> 3002 trỏ vào chỗ không có ai. Compose đã ghi đè `PORT: "3000"` cho `apphira-web`; đừng gỡ.
 
 **5. Caddy** — thêm site block cho `app.hira.vn` và `api.hira.vn` (v1 dùng **hai** hostname),
 upstream là `apphira-web:3000` / `apphira-api:8080`. Nhớ cổng kiểm tra inode ở §A2 sau khi
