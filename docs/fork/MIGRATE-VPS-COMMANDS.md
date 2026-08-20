@@ -551,6 +551,17 @@ ssh hira@72.62.64.42 'curl -s localhost:2019/config/ | jq -S . > /tmp/running.js
 
 Nếu khác nhiều thì đọc kỹ diff trước khi reload — reload sẽ nạp bản trên đĩa.
 
+## D4b. Trước khi rebuild từ source (§6.5 của kế hoạch)
+
+Nếu bản sync upstream (PR #7) đã merge vào `main`, khối env backend trong
+`deploy/hira2/docker-compose.vps.yml` bị thiếu ~12 biến mới. Chép lại trước khi rebuild:
+
+```bash
+diff <(sed -n '/^  backend:/,/^    restart:/p' docker-compose.selfhost.yml | sed -n '/environment:/,$p') <(sed -n '/^  hira-api:/,/^  hira-web:/p' deploy/hira2/docker-compose.vps.yml | sed -n '/environment:/,$p')
+```
+
+Xem chi tiết ở §6b của [`MIGRATE-VPS.md`](MIGRATE-VPS.md).
+
 ## D5. Xoay secret
 
 ⚠️ **v1 vẫn dùng chung `RESEND_API_KEY` và R2 keys.** Mỗi lần xoay phải cập nhật **cả hai**
