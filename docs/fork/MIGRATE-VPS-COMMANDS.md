@@ -566,25 +566,71 @@ Chạy lại sau 1 ngày — con số không được tăng.
 
 ## D2. Dựng backup cho `hira2` trên VPS mới
 
-```bash
-ssh saucevn@187.127.214.83 'sudo apt-get update -qq && sudo apt-get install -y rclone'
-```
+Trước bước này `hira2` **chưa từng có backup tự động** — cron cũ chỉ dump stack v1.
 
-Copy `rclone.conf` **đã sửa** (§0.1) — copy bản chưa sửa là tái tạo lỗ hổng trên máy mới:
+rclone đã có sẵn (`/usr/bin/rclone`), không cần cài, không cần sudo.
 
-```bash
-ssh hira@72.62.64.42 'cat ~/.config/rclone/rclone.conf' | ssh saucevn@187.127.214.83 'mkdir -p ~/.config/rclone && cat > ~/.config/rclone/rclone.conf && chmod 600 ~/.config/rclone/rclone.conf && grep endpoint ~/.config/rclone/rclone.conf'
-```
-
-**Cổng kiểm tra:** `endpoint` không được có `/hira-uploads` ở cuối.
+**Không copy `rclone.conf` từ VPS cũ** — file đó có `endpoint` kèm path `/hira-uploads`,
+chính là lỗi làm dump production nằm công khai trên Internet. Dựng lại từ `.env` đã có
+trên máy mới, endpoint sạch:
 
 ```bash
-scp deploy/hira2/backup-hira2.sh saucevn@187.127.214.83:~/bin/ && ssh saucevn@187.127.214.83 'mkdir -p ~/backups && chmod +x ~/bin/backup-hira2.sh && ~/bin/backup-hira2.sh && rclone ls r2:hira-backups | grep hira2'
+ssh saucevn@187.127.214.83 'mkdir -p ~/.config/rclone && AK=$(grep -E "^AWS_ACCESS_KEY_ID=" ~/hira2/.env | cut -d= -f2-) && SK=$(grep -E "^AWS_SECRET_ACCESS_KEY=" ~/hira2/.env | cut -d= -f2-) && EP=$(grep -E "^AWS_ENDPOINT_URL=" ~/hira2/.env | cut -d= -f2-) && EP=${EP%%/hira-uploads*} && umask 077 && printf "[r2]\ntype = s3\nprovider = Cloudflare\naccess_key_id = %s\nsecret_access_key = %s\nregion = auto\nendpoint = %s\nacl = private\n" "$AK" "$SK" "$EP" > ~/.config/rclone/rclone.conf && chmod 600 ~/.config/rclone/rclone.conf && grep -q "cloudflarestorage.com/" ~/.config/rclone/rclone.conf && echo "SAI: endpoint còn kèm path" || echo "endpoint sạch - ĐÚNG"'
+```
+
+Cài script và chạy thử:
+
+```bash
+ssh saucevn@187.127.214.83 'mkdir -p ~/bin ~/backups' && scp deploy/hira2/backup-hira2.sh saucevn@187.127.214.83:~/bin/ && ssh saucevn@187.127.214.83 'chmod +x ~/bin/backup-hira2.sh && ~/bin/backup-hira2.sh'
 ```
 
 ```bash
-ssh saucevn@187.127.214.83 '(crontab -l 2>/dev/null; echo "15 3 * * * /home/saucevn/bin/backup-hira2.sh >> /home/saucevn/backups/backup.log 2>&1") | crontab - && crontab -l'
+ssh saucevn@187.127.214.83 '(crontab -l 2>/dev/null; echo "15 3 * * * LOCAL_KEEP_DAYS=30 /home/saucevn/bin/backup-hira2.sh >> /home/saucevn/backups/backup.log 2>&1") | crontab - && crontab -l'
 ```
+
+> Đặt 03:15 để không chồng lên cron backup của `lumi-prod` lúc 03:00.
+> `LOCAL_KEEP_DAYS=30` là mức tạm thời cao hơn mặc định, dùng khi offsite chưa bật —
+> 14 MB/ngày × 30 ngày ≈ 420 MB, không đáng kể so với 86 GB trống.
+
+### Offsite cần một bucket PRIVATE — token hiện tại không tạo được
+
+Token R2 đang dùng chỉ có quyền trên bucket `hira-uploads`; `rclone mkdir r2:hira-backups`
+trả 403. Và **không được** dùng `hira-uploads` làm đích: bucket đó map ra CDN
+`files.hira.vn` nên mọi object trong nó tải được công khai.
+
+Việc cần làm trong Cloudflare dashboard:
+
+1. R2 → Create bucket → tên `hira-backups`. **Không** gắn custom domain, **không** bật
+   public access.
+2. R2 → API Tokens → tạo token có **Object Read & Write** trên bucket đó (hoặc rộng hơn).
+3. Cập nhật `access_key_id` / `secret_access_key` trong `~/.config/rclone/rclone.conf`
+   trên VPS mới, rồi chạy lại `~/bin/backup-hira2.sh`.
+
+Script tự bật offsite khi truy cập được; cho tới lúc đó nó vẫn tạo bản cục bộ, ghi WARN
+và thoát với mã 1 để dòng log không im lặng.
+
+**Cổng kiểm tra sau khi bật offsite** — bản backup KHÔNG được tải công khai:
+
+```bash
+ssh saucevn@187.127.214.83 'rclone ls r2:hira-backups | tail -3'
+```
+
+```bash
+curl -sI https://files.hira.vn/hira2-db-$(date +%Y%m%d)-031500.sql.gz | head -1
+```
+
+Phải ra `404`. Ra `200` nghĩa là backup vẫn rơi vào bucket public — dừng lại và kiểm tra
+`endpoint` trong `rclone.conf`.
+
+### Kiểm tra phục hồi — bắt buộc, ít nhất một lần
+
+Backup chưa restore được thì chưa phải backup. Restore vào DB tạm, đối chiếu, rồi xoá:
+
+```bash
+ssh saucevn@187.127.214.83 'F=$(ls -t ~/backups/hira2-db-*.sql.gz | head -1); docker exec hira2-hira-db-1 psql -U multica -d postgres -qc "DROP DATABASE IF EXISTS restoretest;" -c "CREATE DATABASE restoretest OWNER multica;"; gunzip -c "$F" | docker exec -i hira2-hira-db-1 psql -U multica -d restoretest -q >/dev/null 2>&1; docker exec hira2-hira-db-1 psql -U multica -d restoretest -At -F" | " -c "select (select count(*) from \"user\"), (select count(*) from workspace), (select count(*) from issue), (select count(*) from comment), (select count(*) from attachment), (select count(*) from schema_migrations);"; docker exec hira2-hira-db-1 psql -U multica -d postgres -qc "DROP DATABASE restoretest;"'
+```
+
+**Cổng kiểm tra:** số liệu khớp production và `schema_migrations` = 152.
 
 ## D3. Trả TLS về cho ACME (sau khi DNS ổn định vài ngày)
 
