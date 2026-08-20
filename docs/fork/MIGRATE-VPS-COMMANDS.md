@@ -829,3 +829,117 @@ ssh hira@72.62.64.42 'cd /home/hira/hira-new && docker compose -p hira2 -f docke
 ```
 
 **Vẫn KHÔNG dùng `-v`** — giữ volume `hira2_pgdata` thêm một thời gian nữa.
+
+---
+
+## D7. Đưa v1 (`app.hira.vn`) sang VPS mới, dùng CHUNG container Postgres
+
+### Vì sao KHÔNG dùng chung database
+
+`schema_migrations` có `version TEXT PRIMARY KEY` — khoá là **tên file migration** — và
+migrator skip khi tên đã tồn tại (`server/cmd/migrate/main.go:230` và `:244`). Hai repo dùng
+chung lineage Multica nên **trùng tên file 001–049** với nội dung đã rẽ nhánh:
+
+- App nào boot trước ghi `001_init`, `002_agent_config`… App kia thấy tên đã có → **skip** →
+  schema nó cần chưa bao giờ được áp dụng, nhưng nó tưởng đã xong.
+- Từ 050 trở đi tên khác hẳn (v1 có 050–054 cho pgvector/knowledge/admin; fork có tới 119
+  theo đánh số upstream) → **cả hai cùng áp** DDL lên cùng bảng.
+- Query do sqlc sinh compile theo schema riêng: thiếu một cột là lỗi runtime.
+
+Chung **instance**, tách **database** thì hoàn toàn ổn — và đó là cấu hình dưới đây.
+
+### Đã dựng sẵn (kiểm chứng trên máy thật)
+
+```bash
+ssh saucevn@187.127.214.83 'docker exec hira2-hira-db-1 psql -U multica -d postgres -At -c "select datname from pg_database where datistemplate=false;"; docker exec hira2-hira-db-1 psql -U multica -d apphira -At -c "select extname from pg_extension;"'
+```
+
+- Database `apphira`, owner là role `apphira` (**không** dùng lại superuser `multica`)
+- `CONNECTION LIMIT 40` — chặn v1 ăn hết 100 connection của instance dùng chung
+- `vector 0.8.6` + `pgcrypto` cài sẵn (migration 050–054 của v1 cần pgvector)
+- `REVOKE CONNECT ... FROM PUBLIC` trên **cả hai** database. Mặc định PUBLIC connect được
+  tới mọi database — không thu hồi thì role của v1 mở được kết nối vào DB của hira2.
+- Mật khẩu: `~/.apphira-db-password` (chmod 600)
+
+Kiểm chứng cách ly — bước này đừng bỏ, "đã chạy lệnh" không bằng "đã xác minh":
+
+```bash
+ssh saucevn@187.127.214.83 'PW=$(cat ~/.apphira-db-password); docker exec -e PGPASSWORD="$PW" hira2-hira-db-1 psql -U apphira -h 127.0.0.1 -d multica -At -c "select 1;" 2>&1 | head -1'
+```
+
+Phải ra `FATAL: permission denied for database "multica"`.
+
+### Các bước còn lại
+
+**1. Chuyển image v1 sang** (chạy trong `tmux`):
+
+```bash
+ssh hira@72.62.64.42 "docker save multica-backend multica-frontend | gzip -1" | ssh saucevn@187.127.214.83 "gunzip | docker load"
+```
+
+**2. Copy `.env` của v1** và sửa đúng 3 chỗ — giữ `JWT_SECRET` (đổi là logout toàn bộ user v1):
+
+```bash
+ssh saucevn@187.127.214.83 'mkdir -p ~/apphira' && scp hira@72.62.64.42:/home/hira/hira/.env ~/apphira.env && chmod 600 ~/apphira.env
+```
+
+| Sửa | |
+|---|---|
+| `DATABASE_URL` | **xoá dòng** — compose set đè trỏ tới database `apphira` |
+| `POSTGRES_*` | **xoá** — v1 không còn container Postgres riêng |
+| `APPHIRA_DB_PASSWORD` | thêm, lấy từ `~/.apphira-db-password` |
+
+**3. Dump v1 → restore vào `apphira`:**
+
+```bash
+ssh hira@72.62.64.42 "docker exec multica-postgres-1 pg_dump -U multica -d multica -Fc" > ~/apphira.dump && ls -lh ~/apphira.dump && scp ~/apphira.dump saucevn@187.127.214.83:~/apphira/
+```
+
+```bash
+ssh saucevn@187.127.214.83 'PW=$(cat ~/.apphira-db-password); docker exec -i -e PGPASSWORD="$PW" hira2-hira-db-1 pg_restore -U apphira -h 127.0.0.1 -d apphira --no-owner --no-acl < ~/apphira/apphira.dump; echo "exit=$?"'
+```
+
+**Cổng kiểm tra** — số liệu v1 theo khảo sát: user 17 · workspace 12 · issue 1311 ·
+comment 1825 · attachment 69 · `schema_migrations` 68.
+
+**4. Khởi động stack:**
+
+```bash
+scp deploy/apphira/docker-compose.vps.yml saucevn@187.127.214.83:~/apphira/ && scp ~/apphira.env saucevn@187.127.214.83:~/apphira/.env
+```
+
+```bash
+ssh saucevn@187.127.214.83 'cd ~/apphira && docker compose -f docker-compose.vps.yml up -d && sleep 15 && docker compose -f docker-compose.vps.yml ps && curl -s 127.0.0.1:8082/health'
+```
+
+> ⚠️ Ba chỗ đánh dấu **VERIFY** trong `deploy/apphira/docker-compose.vps.yml` phải đối chiếu
+> với v1 thật trước khi chạy: tên:tag image, alias `backend` mà frontend v1 bake lúc build,
+> và danh sách env. File đó viết mà không đọc được `.env`/`Dockerfile` của app-hira.
+
+**5. Caddy** — thêm site block cho `app.hira.vn` và `api.hira.vn` (v1 dùng **hai** hostname),
+upstream là `apphira-web:3000` / `apphira-api:8080`. Nhớ cổng kiểm tra inode ở §A2 sau khi
+sửa Caddyfile, và `caddy validate` trước khi reload.
+
+**6. DNS** — đổi A record `app.hira.vn` và `api.hira.vn` sang `187.127.214.83`.
+Zone `hira.vn` ở **Full (strict)** nên cả hai cần cert thật: dùng khối
+`tls { issuer acme { disable_tlsalpn_challenge } }`, **không** dùng `tls internal`.
+
+**7. Sau khi xanh** — tắt stack v1 trên VPS cũ (giữ volume ≥ 7 ngày):
+
+```bash
+ssh hira@72.62.64.42 'cd /home/hira/hira && docker compose -p multica -f docker-compose.selfhost.yml stop'
+```
+
+Việc này cũng đóng luôn lỗ hổng §0.2 (v1 đang phơi Postgres `0.0.0.0:5432`, mật khẩu 7 ký tự)
+mà không cần sửa gì thêm.
+
+### Cái giá của việc dùng chung instance
+
+Hai stack giờ chung số phận ở tầng Postgres: v1 ăn hết connection, ngốn CPU hay làm đầy đĩa
+thì hira2 lãnh đủ. `CONNECTION LIMIT 40` chặn được kịch bản đầu tiên (`max_connections` = 100,
+hiện dùng 12). Hai kịch bản sau thì không — theo dõi bằng `docker stats hira2-hira-db-1` và
+`df -h`. Và mọi lần restart container Postgres là **cả hai app cùng chết**, không còn khả năng
+bảo trì độc lập.
+
+Backup đã tự động bao cả hai database: `deploy/hira2/backup-hira2.sh` duyệt `DATABASES` và
+dump riêng từng cái để restore độc lập được.
