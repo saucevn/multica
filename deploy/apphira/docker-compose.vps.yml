@@ -1,0 +1,94 @@
+# Stack v1 (saucevn/app-hira — app.hira.vn + api.hira.vn) chạy trên VPS dùng chung.
+#
+# KHÔNG có service postgres: v1 dùng CHUNG container `hira2-hira-db-1` nhưng ở một
+# DATABASE RIÊNG (`apphira`) với role riêng. Lý do không dùng chung database:
+# `schema_migrations` khoá theo TÊN FILE migration, và hai repo trùng tên file 001–049
+# với nội dung đã rẽ nhánh — app nào boot trước sẽ khiến app kia `skip (already applied)`
+# những migration nó chưa từng chạy. Xem docs/fork/MIGRATE-VPS-COMMANDS.md §D7.
+#
+# Ba giả định ban đầu đã được ĐỐI CHIẾU với source thật của saucevn/app-hira:
+#   - service của v1 tên postgres/backend/frontend  -> phải đổi tên, xem chú thích network
+#   - Dockerfile.web ARG REMOTE_API_URL=http://backend:8080 -> frontend BAKE tên `backend`
+#     lúc build, nên alias đó bắt buộc phải có trên network nội bộ
+#   - DATABASE_URL của v1 trỏ host `postgres` -> alias `postgres` của hira2_internal khớp sẵn
+#
+# Chạy:  docker compose -f docker-compose.vps.yml up -d
+
+name: apphira
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  apphira-api:
+    # Build từ source app-hira ngay trên VPS mới (xem docs/fork/MIGRATE-VPS-COMMANDS.md §D7)
+    image: ${APPHIRA_BACKEND_IMAGE:-apphira-backend:prod}
+    ports:
+      # Loopback ONLY. Trên VPS cũ v1 đang phơi 0.0.0.0:8080 và 0.0.0.0:5432 ra Internet;
+      # đừng bê pattern đó sang đây. Docker chèn iptables rule TRƯỚC UFW nên "8082:8080"
+      # sẽ mở thẳng ra ngoài dù firewall đang bật.
+      - "127.0.0.1:${APPHIRA_BACKEND_PORT:-8082}:8080"
+    environment:
+      # Database RIÊNG trên container Postgres dùng chung. Host `postgres` là alias của
+      # hira2-hira-db-1 trên network hira2_internal.
+      DATABASE_URL: postgres://apphira:${APPHIRA_DB_PASSWORD:?APPHIRA_DB_PASSWORD is required}@postgres:5432/apphira?sslmode=disable
+      PORT: "8080"
+      # Các biến còn lại đến từ env_file bên dưới — bê nguyên .env production của v1.
+      # GIỮ JWT_SECRET: v1 và hira2 đang dùng CHUNG một giá trị (đã đối chiếu hash),
+      # đổi là logout toàn bộ user của cả hai hệ thống.
+    env_file:
+      - .env
+    volumes:
+      - backend_uploads:/app/data/uploads
+    networks:
+      internal:
+        aliases:
+          # Dockerfile.web của v1 bake `http://backend:8080` vào routes-manifest lúc
+          # build (ARG REMOTE_API_URL) — restart không đổi được. Alias này CHỈ tồn tại
+          # trên network nội bộ của v1 nên không đụng alias `backend` của hira2.
+          - backend
+      hira2_db:
+      edge:
+    restart: unless-stopped
+    logging: *logging
+
+  apphira-web:
+    image: ${APPHIRA_WEB_IMAGE:-apphira-web:prod}
+    depends_on:
+      - apphira-api
+    ports:
+      - "127.0.0.1:${APPHIRA_FRONTEND_PORT:-3002}:3000"
+    environment:
+      HOSTNAME: "0.0.0.0"
+      # BẮT BUỘC. `.env` của v1 có PORT=8080 cho backend, và env_file nạp nó vào MỌI
+      # container — Next.js lại dùng chính biến PORT đó cho listener của nó, nên frontend
+      # sẽ nghe 8080 thay vì 3000 và cổng publish 3002 trỏ vào chỗ không có ai.
+      # `environment` được ưu tiên hơn `env_file` nên dòng này ghi đè lại.
+      PORT: "3000"
+    env_file:
+      - .env
+    networks:
+      internal:
+      edge:
+    restart: unless-stopped
+    logging: *logging
+
+networks:
+  # Mạng riêng của v1 — nơi alias `backend` sống, không lộ ra ngoài.
+  internal:
+  # Mạng nội bộ của hira2, chỉ để với tới container Postgres dùng chung.
+  # apphira-api mang alias `apphira-api` ở đây, KHÔNG mang alias `backend`,
+  # nên không đụng gì tới hira2.
+  hira2_db:
+    name: hira2_internal
+    external: true
+  # Mạng của stack hàng xóm — Caddy nằm sẵn ở đây.
+  edge:
+    name: lumi-prod_default
+    external: true
+
+volumes:
+  backend_uploads:

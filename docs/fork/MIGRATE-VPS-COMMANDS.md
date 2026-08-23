@@ -122,11 +122,60 @@ ssh saucevn@187.127.214.83 'cp /srv/lumi/Caddyfile /srv/lumi/Caddyfile.bak.$(dat
 ```
 
 ```bash
-ssh saucevn@187.127.214.83 "sed -i -E '/^(lms\.thichcay\.vn|lumi\.hira\.vn)[[:space:]]/s/^/# /' /srv/lumi/Caddyfile && grep -n 'thichcay\|hira.vn\|bebe.group' /srv/lumi/Caddyfile"
+ssh saucevn@187.127.214.83 'grep -n "^lms.thichcay.vn\|^lumi.hira.vn" /srv/lumi/Caddyfile'
 ```
 
-**Cổng kiểm tra:** 2 dòng `lms.thichcay.vn` và `lumi.hira.vn` phải có `# ` ở đầu; 2 dòng
-`lumi.bebe.group` và `lumi.thichcay.vn` **không được** đụng tới.
+**Đọc kỹ output trước khi sửa.** File thật dùng khối **nhiều dòng**:
+
+```
+lms.thichcay.vn {
+	import lumi_app
+}
+```
+
+Comment mỗi dòng mở khối sẽ để lại `import lumi_app` mồ côi và dấu `}` lạc — hỏng cấu trúc
+cả file. Phải comment **cả ba dòng** của mỗi khối.
+
+> 🔴 **KHÔNG dùng `sed -i`.** Xem "Bẫy inode" ngay dưới. Dùng `python3` (mở chế độ `w`,
+> truncate tại chỗ → giữ nguyên inode).
+
+```bash
+ssh saucevn@187.127.214.83 'python3 - <<PY
+import pathlib, re
+p = pathlib.Path("/srv/lumi/Caddyfile"); before = p.stat().st_ino
+s = p.read_text()
+for d in ("lms.thichcay.vn", "lumi.hira.vn"):
+    s = re.sub(r"(?m)^(" + re.escape(d) + r" \{\n(?:.*\n)*?\})",
+               lambda m: "".join("# " + l + "\n" for l in m.group(1).split("\n")), s)
+p.write_text(s)
+print("inode", before, "->", p.stat().st_ino, "|", "OK" if before == p.stat().st_ino else "ĐỔI — DỪNG LẠI")
+PY'
+```
+
+### 🔴 Cổng kiểm tra bắt buộc sau MỌI lần sửa Caddyfile — bẫy inode
+
+Docker bind-mount **một file** theo **inode**, không theo đường dẫn. `sed -i` ghi file tạm rồi
+rename đè → inode mới → **container đóng băng ở nội dung cũ vĩnh viễn**.
+
+Nguy hiểm nhất là nó **im lặng**: `caddy validate` và `caddy reload` chạy *trong container* đọc
+đúng file cũ đó, nên đều báo "Valid configuration" và reload không lỗi — trong khi thay đổi của
+bạn chưa bao giờ được nạp. Sự cố này đã xảy ra thật một lần: config production đứng yên ở bản
+cũ suốt cả quá trình cutover, và bài verify staging cho kết quả dương tính giả.
+
+```bash
+ssh saucevn@187.127.214.83 'echo -n "host      "; ls -i /srv/lumi/Caddyfile; echo -n "container "; docker exec lumi-prod-caddy-1 ls -i /etc/caddy/Caddyfile; docker exec lumi-prod-caddy-1 grep -c app2.hira.vn /etc/caddy/Caddyfile'
+```
+
+**Cổng kiểm tra:** hai inode phải **giống hệt nhau**. Lệch → mount đã đứt, mọi validate/reload
+từ giờ đều vô nghĩa cho tới khi recreate container:
+
+```bash
+ssh saucevn@187.127.214.83 'cd /srv/lumi && docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --no-deps --force-recreate caddy'
+```
+
+`--env-file .env.prod` là bắt buộc (không có sẽ lỗi `REDIS_PASSWORD is missing a value`);
+`--no-deps` để không đụng `frontend`; `--force-recreate` vì nếu không compose sẽ báo
+"Running" rồi bỏ qua.
 
 ```bash
 ssh saucevn@187.127.214.83 'docker exec lumi-prod-caddy-1 caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile'
@@ -361,17 +410,33 @@ curl -sI --resolve app2.hira.vn:443:187.127.214.83 https://app2.hira.vn | head -
 
 ---
 
-# PHẦN B — Verify staging bằng `/etc/hosts` (chưa đụng DNS)
+# PHẦN B — Verify staging (chưa đụng DNS)
+
+> 🔴 **KHÔNG dùng `/etc/hosts`.** Lần chạy thật đã cho **dương tính giả**: `dscacheutil
+> -flushcache` không kịp áp dụng cho lệnh `curl` ngay sau đó, request đi qua Cloudflare về
+> **VPS cũ** và trả 200 — trong khi VPS mới thậm chí chưa có site block nào. Ta đã verify
+> nhầm chính hệ thống đang định thay thế.
+>
+> `curl --resolve` ép IP ở tầng kết nối, không phụ thuộc resolver hay cache, nên là cách
+> duy nhất chứng minh được mình đang nói chuyện với origin mới.
 
 ```bash
-sudo sh -c 'echo "187.127.214.83 app2.hira.vn" >> /etc/hosts' && dscacheutil -flushcache; sudo killall -HUP mDNSResponder
+curl -sI --max-time 10 --resolve app2.hira.vn:443:187.127.214.83 https://app2.hira.vn | head -1
 ```
+
+**Cổng kiểm tra:** `HTTP/2 200`. Nếu ra `tlsv1 alert internal error` → Caddy không có cert cho
+SNI này, tức site block chưa được nạp (gần như chắc chắn là bẫy inode ở trên).
+
+Chứng minh request thật sự chạm origin mới — access log phải tăng:
 
 ```bash
-curl -sI https://app2.hira.vn | head -3; curl -s https://app2.hira.vn/health; echo
+ssh saucevn@187.127.214.83 'docker exec lumi-prod-caddy-1 sh -c "wc -l < /data/access-hira2.log"'
 ```
 
-Mở trình duyệt `https://app2.hira.vn` và kiểm tra **đủ 6 mục**:
+Chạy lại lệnh `curl --resolve` vài lần rồi đếm lại; số dòng phải tăng đúng bằng số request.
+
+Kiểm tra bằng trình duyệt: mở Chrome với hosts override **hoặc** đơn giản hơn là đợi tới sau
+cutover. Sáu mục chức năng cần đi qua:
 
 - [ ] Login bằng email + mã Resend
 - [ ] Workspace / issue / comment hiện đủ, khớp số ở §A8
@@ -380,20 +445,20 @@ Mở trình duyệt `https://app2.hira.vn` và kiểm tra **đủ 6 mục**:
 - [ ] **Realtime**: mở 2 tab cùng 1 issue, comment ở tab này hiện ngay ở tab kia
 - [ ] Tạo 1 issue mới rồi xoá → xác nhận ghi được xuống DB mới
 
-> Chrome bật "Secure DNS" sẽ bỏ qua `/etc/hosts`. Nếu trang không load, tắt nó ở
-> `chrome://settings/security`, hoặc test bằng Safari.
+Kiểm tra nhanh route backend không cần đăng nhập:
+
+```bash
+curl -s --max-time 10 --resolve app2.hira.vn:443:187.127.214.83 https://app2.hira.vn/health; echo; curl -sI --max-time 10 --resolve app2.hira.vn:443:187.127.214.83 https://app2.hira.vn/ws | head -1
+```
+
+`/health` phải trả `{"status":"ok"}` và `/ws` phải trả **405** — 405 chứng minh request tới
+được `hira-api` (endpoint WS từ chối GET thường), 502/404 nghĩa là route sai.
 
 ```bash
 ssh saucevn@187.127.214.83 'docker logs lumi-prod-caddy-1 --since 20m 2>&1 | grep -ci "challenge failed"'
 ```
 
-**Cổng kiểm tra:** `0` — dòng `tls` trong site block phải khiến Caddy **không** gọi ACME.
-
-Xoá hosts entry sau khi xong:
-
-```bash
-sudo sed -i '' '/187\.127\.214\.83 app2\.hira\.vn/d' /etc/hosts && grep -c app2.hira.vn /etc/hosts
-```
+**Cổng kiểm tra:** `0`.
 
 ---
 
@@ -437,6 +502,13 @@ A record từ `72.62.64.42` → `187.127.214.83`:
 
 Giữ nguyên trạng thái proxy (🟠) như đang có. Vì proxied nên hiệu lực gần như tức thì, không
 phải chờ TTL.
+
+> ⚠️ **Hai zone cấu hình SSL khác nhau** — đã xác minh bằng sự cố thật:
+> `bebe.group` để **Full** → `tls internal` (self-signed) được chấp nhận.
+> `hira.vn` để **Full (strict)** → `tls internal` bị từ chối với **HTTP 526**, bắt buộc cert thật.
+> Và vì cả hai zone đều proxied, **tls-alpn-01 không bao giờ dùng được** (Cloudflare terminate
+> TLS nên không thương lượng nổi ALPN `acme-tls/1` → LE trả 403 và Caddy lặp vô hạn).
+> Mọi site cần cert thật phải ép HTTP-01 bằng `disable_tlsalpn_challenge`.
 
 **C5.** Verify:
 
@@ -494,27 +566,88 @@ Chạy lại sau 1 ngày — con số không được tăng.
 
 ## D2. Dựng backup cho `hira2` trên VPS mới
 
-```bash
-ssh saucevn@187.127.214.83 'sudo apt-get update -qq && sudo apt-get install -y rclone'
-```
+Trước bước này `hira2` **chưa từng có backup tự động** — cron cũ chỉ dump stack v1.
 
-Copy `rclone.conf` **đã sửa** (§0.1) — copy bản chưa sửa là tái tạo lỗ hổng trên máy mới:
+rclone đã có sẵn (`/usr/bin/rclone`), không cần cài, không cần sudo.
 
-```bash
-ssh hira@72.62.64.42 'cat ~/.config/rclone/rclone.conf' | ssh saucevn@187.127.214.83 'mkdir -p ~/.config/rclone && cat > ~/.config/rclone/rclone.conf && chmod 600 ~/.config/rclone/rclone.conf && grep endpoint ~/.config/rclone/rclone.conf'
-```
-
-**Cổng kiểm tra:** `endpoint` không được có `/hira-uploads` ở cuối.
+**Không copy `rclone.conf` từ VPS cũ** — file đó có `endpoint` kèm path `/hira-uploads`,
+chính là lỗi làm dump production nằm công khai trên Internet. Dựng lại từ `.env` đã có
+trên máy mới, endpoint sạch:
 
 ```bash
-scp deploy/hira2/backup-hira2.sh saucevn@187.127.214.83:~/bin/ && ssh saucevn@187.127.214.83 'mkdir -p ~/backups && chmod +x ~/bin/backup-hira2.sh && ~/bin/backup-hira2.sh && rclone ls r2:hira-backups | grep hira2'
+ssh saucevn@187.127.214.83 'mkdir -p ~/.config/rclone && AK=$(grep -E "^AWS_ACCESS_KEY_ID=" ~/hira2/.env | cut -d= -f2-) && SK=$(grep -E "^AWS_SECRET_ACCESS_KEY=" ~/hira2/.env | cut -d= -f2-) && EP=$(grep -E "^AWS_ENDPOINT_URL=" ~/hira2/.env | cut -d= -f2-) && EP=${EP%%/hira-uploads*} && umask 077 && printf "[r2]\ntype = s3\nprovider = Cloudflare\naccess_key_id = %s\nsecret_access_key = %s\nregion = auto\nendpoint = %s\nacl = private\n" "$AK" "$SK" "$EP" > ~/.config/rclone/rclone.conf && chmod 600 ~/.config/rclone/rclone.conf && grep -q "cloudflarestorage.com/" ~/.config/rclone/rclone.conf && echo "SAI: endpoint còn kèm path" || echo "endpoint sạch - ĐÚNG"'
+```
+
+Cài script và chạy thử:
+
+```bash
+ssh saucevn@187.127.214.83 'mkdir -p ~/bin ~/backups' && scp deploy/hira2/backup-hira2.sh saucevn@187.127.214.83:~/bin/ && ssh saucevn@187.127.214.83 'chmod +x ~/bin/backup-hira2.sh && ~/bin/backup-hira2.sh'
 ```
 
 ```bash
-ssh saucevn@187.127.214.83 '(crontab -l 2>/dev/null; echo "15 3 * * * /home/saucevn/bin/backup-hira2.sh >> /home/saucevn/backups/backup.log 2>&1") | crontab - && crontab -l'
+ssh saucevn@187.127.214.83 '(crontab -l 2>/dev/null; echo "15 3 * * * LOCAL_KEEP_DAYS=30 /home/saucevn/bin/backup-hira2.sh >> /home/saucevn/backups/backup.log 2>&1") | crontab - && crontab -l'
 ```
+
+> Đặt 03:15 để không chồng lên cron backup của `lumi-prod` lúc 03:00.
+> `LOCAL_KEEP_DAYS=30` là mức tạm thời cao hơn mặc định, dùng khi offsite chưa bật —
+> 14 MB/ngày × 30 ngày ≈ 420 MB, không đáng kể so với 86 GB trống.
+
+### Offsite cần một bucket PRIVATE — token hiện tại không tạo được
+
+Token R2 đang dùng chỉ có quyền trên bucket `hira-uploads`; `rclone mkdir r2:hira-backups`
+trả 403. Và **không được** dùng `hira-uploads` làm đích: bucket đó map ra CDN
+`files.hira.vn` nên mọi object trong nó tải được công khai.
+
+Việc cần làm trong Cloudflare dashboard:
+
+1. R2 → Create bucket → tên `hira-backups`. **Không** gắn custom domain, **không** bật
+   public access.
+2. R2 → API Tokens → tạo token có **Object Read & Write** trên bucket đó (hoặc rộng hơn).
+3. Cập nhật `access_key_id` / `secret_access_key` trong `~/.config/rclone/rclone.conf`
+   trên VPS mới, rồi chạy lại `~/bin/backup-hira2.sh`.
+
+Script tự bật offsite khi truy cập được; cho tới lúc đó nó vẫn tạo bản cục bộ, ghi WARN
+và thoát với mã 1 để dòng log không im lặng.
+
+**Cổng kiểm tra sau khi bật offsite** — bản backup KHÔNG được tải công khai:
+
+```bash
+ssh saucevn@187.127.214.83 'rclone ls r2:hira-backups | tail -3'
+```
+
+```bash
+curl -sI https://files.hira.vn/hira2-db-$(date +%Y%m%d)-031500.sql.gz | head -1
+```
+
+Phải ra `404`. Ra `200` nghĩa là backup vẫn rơi vào bucket public — dừng lại và kiểm tra
+`endpoint` trong `rclone.conf`.
+
+### Kiểm tra phục hồi — bắt buộc, ít nhất một lần
+
+Backup chưa restore được thì chưa phải backup. Restore vào DB tạm, đối chiếu, rồi xoá:
+
+```bash
+ssh saucevn@187.127.214.83 'F=$(ls -t ~/backups/hira2-db-*.sql.gz | head -1); docker exec hira2-hira-db-1 psql -U multica -d postgres -qc "DROP DATABASE IF EXISTS restoretest;" -c "CREATE DATABASE restoretest OWNER multica;"; gunzip -c "$F" | docker exec -i hira2-hira-db-1 psql -U multica -d restoretest -q >/dev/null 2>&1; docker exec hira2-hira-db-1 psql -U multica -d restoretest -At -F" | " -c "select (select count(*) from \"user\"), (select count(*) from workspace), (select count(*) from issue), (select count(*) from comment), (select count(*) from attachment), (select count(*) from schema_migrations);"; docker exec hira2-hira-db-1 psql -U multica -d postgres -qc "DROP DATABASE restoretest;"'
+```
+
+**Cổng kiểm tra:** số liệu khớp production và `schema_migrations` = 152.
 
 ## D3. Trả TLS về cho ACME (sau khi DNS ổn định vài ngày)
+
+> 🔴 **Xoá dòng `tls` là CHƯA ĐỦ.** `app2.hira.vn` đứng sau Cloudflare proxy nên tls-alpn-01
+> luôn fail; bỏ trống để Caddy tự chọn sẽ rơi vào vòng lặp fail và đốt quota LE. Phải thay
+> bằng khối ép HTTP-01 — đúng công thức đã chạy được cho `test.hira.vn`:
+>
+> ```
+> tls {
+> 	issuer acme {
+> 		disable_tlsalpn_challenge
+> 	}
+> }
+> ```
+>
+> Lưu ý có khoảng trống ngắn: bỏ cert file đi thì Caddy không còn cert nào cho hostname này
+> cho tới khi ACME cấp xong (~5–45 giây), trong lúc đó người dùng gặp 525. Làm vào giờ vắng.
 
 ```bash
 ssh saucevn@187.127.214.83 'cp /srv/lumi/Caddyfile /srv/lumi/Caddyfile.bak.$(date +%F-%H%M) && sed -i -E "\|^[[:space:]]*tls /data/hira2/|d" /srv/lumi/Caddyfile && grep -c "tls /data/hira2" /srv/lumi/Caddyfile; echo "(0 = da xoa xong)"'
@@ -562,6 +695,111 @@ diff <(sed -n '/^  backend:/,/^    restart:/p' docker-compose.selfhost.yml | sed
 
 Xem chi tiết ở §6b của [`MIGRATE-VPS.md`](MIGRATE-VPS.md).
 
+## D4c. Bật lại agent runtime (nếu đổi ý so với quyết định ban đầu)
+
+Kế hoạch chốt lúc đầu là **bỏ hẳn** agent runtime. Nếu bật lại, đây là đường đi — và ba cái
+bẫy đã gặp thật.
+
+**1. `setup self-host` chỉ ghi config, KHÔNG đăng nhập.**
+
+```bash
+ssh saucevn@187.127.214.83 'multica setup self-host --server-url https://app2.hira.vn --app-url https://app2.hira.vn'
+```
+
+Trên VPS không có trình duyệt nên đừng dùng OAuth. Tạo personal access token trong web UI
+(Settings → Personal access tokens) rồi:
+
+```bash
+ssh -t saucevn@187.127.214.83 'multica login --token'
+```
+
+Để `--token` trống thì CLI hỏi tương tác — token không rơi vào `~/.bash_history`.
+
+**2. Auto-update kéo bản của UPSTREAM.** Nguồn hardcode trong
+`server/internal/cli/update.go`: `api.github.com/repos/multica-ai/multica/releases/latest`.
+Trên fork phải tắt, nếu không một ngày nào đó binary tự bị thay:
+
+```bash
+ssh saucevn@187.127.214.83 'multica daemon start --no-auto-update && sleep 3 && multica daemon status'
+```
+
+**3. Agent CLI phải cài, và PATH của systemd KHÔNG thấy nó.**
+
+VPS mới không có node/npm. Cài không cần sudo (sudo đòi mật khẩu):
+
+```bash
+ssh saucevn@187.127.214.83 'V=$(curl -s https://nodejs.org/dist/index.json | grep -o "\"version\":\"v22\.[0-9.]*\"" | head -1 | cut -d\" -f4) && cd /tmp && curl -fsSL -o node.tar.xz "https://nodejs.org/dist/$V/node-$V-linux-x64.tar.xz" && rm -rf ~/.local/node && mkdir -p ~/.local/node && tar -xJf node.tar.xz -C ~/.local/node --strip-components=1 && rm -f node.tar.xz && PATH=$HOME/.local/node/bin:$PATH npm install -g @anthropic-ai/claude-code && ~/.local/node/bin/claude --version'
+```
+
+> `npm` có shebang `#!/usr/bin/env node` nên phải set PATH ngay trong lệnh cài, không thì
+> `/usr/bin/env: 'node': No such file or directory`. Bản thân `claude` 2.x là ELF binary
+> nên lúc chạy không cần node.
+
+PATH của systemd service là `/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/snap/bin` —
+**không có** `~/.local/node/bin`, nên `exec.LookPath("claude")` của daemon sẽ trượt. Dùng env
+file riêng, **không** dùng `~/hira2/.env`: daemon không cần `POSTGRES_PASSWORD` hay
+`JWT_SECRET`, đừng nạp chúng vào process env vô cớ.
+
+```bash
+ssh saucevn@187.127.214.83 'umask 077; { echo "PATH=/home/saucevn/.local/node/bin:/usr/local/bin:/usr/bin:/bin"; echo "MULTICA_CLAUDE_PATH=/home/saucevn/.local/node/bin/claude"; grep -E "^(ANTHROPIC_API_KEY|OPENAI_API_KEY|GOOGLE_AI_KEY|MULTICA_CLAUDE_MODEL)=" ~/hira2/.env; echo "MULTICA_DAEMON_AUTO_UPDATE=false"; } > ~/.multica/daemon.env && chmod 600 ~/.multica/daemon.env'
+```
+
+**Kiểm tra API key trước khi tin runtime đã sẵn sàng** — `claude --version` chạy được không
+có nghĩa là gọi được model:
+
+```bash
+ssh saucevn@187.127.214.83 'set -a; . ~/.multica/daemon.env; set +a; timeout 90 claude -p "Reply with exactly: OK" 2>&1 | head -3'
+```
+
+Ra `Credit balance is too low` nghĩa là key hợp lệ nhưng tài khoản Anthropic hết tiền —
+runtime sẽ đăng ký thành công, dashboard hiện xanh, và **mọi task đều fail**. Nạp tiền, hoặc
+bỏ `ANTHROPIC_API_KEY` khỏi daemon.env và đăng nhập `claude` bằng tài khoản subscription.
+
+**4. systemd, đừng lặp lại `--foreground` gõ tay.** VPS cũ chạy kiểu đó 66 ngày: reboot là
+chết im, và log phình 1.8 GB vì không xoay vòng.
+
+```bash
+ssh -t saucevn@187.127.214.83 'sudo tee /etc/systemd/system/multica-daemon.service > /dev/null <<EOF
+[Unit]
+Description=Multica agent runtime daemon (hira2)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+User=saucevn
+EnvironmentFile=/home/saucevn/.multica/daemon.env
+ExecStart=/usr/local/bin/multica daemon start --foreground --no-auto-update
+Restart=always
+RestartSec=10
+StandardOutput=append:/home/saucevn/.multica/daemon.log
+StandardError=append:/home/saucevn/.multica/daemon.log
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo systemctl daemon-reload && sudo systemctl enable --now multica-daemon && sudo systemctl status multica-daemon --no-pager | head -12'
+```
+
+```bash
+ssh -t saucevn@187.127.214.83 'sudo tee /etc/logrotate.d/multica-daemon > /dev/null <<EOF
+/home/saucevn/.multica/daemon.log {
+	weekly
+	rotate 4
+	compress
+	missingok
+	notifempty
+	copytruncate
+}
+EOF
+echo ok'
+```
+
+> ⚠️ **Lệch phiên bản.** CLI/daemon trên VPS mới là `0.4.31` (bản upstream, build 20/08) nói
+> chuyện với backend build từ **tháng 6** (`65efc411`) — cách nhau ~1300 commit.
+> `/api/daemon/register` vẫn tồn tại (trả 401 khi thiếu auth) nên đường đăng ký cơ bản còn,
+> nhưng nếu `daemon status` báo lỗi lạ thì nghi chỗ này trước. Cách sửa là rebuild backend
+> từ `main` (§6.5 + §D4b), không phải hạ cấp CLI.
+
 ## D5. Xoay secret
 
 ⚠️ **v1 vẫn dùng chung `RESEND_API_KEY` và R2 keys.** Mỗi lần xoay phải cập nhật **cả hai**
@@ -591,3 +829,129 @@ ssh hira@72.62.64.42 'cd /home/hira/hira-new && docker compose -p hira2 -f docke
 ```
 
 **Vẫn KHÔNG dùng `-v`** — giữ volume `hira2_pgdata` thêm một thời gian nữa.
+
+---
+
+## D7. Đưa v1 (`app.hira.vn`) sang VPS mới, dùng CHUNG container Postgres
+
+### Vì sao KHÔNG dùng chung database
+
+`schema_migrations` có `version TEXT PRIMARY KEY` — khoá là **tên file migration** — và
+migrator skip khi tên đã tồn tại (`server/cmd/migrate/main.go:230` và `:244`). Hai repo dùng
+chung lineage Multica nên **trùng tên file 001–049** với nội dung đã rẽ nhánh:
+
+- App nào boot trước ghi `001_init`, `002_agent_config`… App kia thấy tên đã có → **skip** →
+  schema nó cần chưa bao giờ được áp dụng, nhưng nó tưởng đã xong.
+- Từ 050 trở đi tên khác hẳn (v1 có 050–054 cho pgvector/knowledge/admin; fork có tới 119
+  theo đánh số upstream) → **cả hai cùng áp** DDL lên cùng bảng.
+- Query do sqlc sinh compile theo schema riêng: thiếu một cột là lỗi runtime.
+
+Chung **instance**, tách **database** thì hoàn toàn ổn — và đó là cấu hình dưới đây.
+
+### Đã dựng sẵn (kiểm chứng trên máy thật)
+
+```bash
+ssh saucevn@187.127.214.83 'docker exec hira2-hira-db-1 psql -U multica -d postgres -At -c "select datname from pg_database where datistemplate=false;"; docker exec hira2-hira-db-1 psql -U multica -d apphira -At -c "select extname from pg_extension;"'
+```
+
+- Database `apphira`, owner là role `apphira` (**không** dùng lại superuser `multica`)
+- `CONNECTION LIMIT 40` — chặn v1 ăn hết 100 connection của instance dùng chung
+- `vector 0.8.6` + `pgcrypto` cài sẵn (migration 050–054 của v1 cần pgvector)
+- `REVOKE CONNECT ... FROM PUBLIC` trên **cả hai** database. Mặc định PUBLIC connect được
+  tới mọi database — không thu hồi thì role của v1 mở được kết nối vào DB của hira2.
+- Mật khẩu: `~/.apphira-db-password` (chmod 600)
+
+Kiểm chứng cách ly — bước này đừng bỏ, "đã chạy lệnh" không bằng "đã xác minh":
+
+```bash
+ssh saucevn@187.127.214.83 'PW=$(cat ~/.apphira-db-password); docker exec -e PGPASSWORD="$PW" hira2-hira-db-1 psql -U apphira -h 127.0.0.1 -d multica -At -c "select 1;" 2>&1 | head -1'
+```
+
+Phải ra `FATAL: permission denied for database "multica"`.
+
+### Các bước còn lại
+
+**1. Image: build trên VPS mới từ source, KHÔNG `docker save` từ VPS cũ.**
+
+Đường này không cần chạm VPS cũ chút nào. Đẩy source lên rồi build tại chỗ:
+
+```bash
+rsync -a --delete --exclude node_modules --exclude .git --exclude .turbo --exclude .next --exclude dist --exclude '.env*' ~/Github/app-hira/ saucevn@187.127.214.83:~/apphira/src/
+```
+
+```bash
+ssh saucevn@187.127.214.83 'cd ~/apphira/src && docker build -f Dockerfile -t apphira-backend:prod . && nohup docker build -f Dockerfile.web --build-arg REMOTE_API_URL=http://backend:8080 --build-arg NEXT_PUBLIC_WS_URL=https://app.hira.vn/ws --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_ID= -t apphira-web:prod . > ~/apphira/build-web.log 2>&1 &'
+```
+
+> Build args lấy từ `docker-compose.selfhost.yml` của v1. `NEXT_PUBLIC_WS_URL` **bake vào
+> bundle client** lúc build nên phải đúng `https://app.hira.vn/ws` ngay từ đầu — sai thì
+> restart không sửa được, phải build lại.
+>
+> Thực đo: backend ~2 phút, frontend ~9 phút trên 2 vCPU; swap 4 GB gần như không đụng tới
+> (đỉnh 512 KiB). Đừng dùng `pgrep -f "docker build"` để chờ — chuỗi lệnh giám sát tự khớp
+> chính nó và vòng lặp không bao giờ thoát.
+
+**2. `.env`**: bê nguyên `.env` production của v1, bỏ `DATABASE_URL` và `POSTGRES_*`
+(không còn container Postgres riêng), thêm `APPHIRA_DB_PASSWORD`.
+
+> Nếu file gốc là RTF (xuất từ TextEdit): `textutil -convert txt -stdout f.rtf` rồi cắt `\`
+> cuối dòng, nếu không mọi giá trị dài thêm 1 ký tự — JWT_SECRET thành 65 ký tự và **mọi
+> session sẽ hỏng một cách khó hiểu**. Đối chiếu bằng hash với `.env` của hira2 trước khi tin.
+
+**3. Dữ liệu: lấy từ backup R2, không cần VPS cũ** (cho chặng dựng thử):
+
+```bash
+ssh saucevn@187.127.214.83 'LATEST=$(rclone lsf r2:hira-uploads/hira-backups/ | sort | tail -1) && rclone copy "r2:hira-uploads/hira-backups/$LATEST" ~/apphira/ && ls -lh ~/apphira/'
+```
+
+Restore, đổi owner ngay trong luồng — dump do role `multica` tạo, mà trên instance dùng chung
+đó là superuser của hira2; restore nguyên xi sẽ khiến bảng của v1 do `multica` sở hữu và phá
+mô hình cách ly:
+
+```bash
+ssh saucevn@187.127.214.83 'PW=$(cat ~/.apphira-db-password); gzip -cd ~/apphira/hira-db-*.sql.gz | sed -E "s/OWNER TO multica;/OWNER TO apphira;/g" | docker exec -i -e PGPASSWORD="$PW" hira2-hira-db-1 psql -U apphira -h 127.0.0.1 -d apphira -q 2>&1 | grep -ci "^ERROR"'
+```
+
+Chỉ được phép còn lỗi `must be owner of extension` (COMMENT/ALTER EXTENSION — vô hại vì
+extension đã cài sẵn bằng superuser).
+
+**Cổng kiểm tra** — thực đo sau restore: `schema_migrations` 68 · user 17 · workspace 12 ·
+issue 1311 · comment 1825 · attachment 69 · 6 bảng `knowledge_*` · mọi bảng owner `apphira`.
+
+**4. Khởi động:**
+
+```bash
+scp deploy/apphira/docker-compose.vps.yml saucevn@187.127.214.83:~/apphira/ && ssh saucevn@187.127.214.83 'cd ~/apphira && docker compose -f docker-compose.vps.yml up -d && sleep 20 && curl -s 127.0.0.1:8082/health && curl -sI 127.0.0.1:3002 | head -1'
+```
+
+> 🔴 `.env` của v1 có `PORT=8080` cho backend, và `env_file` nạp nó vào **mọi** container —
+> Next.js dùng chính biến `PORT` đó cho listener nên frontend sẽ nghe 8080 và cổng publish
+> 3002 trỏ vào chỗ không có ai. Compose đã ghi đè `PORT: "3000"` cho `apphira-web`; đừng gỡ.
+
+**5. Caddy** — thêm site block cho `app.hira.vn` và `api.hira.vn` (v1 dùng **hai** hostname),
+upstream là `apphira-web:3000` / `apphira-api:8080`. Nhớ cổng kiểm tra inode ở §A2 sau khi
+sửa Caddyfile, và `caddy validate` trước khi reload.
+
+**6. DNS** — đổi A record `app.hira.vn` và `api.hira.vn` sang `187.127.214.83`.
+Zone `hira.vn` ở **Full (strict)** nên cả hai cần cert thật: dùng khối
+`tls { issuer acme { disable_tlsalpn_challenge } }`, **không** dùng `tls internal`.
+
+**7. Sau khi xanh** — tắt stack v1 trên VPS cũ (giữ volume ≥ 7 ngày):
+
+```bash
+ssh hira@72.62.64.42 'cd /home/hira/hira && docker compose -p multica -f docker-compose.selfhost.yml stop'
+```
+
+Việc này cũng đóng luôn lỗ hổng §0.2 (v1 đang phơi Postgres `0.0.0.0:5432`, mật khẩu 7 ký tự)
+mà không cần sửa gì thêm.
+
+### Cái giá của việc dùng chung instance
+
+Hai stack giờ chung số phận ở tầng Postgres: v1 ăn hết connection, ngốn CPU hay làm đầy đĩa
+thì hira2 lãnh đủ. `CONNECTION LIMIT 40` chặn được kịch bản đầu tiên (`max_connections` = 100,
+hiện dùng 12). Hai kịch bản sau thì không — theo dõi bằng `docker stats hira2-hira-db-1` và
+`df -h`. Và mọi lần restart container Postgres là **cả hai app cùng chết**, không còn khả năng
+bảo trì độc lập.
+
+Backup đã tự động bao cả hai database: `deploy/hira2/backup-hira2.sh` duyệt `DATABASES` và
+dump riêng từng cái để restore độc lập được.
