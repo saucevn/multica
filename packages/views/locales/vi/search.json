@@ -8,17 +8,8 @@
     "members": "Thành viên",
     "projects": "Dự án",
     "issues": "Công việc",
+    "cancelled": "Đã hủy",
     "recent": "Gần đây"
-  },
-  "pages": {
-    "inbox": "Hộp thư",
-    "my_issues": "Công việc của tôi",
-    "issues": "Công việc",
-    "projects": "Dự án",
-    "agents": "Agent",
-    "runtimes": "Runtime",
-    "skills": "Skill",
-    "settings": "Cài đặt"
   },
   "commands": {
     "current_theme_aria": "Chủ đề hiện tại",
@@ -26,6 +17,8 @@
     "new_project": "Dự án mới",
     "copy_issue_link": "Sao chép liên kết công việc",
     "copy_identifier": "Sao chép mã định danh ({{identifier}})",
+    "fold_all_comments": "Thu gọn tất cả bình luận",
+    "unfold_all_comments": "Mở rộng tất cả bình luận",
     "switch_to_light": "Chuyển sang chủ đề sáng",
     "switch_to_dark": "Chuyển sang chủ đề tối",
     "use_system_theme": "Dùng chủ đề hệ thống"

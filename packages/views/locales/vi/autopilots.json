@@ -9,17 +9,25 @@
       "created_by": "Người tạo",
       "mode": "Chế độ",
       "status": "Trạng thái",
-      "last_run": "Lần chạy cuối"
+      "last_run": "Lần chạy cuối",
+      "assignee": "Người phụ trách",
+      "trigger": "Kích hoạt",
+      "next_run": "Lượt chạy kế",
+      "created": "Ngày tạo"
     },
     "last_run_empty": "--",
     "empty": {
       "title": "Chưa có autopilot nào",
       "hint": "Lên lịch các tác vụ định kỳ cho AI agents. Chọn template hoặc tạo từ đầu."
-    }
+    },
+    "scope_all": "Tất cả",
+    "no_matches": "Không có tự động hóa phù hợp",
+    "retry": "Thử lại"
   },
   "status": {
     "active": "Đang hoạt động",
     "paused": "Tạm dừng",
+    "paused_runtime_required": "Tạm dừng — người phụ trách cần một runtime",
     "archived": "Đã lưu trữ"
   },
   "execution_mode": {
@@ -62,11 +70,21 @@
     "not_found": "Không tìm thấy Autopilot",
     "pause_aria": "Tạm dừng autopilot",
     "activate_aria": "Kích hoạt autopilot",
+    "paused_runtime_required": "Tạm dừng vì người phụ trách mất runtime. Hãy gắn một runtime rồi kích hoạt lại autopilot này.",
+    "bind_runtime": "Gắn runtime",
     "edit": "Sửa",
     "run_now": "Chạy ngay",
     "running": "Đang chạy...",
     "toast_triggered": "Autopilot đã được kích hoạt",
     "toast_trigger_failed": "Không thể kích hoạt autopilot",
+    "run_blocked_invocation_not_allowed": "Không kích hoạt — bạn không có quyền dùng agent của autopilot này",
+    "run_blocked_runtime_offline": "Không kích hoạt — runtime của agent đang ngoại tuyến",
+    "run_blocked_agent_runtime_required": "Không kích hoạt — agent chưa có runtime; hãy gắn một cái để chạy",
+    "run_blocked_target_unavailable": "Không kích hoạt — agent không khả dụng",
+    "run_blocked_attribution": "Không kích hoạt — không quy được lượt chạy cho một thành viên chịu trách nhiệm",
+    "run_blocked_already_active": "Không kích hoạt — một lượt chạy gần đây đã bao phủ việc này",
+    "run_blocked_quota_exceeded": "Không kích hoạt — đã đạt giới hạn số lượt chạy của kỳ này",
+    "run_blocked_generic": "Không kích hoạt — lượt chạy bị chặn",
     "section_properties": "Thuộc tính",
     "section_triggers": "Trigger",
     "section_run_history": "Lịch sử chạy",
@@ -78,6 +96,8 @@
     "no_project": "Không có dự án",
     "project_unavailable": "Dự án không khả dụng",
     "field_prompt": "Prompt",
+    "field_subscribers": "Người theo dõi",
+    "field_subscribers_none": "Không có",
     "add_trigger": "Thêm trigger",
     "no_triggers": "Chưa có trigger nào. Thêm lịch để chạy tự động.",
     "no_runs": "Chưa có lần chạy nào. Nhấn \"Chạy ngay\" để kích hoạt thủ công.",
@@ -91,6 +111,20 @@
       "confirm": "Xóa",
       "deleting": "Đang xóa..."
     }
+  },
+  "access": {
+    "title": "Quản lý quyền truy cập",
+    "description": "Thành viên bạn thêm có thể sửa, chạy và quản lý các trigger cùng webhook của autopilot này.",
+    "current_label": "Có quyền truy cập",
+    "add": "Thêm thành viên",
+    "search_placeholder": "Tìm thành viên…",
+    "no_results": "Không tìm thấy thành viên",
+    "remove_tooltip": "Gỡ quyền truy cập",
+    "empty": "Chưa cấp quyền cho ai.",
+    "toast_granted": "Đã cấp quyền truy cập",
+    "toast_revoked": "Đã gỡ quyền truy cập",
+    "toast_failed": "Không cập nhật được quyền truy cập",
+    "owner_note": "Người tạo và quản trị viên workspace luôn có quyền truy cập."
   },
   "run_status": {
     "issue_created": "Đã tạo công việc",
@@ -134,6 +168,9 @@
     "deprecated_badge": "Đã lỗi thời",
     "next_label": "Tiếp theo: {{date}}",
     "webhook_url_label": "Webhook URL",
+    "show_url": "Hiện URL",
+    "hide_url": "Ẩn URL",
+    "hidden_url_aria": "URL webhook đang ẩn — nhấp để hiện",
     "copy_url": "Sao chép URL",
     "url_copied": "Đã sao chép webhook URL",
     "url_copy_failed": "Không thể sao chép",
@@ -180,6 +217,8 @@
       "received_at": "Nhận lúc",
       "last_attempt_at": "Lần thử cuối",
       "attempt_count": "Số lần thử",
+      "dispatch_attempts": "Số lần gửi",
+      "available_at": "Lần gửi kế",
       "response_status": "Phản hồi",
       "dedupe_key": "Khóa dedupe",
       "dedupe_source": "Nguồn dedupe",
@@ -248,6 +287,13 @@
     "section_project": "Dự án",
     "no_project": "Không có dự án",
     "section_output_mode": "Chế độ đầu ra",
+    "section_subscribers": "Người theo dõi",
+    "subscribers_hint": "Tự động theo dõi mọi issue mà autopilot này tạo ra",
+    "subscribers_empty": "Chưa có người theo dõi — thêm đồng đội để báo cho họ mỗi lượt chạy",
+    "subscribers_add": "Thêm người theo dõi",
+    "subscribers_search_placeholder": "Tìm thành viên theo tên…",
+    "subscribers_no_results": "Không có thành viên phù hợp",
+    "subscribers_remove_tooltip": "Gỡ",
     "section_schedule": "Lịch",
     "section_trigger_kind": "Trigger",
     "trigger_kind_schedule": "Lịch",
@@ -265,7 +311,10 @@
     "event_filter_actions_placeholder": "completed, failed",
     "event_filter_hint": "Chỉ xử lý webhook khớp với các sự kiện này. Để trống để chấp nhận tất cả.",
     "schedule_disabled_reason": "Autopilot này có nhiều lịch — chỉnh sửa chúng trên trang chi tiết.",
-    "next_run_label": "Lần chạy tiếp theo:",
+    "schedule_empty": "Không có lịch — autopilot này chỉ chạy khi được kích hoạt thủ công.",
+    "schedule_add": "Thêm lịch",
+    "error_title_required": "Hãy nhập tên cho autopilot này.",
+    "error_assignee_required": "Hãy chọn agent hoặc squad sẽ chạy autopilot này.",
     "output_modes": {
       "create_issue": {
         "label": "Tạo công việc",
@@ -275,32 +324,20 @@
         "label": "Chỉ chạy",
         "description": "Chạy ngầm, không tạo công việc"
       }
-    },
-    "frequency_long": {
-      "hourly": "Mỗi giờ",
-      "daily": "Mỗi ngày",
-      "weekdays": "Các ngày trong tuần",
-      "weekly": "Mỗi tuần",
-      "custom": "Cron tùy chỉnh"
-    },
-    "days": {
-      "sunday": "Chủ nhật",
-      "monday": "Thứ hai",
-      "tuesday": "Thứ ba",
-      "wednesday": "Thứ tư",
-      "thursday": "Thứ năm",
-      "friday": "Thứ sáu",
-      "saturday": "Thứ bảy"
     }
   },
-  "trigger_config": {
-    "frequencies": {
-      "hourly": "Hàng giờ",
-      "daily": "Hàng ngày",
-      "weekdays": "Ngày trong tuần",
-      "weekly": "Ngày",
-      "custom": "Tùy chỉnh"
-    },
+  "schedule_editor": {
+    "time_label": "Thời điểm",
+    "time_at": "Vào một giờ",
+    "time_every": "Theo chu kỳ",
+    "every_prefix": "Mỗi",
+    "unit_hours": "giờ",
+    "unit_minutes": "phút",
+    "days_label": "Ngày",
+    "days_every": "Hằng ngày",
+    "days_weekly": "Các thứ trong tuần",
+    "days_monthly": "Ngày trong tháng",
+    "monthly_short_month_hint": "Những tháng không có ngày {{day}} sẽ bị bỏ qua.",
     "days_short": {
       "sun": "CN",
       "mon": "T2",
@@ -310,32 +347,69 @@
       "fri": "T6",
       "sat": "T7"
     },
-    "cron_label": "Biểu thức Cron",
-    "cron_hint": "Cron 5 trường chuẩn (phút giờ ngày tháng thứ)",
-    "minute_label": "Phút",
-    "time_label": "Thời gian",
     "timezone_label": "Múi giờ",
-    "days_label": "Ngày",
-    "summary": {
-      "hourly": "Hàng giờ · :{{min}}",
-      "daily": "Hàng ngày {{time}}",
-      "weekdays": "Ngày trong tuần {{time}}",
-      "weekly": "{{days}} {{time}}",
-      "custom": "Cron tùy chỉnh",
-      "no_days": "—"
-    },
+    "cron_toggle": "Cron",
+    "cron_click_to_edit": "nhấp để sửa",
+    "cron_hint": "Cron chuẩn 5 trường (phút giờ ngày tháng thứ)",
+    "cron_invalid": "Biểu thức cron này không hợp lệ.",
+    "timezone_invalid": "Máy chủ không nhận diện được múi giờ này.",
+    "advanced_hint": "Biểu thức này dùng các tính năng mà trình soạn trực quan không biểu diễn được. Hãy sửa trực tiếp phần cron, hoặc đơn giản hóa để bật lại các điều khiển.",
+    "advanced_unverified": "Không liên hệ được máy chủ để kiểm tra biểu thức này nên các điều khiển vẫn tắt. Hãy chắc chắn phần cron đúng trước khi lưu.",
+    "advanced_checking": "Đang kiểm tra biểu thức này với máy chủ. Các điều khiển sẽ tắt cho tới khi có phản hồi.",
+    "next_runs_label": "Các lượt chạy kế",
+    "next_in": "sau {{countdown}}",
+    "preview_unavailable": "Hiện chưa xem được các lượt chạy kế.",
+    "no_upcoming_runs": "Biểu thức này không có lượt chạy nào sắp tới.",
     "describe": {
-      "hourly": "Chạy mỗi giờ lúc :{{min}}",
-      "daily": "Chạy hàng ngày lúc {{time}} {{offset}}",
-      "weekdays": "Chạy các ngày trong tuần lúc {{time}} {{offset}}",
-      "weekly": "Chạy mỗi {{days}} lúc {{time}} {{offset}}",
-      "custom": "Lịch tùy chỉnh: {{cron}}"
+      "days_every": "Hằng ngày",
+      "days_monthly": "Ngày {{day}} hằng tháng",
+      "days_long": {
+        "sun": "CN",
+        "mon": "T2",
+        "tue": "T3",
+        "wed": "T4",
+        "thu": "T5",
+        "fri": "T6",
+        "sat": "T7"
+      },
+      "days_range": "{{from}}–{{to}}",
+      "days_join": ", ",
+      "time_at": "Lúc {{time}}",
+      "time_every_hour": "Mỗi giờ vào phút :{{minute}}",
+      "time_every_hours": "Mỗi {{interval}} giờ vào phút :{{minute}}",
+      "time_every_hour_window": "Mỗi giờ",
+      "time_every_hours_window": "Mỗi {{interval}} giờ",
+      "time_every_minute": "Mỗi phút",
+      "time_every_minutes": "Mỗi {{interval}} phút",
+      "window": "{{from}}–{{to}}"
     },
     "countdown": {
-      "days_hours": "{{days}}n {{hours}}g",
+      "days_hours": "{{days}}n {{hours}}g {{minutes}}p",
       "hours_minutes": "{{hours}}g {{minutes}}p",
       "minutes": "{{minutes}}p",
       "less_than_minute": "<1p"
+    },
+    "a11y": {
+      "fixed_hour": "Giờ",
+      "fixed_minute": "Phút",
+      "interval": "Chu kỳ",
+      "interval_unit": "Đơn vị chu kỳ",
+      "window_start_hour": "Giờ bắt đầu khung",
+      "window_start_minute": "Phút bắt đầu khung",
+      "window_end_hour": "Giờ kết thúc khung",
+      "window_end_minute": "Phút kết thúc khung",
+      "day_pattern": "Kiểu ngày",
+      "day_of_month": "Ngày trong tháng",
+      "timezone": "Múi giờ",
+      "days_full": {
+        "sun": "Chủ nhật",
+        "mon": "Thứ hai",
+        "tue": "Thứ ba",
+        "wed": "Thứ tư",
+        "thu": "Thứ năm",
+        "fri": "Thứ sáu",
+        "sat": "Thứ bảy"
+      }
     }
   },
   "agent_picker": {
@@ -343,9 +417,42 @@
     "select_agent": "Chọn agent",
     "select_assignee": "Chọn agent hoặc Squad",
     "agents_group": "Agents",
-    "squads_group": "Squads"
+    "squads_group": "Squads",
+    "agent_runtime_required": "Hãy gắn runtime trước khi chọn agent này",
+    "squad_runtime_required": "Hãy gắn runtime cho trưởng nhóm của squad này trước khi chọn"
   },
   "timezone_picker": {
     "search_placeholder": "Tìm múi giờ..."
+  },
+  "toolbar": {
+    "result_count_title": "Tự động hóa phù hợp / tổng số tự động hóa",
+    "filter_label": "Bộ lọc",
+    "filter_active_count_other": "{{count}} bộ lọc",
+    "clear_filters": "Xóa bộ lọc",
+    "section_assignee": "Người phụ trách",
+    "section_mode": "Chế độ",
+    "section_trigger": "Kích hoạt",
+    "section_creator": "Người tạo",
+    "display": "Hiển thị",
+    "sort_by": "Sắp xếp theo",
+    "direction_asc": "Tăng dần",
+    "direction_desc": "Giảm dần",
+    "section_columns": "Cột"
+  },
+  "actions": {
+    "row_menu": "Thao tác tự động hóa",
+    "pause": "Tạm dừng",
+    "resume": "Tiếp tục",
+    "delete": "Xóa",
+    "selected_other": "Đã chọn {{count}}",
+    "clear_selection": "Bỏ chọn",
+    "delete_dialog": {
+      "title": "Xóa tự động hóa?",
+      "description_other": "Thao tác này sẽ xóa vĩnh viễn {{count}} tự động hóa cùng lịch sử chạy của chúng.",
+      "warning": "Không thể hoàn tác thao tác này.",
+      "cancel": "Hủy",
+      "confirm": "Xóa vĩnh viễn",
+      "deleting": "Đang xóa…"
+    }
   }
 }

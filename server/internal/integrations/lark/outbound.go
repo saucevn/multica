@@ -11,6 +11,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/multica-ai/multica/server/internal/events"
+	"github.com/multica-ai/multica/server/internal/integrations/channel/engine"
 	db "github.com/multica-ai/multica/server/pkg/db/generated"
 	"github.com/multica-ai/multica/server/pkg/protocol"
 )
@@ -142,20 +143,21 @@ func (defaultRenderer) Render(in RenderInput) (CardRender, error) {
 // without a real Postgres connection.
 type PatcherQueries interface {
 	GetAgentTask(ctx context.Context, id pgtype.UUID) (db.AgentTaskQueue, error)
+	TaskHasChannelIngestedMessages(ctx context.Context, taskID pgtype.UUID) (bool, error)
 	GetChatSession(ctx context.Context, id pgtype.UUID) (db.ChatSession, error)
 	GetAgent(ctx context.Context, id pgtype.UUID) (db.Agent, error)
-	GetLarkInstallation(ctx context.Context, id pgtype.UUID) (db.LarkInstallation, error)
-	GetLarkChatSessionBindingBySession(ctx context.Context, chatSessionID pgtype.UUID) (db.LarkChatSessionBinding, error)
-	GetLarkOutboundCardByTask(ctx context.Context, taskID pgtype.UUID) (db.LarkOutboundCardMessage, error)
-	CreateLarkOutboundCardMessage(ctx context.Context, arg db.CreateLarkOutboundCardMessageParams) (db.LarkOutboundCardMessage, error)
-	UpdateLarkOutboundCardStatus(ctx context.Context, arg db.UpdateLarkOutboundCardStatusParams) error
+	GetLarkInstallation(ctx context.Context, id pgtype.UUID) (Installation, error)
+	GetLarkChatSessionBindingBySession(ctx context.Context, chatSessionID pgtype.UUID) (ChatSessionBinding, error)
+	GetLarkOutboundCardByTask(ctx context.Context, taskID pgtype.UUID) (OutboundCardMessage, error)
+	CreateLarkOutboundCardMessage(ctx context.Context, arg CreateOutboundCardMessageParams) (OutboundCardMessage, error)
+	UpdateLarkOutboundCardStatus(ctx context.Context, arg UpdateOutboundCardStatusParams) error
 }
 
 // CredentialsResolver decrypts an installation's app_secret for the
 // transport layer. *InstallationService satisfies it directly; tests
 // substitute a fake.
 type CredentialsResolver interface {
-	DecryptAppSecret(inst db.LarkInstallation) (string, error)
+	DecryptAppSecret(inst Installation) (string, error)
 }
 
 // PatcherConfig tunes the outbound Patcher. Defaults via withDefaults;
@@ -250,6 +252,28 @@ func (p *Patcher) SetTypingIndicatorManager(m *TypingIndicatorManager) {
 //   - EventTaskFailed — the run failed; surface a short error card
 //     so the failure is visually distinct from a successful reply.
 //
+//   - EventTaskCancelled — the run ended without an answer. Nothing is
+//     sent for it; the subscription exists so the Typing reaction comes
+//     off. A cancellation publishes no chat-done and no task-failed, so
+//     without this the badge sits on the user's message for good.
+//     task:cancelled is broadcast once per cancelled row by CancelTask,
+//     the queued follow-up cancel behind it, the agent- and issue-level
+//     bulk cancels, the runtime and member revocations, and deleting the
+//     chat session. The delete is the one that used to publish nothing:
+//     BroadcastCancelledTasks resolved each task's workspace through its
+//     chat_session, the same row its transaction had just deleted, and an
+//     event with no workspace is dropped before it reaches the bus. It now
+//     takes the workspace from its caller. Two holes are left, neither of
+//     them a missing subscription: archiving an agent stays silent by
+//     choice — agent:archived invalidates every client's task list
+//     instead — and no list refresh removes a Lark reaction; and an
+//     ending that arrives while the reaction is still being added clears
+//     nothing, because Add records its state only after the Lark call
+//     returns, so the badge lands after the clear with nothing left to
+//     take it off. That second one predates task:cancelled — chat-done
+//     and task-failed race the add the same way — and closing it needs a
+//     per-session generation the add can check when its call returns.
+//
 // We deliberately do NOT subscribe to EventTaskQueued / EventTaskRunning
 // (no thinking-card lifecycle anymore — adds noise without value) or to
 // EventTaskCompleted (chat tasks always emit EventChatDone first, which
@@ -260,6 +284,7 @@ func (p *Patcher) SetTypingIndicatorManager(m *TypingIndicatorManager) {
 func (p *Patcher) Register(bus *events.Bus) {
 	bus.Subscribe(protocol.EventTaskFailed, p.handleEvent)
 	bus.Subscribe(protocol.EventChatDone, p.handleEvent)
+	bus.Subscribe(protocol.EventTaskCancelled, p.handleEvent)
 }
 
 func (p *Patcher) handleEvent(e events.Event) {
@@ -287,6 +312,32 @@ func (p *Patcher) processEvent(ctx context.Context, e events.Event) error {
 		// Issue / autopilot tasks have no chat_session.
 		return nil
 	}
+	// A cancelled run has no reply to place, so the only thing owed to the user
+	// is taking the Typing badge off. That runs before every lookup below,
+	// because each of them can answer "no" for a run that still has a badge on
+	// screen:
+	//
+	//   - the binding is gone by the time a session delete's cancels are
+	//     broadcast (they fire after the transaction that dropped it commits);
+	//
+	//   - the origin classification answers "does this answer belong on Lark",
+	//     and a task cancelled for owning an empty input batch — the failure
+	//     #6611 fixed the cause of — reports no channel-ingested messages, so a
+	//     clear behind it would be skipped on exactly the run that most needs
+	//     it. A cancellation has no answer to misroute, so the question does not
+	//     arise.
+	//
+	// Nothing is posted here, so neither gate is protecting anything: the badge
+	// is Lark's own, and Clear only touches sessions this process put one on.
+	// The clear is keyed by session rather than by turn, so cancelling one of
+	// two turns in a session takes the badge off both; the worst that costs is a
+	// missing badge on a turn still running.
+	if e.Type == protocol.EventTaskCancelled {
+		if p.typingIndicator != nil {
+			p.typingIndicator.Clear(ctx, chatSessionID)
+		}
+		return nil
+	}
 
 	binding, err := p.queries.GetLarkChatSessionBindingBySession(ctx, chatSessionID)
 	if err != nil {
@@ -295,6 +346,24 @@ func (p *Patcher) processEvent(ctx context.Context, e events.Event) error {
 			return nil
 		}
 		return fmt.Errorf("lookup chat session binding: %w", err)
+	}
+
+	// Only bound sessions reach here, so classify the task origin before
+	// spending any send work. Web/mobile direct-chat tasks can reuse a session
+	// that originated in Lark, but their replies belong only in Multica.
+	// Sealed channel tasks own an input batch just like direct tasks, so the
+	// discriminator is the immutable channel_ingested provenance of that
+	// batch, not chat_input_task_id presence (which #5645 originally used).
+	task, err := p.queries.GetAgentTask(ctx, taskID)
+	if err != nil {
+		return fmt.Errorf("load agent task: %w", err)
+	}
+	deliver, err := engine.TaskInputIsChannelIngested(ctx, p.queries, task)
+	if err != nil {
+		return fmt.Errorf("classify task input origin: %w", err)
+	}
+	if !deliver {
+		return nil
 	}
 
 	inst, err := p.queries.GetLarkInstallation(ctx, binding.InstallationID)
@@ -354,32 +423,100 @@ func (p *Patcher) processEvent(ctx context.Context, e events.Event) error {
 // the task without producing visible output, which only happens for
 // edge cases like a chat task that just acknowledged a system event;
 // not emitting a message there is the right product call.
-func (p *Patcher) sendChatReply(ctx context.Context, creds InstallationCredentials, binding db.LarkChatSessionBinding, payload any) error {
+func (p *Patcher) sendChatReply(ctx context.Context, creds InstallationCredentials, binding ChatSessionBinding, payload any) error {
 	content := chatDoneContent(payload)
 	if content == "" {
 		return nil
 	}
+	target := threadReplyTarget(binding)
 	if containsMarkdown(content) {
-		if _, err := p.client.SendMarkdownCard(ctx, SendMarkdownCardParams{
+		return sendWithThreadFallback(p.cfg.Logger, "send markdown card", target, func(t ReplyTarget) error {
+			_, err := p.client.SendMarkdownCard(ctx, SendMarkdownCardParams{
+				InstallationID: creds,
+				ChatID:         outboundChatID(binding),
+				Markdown:       content,
+				ReplyTarget:    t,
+			})
+			return err
+		})
+	}
+	return sendWithThreadFallback(p.cfg.Logger, "send text message", target, func(t ReplyTarget) error {
+		_, err := p.client.SendTextMessage(ctx, SendTextParams{
 			InstallationID: creds,
-			ChatID:         ChatID(binding.LarkChatID),
-			Markdown:       content,
-		}); err != nil {
-			return fmt.Errorf("send markdown card: %w", err)
+			ChatID:         outboundChatID(binding),
+			Text:           content,
+			ReplyTarget:    t,
+		})
+		return err
+	})
+}
+
+// outboundChatID recovers the real Lark chat id from the chat binding. The
+// channel_chat_id may be a composite "chat:thread" topic-isolation key, so
+// the real chat id is read from the binding config (larkBindingConfig);
+// pre-topic rows (config "{}") route by the key itself, which for them IS the
+// real chat id.
+func outboundChatID(b ChatSessionBinding) ChatID {
+	if len(b.Config) > 0 {
+		var cfg larkBindingConfig
+		if err := json.Unmarshal(b.Config, &cfg); err == nil && cfg.ChatID != "" {
+			return ChatID(cfg.ChatID)
+		}
+	}
+	return ChatID(b.ChannelChatID)
+}
+
+// threadReplyTarget derives the outbound reply target from the chat
+// binding's most-recent inbound trigger. We thread the reply ONLY when
+// that trigger was itself inside a Lark topic (last_lark_thread_id
+// present): normal group / p2p chats keep the unchanged chat-level send
+// path, and only an @-mention that happened inside a thread gets a
+// threaded reply (replying to last_lark_message_id with reply_in_thread).
+// The zero ReplyTarget means "send at the chat level".
+func threadReplyTarget(binding ChatSessionBinding) ReplyTarget {
+	if binding.LastThreadID.Valid && binding.LastThreadID.String != "" &&
+		binding.LastMessageID.Valid && binding.LastMessageID.String != "" {
+		return ReplyTarget{MessageID: binding.LastMessageID.String, InThread: true}
+	}
+	return ReplyTarget{}
+}
+
+// sendWithThreadFallback runs send with the thread reply target and,
+// ONLY when the threaded attempt fails with a Lark error that means the
+// topic reply legitimately cannot land (trigger message recalled, topic
+// gone, topics disabled, aggregated message — see
+// threadReplyUnsupportedCodes), retries once at the chat level so the
+// reply is not silently lost. Any other failure — transport error,
+// 5xx, timeout, rate limit, or an ambiguous "the server may have
+// received it" error — is logged and returned as a failure rather than
+// retried: a blind chat-level retry could duplicate the reply or leak a
+// thread-only reply into the main group chat. When target is already
+// chat-level there is nothing to fall back to and the error is returned.
+//
+// It is a package-level function (rather than a Patcher method) so the
+// event-driven Patcher and the immediate OutcomeReplier share one
+// classified fallback path.
+func sendWithThreadFallback(log *slog.Logger, op string, target ReplyTarget, send func(ReplyTarget) error) error {
+	err := send(target)
+	if err == nil {
+		return nil
+	}
+	if target.IsSet() && isThreadReplyUnsupported(err) {
+		log.Warn("lark: thread reply unsupported for target, retrying at chat level",
+			"op", op, "reply_message_id", target.MessageID, "error", err)
+		if fallbackErr := send(ReplyTarget{}); fallbackErr != nil {
+			return fmt.Errorf("%s (chat-level fallback after thread-unsupported reply: %v): %w", op, err, fallbackErr)
 		}
 		return nil
 	}
-	if _, err := p.client.SendTextMessage(ctx, SendTextParams{
-		InstallationID: creds,
-		ChatID:         ChatID(binding.LarkChatID),
-		Text:           content,
-	}); err != nil {
-		return fmt.Errorf("send text message: %w", err)
+	if target.IsSet() {
+		log.Warn("lark: thread reply failed; not falling back (non-classified error)",
+			"op", op, "reply_message_id", target.MessageID, "error", err)
 	}
-	return nil
+	return fmt.Errorf("%s: %w", op, err)
 }
 
-func (p *Patcher) installationCredentials(inst db.LarkInstallation) (InstallationCredentials, error) {
+func (p *Patcher) installationCredentials(inst Installation) (InstallationCredentials, error) {
 	if p.credentials == nil {
 		return InstallationCredentials{}, errors.New("lark patcher: credentials resolver missing")
 	}
@@ -407,7 +544,7 @@ func (p *Patcher) installationCredentials(inst db.LarkInstallation) (Installatio
 // One-shot send (no patching, no DB row): if the task fails a second
 // time we'd just send a second card, which is fine — failure is
 // usually a single terminal event.
-func (p *Patcher) fail(ctx context.Context, creds InstallationCredentials, binding db.LarkChatSessionBinding, taskID pgtype.UUID, agentName string, payload any) error {
+func (p *Patcher) fail(ctx context.Context, creds InstallationCredentials, binding ChatSessionBinding, taskID pgtype.UUID, agentName string, payload any) error {
 	render, err := p.cfg.Renderer.Render(RenderInput{
 		Kind:         CardKindError,
 		AgentName:    agentName,
@@ -417,18 +554,19 @@ func (p *Patcher) fail(ctx context.Context, creds InstallationCredentials, bindi
 	if err != nil {
 		return fmt.Errorf("render error card: %w", err)
 	}
-	if _, err := p.client.SendInteractiveCard(ctx, SendCardParams{
-		InstallationID: creds,
-		ChatID:         ChatID(binding.LarkChatID),
-		CardJSON:       render.JSON,
-	}); err != nil {
-		return fmt.Errorf("send error card: %w", err)
-	}
-	return nil
+	return sendWithThreadFallback(p.cfg.Logger, "send error card", threadReplyTarget(binding), func(t ReplyTarget) error {
+		_, err := p.client.SendInteractiveCard(ctx, SendCardParams{
+			InstallationID: creds,
+			ChatID:         outboundChatID(binding),
+			CardJSON:       render.JSON,
+			ReplyTarget:    t,
+		})
+		return err
+	})
 }
 
-// taskAndSessionFromEvent parses the typed-ish payload broadcastTaskEvent
-// publishes — a map[string]any with `task_id` (always) and
+// taskAndSessionFromEvent parses the typed-ish payload the task publishers
+// emit — a map[string]any with `task_id` (always) and
 // `chat_session_id` (chat tasks only). EventChatDone carries a
 // ChatDonePayload struct instead.
 func taskAndSessionFromEvent(e events.Event) (taskID, chatSessionID pgtype.UUID, ok bool) {

@@ -7,7 +7,16 @@
     "view_compact": "Thu gọn",
     "view_comfortable": "Thoải mái",
     "search_placeholder": "Tìm kiếm dự án...",
-    "no_search_results": "Không có kết quả phù hợp"
+    "no_search_results": "Không có kết quả phù hợp",
+    "view_table": "Bảng",
+    "view_cards": "Thẻ",
+    "row_menu": "Thao tác dự án",
+    "pin": "Ghim vào thanh bên",
+    "unpin": "Bỏ ghim",
+    "delete": "Xóa",
+    "no_matches": "Không có dự án phù hợp",
+    "selected_other": "Đã chọn {{count}}",
+    "clear_selection": "Bỏ chọn"
   },
   "table": {
     "name": "Tên",
@@ -15,7 +24,8 @@
     "status": "Trạng thái",
     "progress": "Tiến độ",
     "lead": "Người phụ trách",
-    "created": "Ngày tạo"
+    "created": "Ngày tạo",
+    "issues": "Issue"
   },
   "status": {
     "planned": "Đã lên kế hoạch",
@@ -57,7 +67,12 @@
     "section_properties": "Thuộc tính",
     "section_progress": "Tiến độ",
     "section_description": "Mô tả",
+    "prop_start_date": "Ngày bắt đầu",
+    "prop_due_date": "Hạn chót",
+    "no_start_date": "Chưa có ngày bắt đầu",
+    "no_due_date": "Chưa có hạn chót",
     "description_placeholder": "Thêm mô tả...",
+    "description_hint": "Được chia sẻ cho các agent làm ngữ cảnh cho mọi việc trong dự án này.",
     "empty_issues_title": "Chưa có công việc nào được liên kết",
     "empty_issues_hint": "Tạo công việc mới hoặc gán công việc hiện có vào dự án này.",
     "empty_issues_new_button": "Công việc mới",
@@ -89,6 +104,8 @@
     "local_no_daemon_tooltip": "Daemon cục bộ chưa báo cáo ID — Agent không thể mở thư mục này.",
     "local_other_machine_tooltip": "Chỉ khả dụng trên máy đã đăng ký thư mục này.",
     "chat_hint_prefix": "Agent sẽ làm việc trực tiếp tại",
+    "chat_hint_worktree_prefix": "Agent sẽ làm việc trong một worktree tách biệt của",
+    "chat_hint_worktree_note": "Bản làm việc của bạn không bị đụng tới — mỗi tác vụ trả kết quả về bằng một nhánh agent/…",
     "toast_local_attached": "Đã gắn thư mục cục bộ",
     "toast_local_renamed": "Đã đổi tên",
     "toast_local_rename_failed": "Không thể đổi tên",
@@ -101,7 +118,24 @@
     "local_validate_not_a_directory": "Đường dẫn không phải thư mục.",
     "local_validate_not_readable": "Thư mục không thể đọc.",
     "local_validate_not_writable": "Thư mục không thể ghi.",
-    "local_validate_unsupported": "Thư mục cục bộ chỉ có thể chọn trên ứng dụng desktop."
+    "local_validate_unsupported": "Thư mục cục bộ chỉ có thể chọn trên ứng dụng desktop.",
+    "mode_dialog_title": "Tác vụ nên dùng thư mục này thế nào?",
+    "mode_dialog_description": "Điều này quyết định cách bạn nhận lại kết quả của agent, và liệu các tác vụ trên thư mục này có chạy song song được không.",
+    "mode_in_place_title": "Sửa trực tiếp thư mục này",
+    "mode_in_place_description": "Mỗi lần một tác vụ. Thay đổi hiện ngay trong bản làm việc của bạn khi agent thực hiện, sẵn sàng để bạn làm tiếp.",
+    "mode_worktree_title": "Chạy song song, tách biệt",
+    "mode_worktree_description": "Các tác vụ chạy cùng lúc mà không đụng tới bản làm việc của bạn. Mỗi tác vụ trả về một nhánh agent/… trong repo này để bạn xem và gộp.",
+    "mode_worktree_needs_git": "Thư mục này không phải repo git nên không có chỗ để tạo nhánh. Hãy chọn một repo, hoặc tiếp tục sửa trực tiếp thư mục.",
+    "mode_worktree_needs_server_upgrade": "Máy chủ Hira của bạn quá cũ để chạy tác vụ song song — nó sẽ âm thầm chạy ngay trong thư mục này. Hãy cập nhật máy chủ rồi bật lại.",
+    "mode_cancel": "Hủy",
+    "mode_save": "Lưu",
+    "mode_add": "Thêm thư mục",
+    "mode_edit_tooltip": "Đổi cách tác vụ dùng thư mục này",
+    "mode_badge_worktree": "Song song",
+    "mode_badge_worktree_tooltip": "Các tác vụ chạy cùng lúc trong worktree git riêng và trả về một nhánh. Bản làm việc của bạn không bị đụng tới.",
+    "toast_local_mode_updated": "Đã cập nhật chế độ thực thi",
+    "toast_local_mode_update_failed": "Không cập nhật được chế độ thực thi",
+    "mode_badge_in_place": "Trực tiếp"
   },
   "delete_dialog": {
     "title": "Xóa dự án",
@@ -111,10 +145,26 @@
   },
   "picker": {
     "no_project": "Không có dự án",
-    "remove": "Gỡ khỏi dự án",
-    "empty": "Chưa có dự án nào"
+    "empty": "Chưa có dự án nào",
+    "search_placeholder": "Tìm dự án...",
+    "clear_aria": "Xóa dự án"
   },
   "chip": {
     "fallback_label": "Dự án"
+  },
+  "toolbar": {
+    "result_count_title": "Dự án phù hợp / tổng số dự án",
+    "filter_label": "Bộ lọc",
+    "filter_active_count_other": "{{count}} bộ lọc",
+    "clear_filters": "Xóa bộ lọc",
+    "section_status": "Trạng thái",
+    "section_priority": "Độ ưu tiên",
+    "section_lead": "Phụ trách",
+    "display": "Hiển thị",
+    "sort_by": "Sắp xếp theo",
+    "direction_asc": "Tăng dần",
+    "direction_desc": "Giảm dần",
+    "section_columns": "Cột",
+    "view": "Dạng xem"
   }
 }

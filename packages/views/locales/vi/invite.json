@@ -42,7 +42,6 @@
     "title": "Bạn được mời",
     "subtitle": "Chọn các workspace bạn muốn tham gia. Bạn luôn có thể xử lý phần còn lại sau từ sidebar.",
     "submit_skip": "Bỏ qua và cài đặt workspace của tôi",
-    "submit_join_one": "Tham gia 1 workspace",
     "submit_join_other": "Tham gia {{count}} workspace",
     "joining": "Đang tham gia...",
     "error_generic": "Xử lý lời mời thất bại. Vui lòng thử lại.",

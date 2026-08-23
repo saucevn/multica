@@ -41,19 +41,25 @@ Every upstream-owned file this fork edits. New fork-owned files (`locales/vi/**`
 | packages/views/locales/index.ts | +25 vi imports + vi block in RESOURCES | Re-apply block |
 | packages/views/locales/{en,zh-Hans,ko,ja}/settings.json | +"vietnamese" language label key | Re-apply 1 key per file |
 | packages/views/settings/components/preferences-tab.tsx | +1 vi option in languageOptions | Re-apply 1 line |
-| apps/web/app/layout.tsx | +vi in HTML_LANG; +vietnamese font subsets; Hira metadata (title/description/siteName/metadataBase=app.hira.vn/locale=vi_VN; twitter block removed) | Take upstream, re-apply 3 regions |
-| apps/desktop/src/renderer/src/App.tsx | +vi in HTML_LANG | Re-apply 1 line |
+| apps/web/platform/document-title.ts | SITE_TITLE + TITLE_SUFFIX → Hira (upstream moved the brand name out of layout.tsx into these constants; they now drive `document.title` on EVERY workspace route via workspace-document-title.tsx, so leaving them unchanged shows "Issues \| Multica" in the tab) | Take upstream, re-apply 2 strings |
+| apps/web/platform/document-title.test.tsx | 9 " \| Multica" assertions → " \| Hira" | Re-apply (sed the suffix) |
+| packages/views/workspace/celestial-workspace-names.ts | +1 `vi:` line per entry (100 workspace-name suggestions). Proper names of stars/moons stay Latin (Vietnamese uses Latin script); planets, galaxies, nebulae and the 4 stars with common Vietnamese names are translated | Append `vi` after `ko` in each new entry; typecheck lists every missing one |
+| apps/web/app/layout.tsx | +vi in HTML_LANG; +vietnamese font subsets; Hira metadata (title/description/siteName/metadataBase=app.hira.vn/locale=vi_VN; twitter block removed); i18n resources via resourcesForLocale(locale) | Take upstream, re-apply 4 regions |
+| apps/desktop/src/renderer/src/App.tsx | +vi in HTML_LANG; i18n resources via resourcesForLocale(locale) so the en fallback bundle ships too | Re-apply 2 lines |
 | packages/views/onboarding/templates/index.ts | +vi→en content fallback | Re-apply 1 line |
 | apps/web/lib/use-cases-i18n.ts | +vi UseCaseText block | Re-apply block |
 | apps/web/features/landing/i18n/types.ts | +vi in localeLabels + locales array | Re-apply (required for typecheck) |
 | apps/web/app/globals.css | +@import brand.css (after base.css) | Re-apply 1 line |
 | apps/desktop/src/renderer/src/globals.css | +@import brand.css (after base.css) | Re-apply 1 line |
 | packages/ui/package.json | +"./styles/brand.css" in exports (required by desktop's package-path import) | Re-apply 1 line |
+| packages/views/package.json | +"./locales/resources-for-locale" in exports (the `./locales/*` wildcard maps literally, so the extensionless subpath needs its own entry) | Re-apply 1 line |
 | scripts/local-env.sh | derive+export NEXT_PUBLIC_API_URL/NEXT_PUBLIC_WS_URL so `make dev` proxies /api to the backend, not itself (general dev-tooling bugfix; good upstream candidate) | Keep ours; drop if upstream fixes it |
-| docker-compose.selfhost.yml | pass AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY through to the backend container so S3-compatible (R2/MinIO) uploads authenticate — upstream omits them and self-host PutObject fails with HTTP 500 (general infra bugfix; good upstream candidate) | Re-apply 2 env lines; drop if upstream fixes it |
 | apps/web/public/favicon.svg | Hira "h." mark | merge=ours (auto) |
 | server/internal/service/email.go | sender noreply@hira.vn; VI verification + invitation subjects/bodies; appURL app.hira.vn; CTA indigo | Take upstream, re-apply 6 strings |
-| server/internal/service/email_test.go | invitation subject expectation → VI/Hira | Re-apply 1 assertion |
+| server/internal/service/email_test.go | invitation subject expectation → VI/Hira; default-sender case wants noreply@hira.vn; truncation bound counts runes of the VI template (len() on the EN template made it vacuously true) | Re-apply 3 assertions |
+| e2e/navigation.spec.ts, e2e/issues.spec.ts | `toHaveTitle("… \| Multica")` → `"… \| Hira"` (4 assertions). The E2E suite asserts the browser title, so rebranding TITLE_SUFFIX breaks it — `make check` catches this at step 5, long after typecheck and unit tests pass | Re-apply 4 assertions |
+> Note: `e2e/auth.spec.ts` and `e2e/onboarding-smoke.spec.ts` also contain "Multica", but they assert **English** UI strings the fork never changes. Leave them alone.
+
 | README.md | +Tiếng Việt link in language nav; +Vietnamese "Bản fork cá nhân — Hira" notice block after the header | Take upstream, re-apply the 2 fork additions (top of file) |
 | AGENTS.md | Fork-notice banner prepended above upstream content (golden rules + pointers) | Keep our banner, take upstream body below it |
 | CLAUDE.md | Fork-notice blockquote inserted after the intro line (golden rules + pointers) | Keep our blockquote, take upstream body |
@@ -107,7 +113,7 @@ make check                                         # full pipeline (typecheck + 
 # then: git switch main && git merge --no-ff sync/upstream-manual && git push
 ```
 
-### Three automated safety nets after a merge
+### Four automated safety nets after a merge
 1. **`pnpm typecheck`** — any new `Record<SupportedLocale, …>` map upstream adds will fail
    to compile until it has a `vi` entry. The compiler enumerates every wiring site for you.
 2. **`packages/views/locales/parity.test.ts`** — fails (and lists the keys) whenever upstream
@@ -117,10 +123,16 @@ make check                                         # full pipeline (typecheck + 
    - New keys in an existing namespace: the merge updates `en` (and `ja`/`ko`/`zh-Hans`,
      which upstream owns) but does NOT touch `vi/<ns>.json` (fork-owned), so `vi` falls
      behind. Copy the new keys from `en/<ns>.json` into `vi/<ns>.json` and translate them.
-     Keep `{{placeholders}}` and both plural forms. The failing parity test prints the exact
+     Keep `{{placeholders}}`. Drop the `_one` form — Vietnamese has only the `other`
+     plural category, and parity.test.ts fails on any `_one` key in `vi`. The failing parity test prints the exact
      missing keys. (Verified live: an upstream merge added 19 `agents.json` keys to `en`,
      and parity flagged all 19 as missing from `vi`.)
-3. **`.gitattributes` `merge=ours`** — brand assets (favicon, desktop icons, logos) are never
+3. **`packages/views/locales/vi-placeholder-parity.test.ts`** — fails when a `vi` string's
+   `{{interpolations}}` stop matching its `en` counterpart. Key-name parity (net 2) cannot see
+   this: upstream rewords an English string and drops a placeholder, the key name never
+   changes, and the fork-owned `vi` value keeps referring to a variable nobody passes — so a
+   literal `{{name}}` renders on screen. Two live cases in `issues.json` were found this way.
+4. **`.gitattributes` `merge=ours`** — brand assets (favicon, desktop icons, logos) are never
    overwritten by upstream. Requires `git config merge.ours.driver true` once per clone.
 
 ### Why this stays mergeable

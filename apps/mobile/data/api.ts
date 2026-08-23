@@ -121,6 +121,7 @@ import type { ZodType } from "zod";
 import { getCurrentSlug } from "./workspace-store";
 import { parseWithFallback } from "@/lib/parse-response";
 import { createRequestId } from "@/lib/request-id";
+import { buildCommentUpdateBody } from "./revision";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -211,7 +212,7 @@ class ApiClient {
     // Backend middleware (server/internal/middleware/workspace.go) resolves
     // slug → ws UUID and gates membership. Mirrors packages/core/api/client.ts.
     const slug = getCurrentSlug();
-    if (slug) {
+    if (slug && !headers["X-Workspace-Slug"]) {
       headers["X-Workspace-Slug"] = slug;
     }
 
@@ -411,12 +412,19 @@ class ApiClient {
 
   async updateNotificationPreferences(
     preferences: NotificationPreferences,
+    workspaceSlug?: string,
   ): Promise<NotificationPreferenceResponse> {
     return this.fetchValidatedWith(
       "/api/notification-preferences",
       NotificationPreferenceResponseSchema,
       EMPTY_NOTIFICATION_PREFERENCES,
-      { method: "PUT", body: JSON.stringify({ preferences }) },
+      {
+        method: "PATCH",
+        headers: workspaceSlug
+          ? { "X-Workspace-Slug": workspaceSlug }
+          : undefined,
+        body: JSON.stringify({ preferences }),
+      },
       { endpoint: "updateNotificationPreferences" },
     );
   }
@@ -711,6 +719,7 @@ class ApiClient {
     commentId: string,
     content: string,
     attachmentIds?: string[],
+    contentBase?: string,
   ): Promise<Comment> {
     return this.fetchValidatedWith(
       `/api/comments/${commentId}`,
@@ -718,10 +727,9 @@ class ApiClient {
       EMPTY_COMMENT,
       {
         method: "PUT",
-        body: JSON.stringify({
-          content,
-          ...(attachmentIds ? { attachment_ids: attachmentIds } : {}),
-        }),
+        body: JSON.stringify(
+          buildCommentUpdateBody(content, attachmentIds, contentBase),
+        ),
       },
       { endpoint: "updateComment" },
     );

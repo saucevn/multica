@@ -6,10 +6,22 @@
     "new_skill": "Skill mới",
     "search_placeholder": "Tìm skill…",
     "scopes": {
-      "all": { "label": "Tất cả", "description": "Tất cả skill trong workspace này" },
-      "used": { "label": "Đang dùng", "description": "Skill được gán cho ít nhất một agent" },
-      "unused": { "label": "Chưa dùng", "description": "Skill chưa được gán cho agent nào" },
-      "mine": { "label": "Do tôi tạo", "description": "Skill bạn đã tạo" }
+      "all": {
+        "label": "Tất cả",
+        "description": "Tất cả skill trong workspace này"
+      },
+      "used": {
+        "label": "Đang dùng",
+        "description": "Skill được gán cho ít nhất một agent"
+      },
+      "unused": {
+        "label": "Chưa dùng",
+        "description": "Skill chưa được gán cho agent nào"
+      },
+      "mine": {
+        "label": "Do tôi tạo",
+        "description": "Skill bạn đã tạo"
+      }
     },
     "empty": {
       "title": "Chưa có skill nào",
@@ -36,10 +48,11 @@
   },
   "table": {
     "name": "Tên",
+    "created_by": "Người thêm",
     "used_by": "Được dùng bởi",
     "source": "Nguồn · Thêm bởi",
     "updated": "Cập nhật",
-    "no_description": "Không có mô tả",
+    "created": "Ngày tạo",
     "lock_tooltip": "Chỉ đọc — chỉ người tạo hoặc quản trị viên mới có thể chỉnh sửa",
     "unused": "— chưa dùng",
     "by_creator": "bởi {{name}}",
@@ -51,19 +64,61 @@
     "source_skills_sh": "Từ Skills.sh",
     "source_github": "Từ GitHub"
   },
+  "actions": {
+    "row_menu": "Thao tác",
+    "add_to_agent": "Thêm vào agent",
+    "refresh": "Cập nhật từ nguồn",
+    "my_agents": "Agent của tôi",
+    "other_agents": "Agent khác",
+    "no_agents": "Không có agent nào",
+    "search_placeholder": "Tìm agent…",
+    "no_agents_match": "Không có agent nào khớp tìm kiếm của bạn.",
+    "has_partial": "Đã thêm {{owned}}/{{total}}",
+    "added_toast": "Đã thêm vào {{name}}",
+    "add_failed_toast": "Không thêm được skill",
+    "delete": "Xóa",
+    "selected": "Đã chọn {{count}}",
+    "clear_selection": "Bỏ chọn",
+    "delete_no_permission": "Lựa chọn có skill chỉ người tạo hoặc quản trị viên mới xóa được",
+    "delete_dialog_title_other": "Xóa {{count}} skill?",
+    "delete_dialog_desc_other": "Thao tác này sẽ xóa vĩnh viễn {{count}} skill đã chọn và gỡ chúng khỏi mọi agent.",
+    "deleted_toast_other": "Đã xóa {{count}} skill",
+    "delete_failed_toast": "Không xóa được skill",
+    "update": "Cập nhật",
+    "update_none": "Lựa chọn không có skill nhập khẩu nào bạn cập nhật được",
+    "update_dialog_title": "Cập nhật skill từ nguồn?",
+    "update_summary_selected_other": "{{count}} skill sẽ được cập nhật từ nguồn của chúng",
+    "update_summary_skipped_other": "{{count}} skill không cập nhật được từ nguồn — đã bỏ qua",
+    "update_confirm": "Cập nhật {{count}}",
+    "update_updating": "Đang cập nhật {{done}}/{{total}}…",
+    "updated_toast_other": "Đã cập nhật {{count}} skill từ nguồn",
+    "update_partial_toast": "Đã cập nhật {{count}}, {{failed}} thất bại",
+    "add_dialog_description": "Chọn các agent sẽ nhận những skill đã chọn.",
+    "cancel": "Hủy",
+    "add_confirm": "Thêm ({{num}})",
+    "adding": "Đang thêm...",
+    "added_multi_toast_other": "Đã thêm vào {{count}} agent"
+  },
+  "toolbar": {
+    "result_count_title": "Skill phù hợp / tổng số skill",
+    "filter_label": "Bộ lọc",
+    "filter_active_count_other": "{{count}} bộ lọc",
+    "clear_filters": "Xóa bộ lọc",
+    "section_usage": "Mức dùng",
+    "display": "Hiển thị",
+    "sort_by": "Sắp xếp theo",
+    "direction_asc": "Tăng dần",
+    "direction_desc": "Giảm dần",
+    "section_columns": "Cột"
+  },
   "detail": {
     "all_skills": "Tất cả skill",
     "read_only": "Chỉ đọc",
     "delete_aria": "Xóa skill",
     "delete_tooltip": "Xóa skill",
     "supporting_data_warning": "Một số dữ liệu workspace không tải được. Thông tin tác giả, tên runtime hoặc quyền chỉnh sửa có thể hiển thị không đầy đủ cho đến lần làm mới tiếp theo.",
-    "files_label": "File · {{count}}",
-    "add_file_aria": "Thêm file",
-    "add_file_tooltip": "Thêm file",
     "delete_file": "Xóa file",
-    "name_aria": "Tên skill",
     "name_placeholder": "tên-skill",
-    "description_label": "Mô tả",
     "description_placeholder": "Một câu mô tả khi nào agent nên dùng skill này…",
     "subline": {
       "origin_runtime_named": "Runtime cục bộ · {{name}}",
@@ -72,42 +127,18 @@
       "origin_clawhub": "Đã import · ClawHub",
       "origin_skills_sh": "Đã import · Skills.sh",
       "origin_github": "Đã import · GitHub",
-      "origin_workspace": "Workspace",
-      "updated_label": "Cập nhật {{when}}",
-      "by_creator": "bởi {{name}}"
+      "origin_workspace": "Workspace"
     },
     "conflict_banner": {
       "title": "Người khác đã cập nhật skill này",
       "body": "Chỉnh sửa của bạn được giữ lại. Bỏ để lấy thay đổi của họ, hoặc Lưu để ghi đè."
     },
     "save_bar": {
-      "unsaved": "Có thay đổi chưa lưu — sẽ ghi đè skill đang chạy khi lưu",
+      "changed_summary": "Đã thay đổi: {{parts}}",
+      "changed_files_other": "{{count}} tệp",
       "discard": "Bỏ thay đổi",
       "save": "Lưu thay đổi",
       "saving": "Đang lưu…"
-    },
-    "sidebar": {
-      "metadata": "Siêu dữ liệu",
-      "created": "Ngày tạo",
-      "updated": "Ngày cập nhật",
-      "created_by": "Người tạo",
-      "files": "File",
-      "id": "ID",
-      "origin": "Nguồn gốc",
-      "used_by_one": "Được dùng bởi {{count}} agent",
-      "used_by_other": "Được dùng bởi {{count}} agent",
-      "permissions": "Quyền",
-      "permissions_owner": "Bạn có thể chỉnh sửa và xóa skill này. Thay đổi có hiệu lực ở lần chạy agent tiếp theo.",
-      "permissions_locked_creator": "Chỉ người tạo ({{name}}) hoặc quản trị viên workspace mới có thể chỉnh sửa skill này.",
-      "permissions_locked": "Chỉ người tạo hoặc quản trị viên workspace mới có thể chỉnh sửa skill này.",
-      "used_by_empty": "Chưa được gán cho agent nào. Mở tab Skills của agent để gán."
-    },
-    "origin_card": {
-      "imported_runtime": "Import từ runtime cục bộ",
-      "imported_clawhub": "Import từ ClawHub",
-      "imported_skills_sh": "Import từ Skills.sh",
-      "imported_github": "Import từ GitHub",
-      "provider": "provider · {{provider}}"
     },
     "not_found": {
       "title": "Không tìm thấy skill",
@@ -118,9 +149,25 @@
     "toast_save_failed": "Không thể lưu skill",
     "toast_deleted": "Đã xóa skill",
     "toast_delete_failed": "Không thể xóa skill",
+    "refresh": {
+      "button": "Cập nhật",
+      "tooltip": "Tải lại skill này từ nguồn của nó",
+      "source_github": "GitHub",
+      "source_skills_sh": "Skills.sh",
+      "source_clawhub": "ClawHub",
+      "toast_success": "Đã cập nhật skill từ {{source}}",
+      "toast_failed": "Không cập nhật được skill",
+      "dialog": {
+        "title": "Cập nhật từ nguồn?",
+        "description": "Thao tác này sẽ tải lại \"{{name}}\" từ {{source}} và thay tên, mô tả, SKILL.md cùng các tệp bằng phiên bản mới nhất.",
+        "warning": "Các chỉnh sửa cục bộ cho skill này sẽ bị ghi đè. Việc gán agent, nhãn và người tạo được giữ nguyên.",
+        "cancel": "Hủy",
+        "confirm": "Cập nhật",
+        "refreshing": "Đang cập nhật…"
+      }
+    },
     "delete_dialog": {
       "title": "Xóa skill?",
-      "description_with_agents_one": "Thao tác này sẽ xóa vĩnh viễn \"{{name}}\" và gỡ bỏ khỏi {{count}} agent đang dùng nó.",
       "description_with_agents_other": "Thao tác này sẽ xóa vĩnh viễn \"{{name}}\" và gỡ bỏ khỏi {{count}} agent đang dùng nó.",
       "description_no_agents": "Thao tác này sẽ xóa vĩnh viễn \"{{name}}\" và gỡ bỏ khỏi tất cả agent.",
       "warning": "Không thể hoàn tác.",
@@ -137,8 +184,45 @@
         "absolute": "Không được dùng đường dẫn tuyệt đối.",
         "double_dot": "Đường dẫn không được chứa \"..\".",
         "reserved": "SKILL.md được dành riêng cho file chính.",
-        "exists": "Đã có file tại đường dẫn này."
+        "exists": "Đã có file tại đường dẫn này.",
+        "is_directory": "Đã có thư mục trùng tên",
+        "under_file": "Đã có tệp ở vị trí đó"
       }
+    },
+    "header": {
+      "files_other": "{{count}} tệp",
+      "used_by_other": "{{count}} agent",
+      "updated": "Cập nhật {{when}}",
+      "updated_by": "Cập nhật {{when}} bởi {{name}}"
+    },
+    "tabs": {
+      "aria": "Các phần của skill",
+      "overview": "Tổng quan",
+      "files_other": "Tệp {{count}}"
+    },
+    "overview": {
+      "properties": "Thuộc tính",
+      "properties_hint": "Các trường này luôn đồng bộ với frontmatter của SKILL.md.",
+      "name": "Tên",
+      "description": "Mô tả",
+      "description_hint": "{{count}} ký tự. Agent đọc phần này để quyết định có nạp skill hay không.",
+      "labels": "Nhãn",
+      "used_by_other": "Được {{count}} agent sử dụng",
+      "used_by_empty": "Chưa gán cho agent nào. Hãy mở tab Skill của một agent để gán.",
+      "permissions_owner": "Bạn có thể sửa và xóa skill này. Thay đổi có hiệu lực từ lượt chạy agent kế tiếp.",
+      "permissions_locked_creator": "Chỉ người tạo ({{name}}) hoặc quản trị viên workspace mới sửa được skill này.",
+      "permissions_locked": "Chỉ người tạo hoặc quản trị viên workspace mới sửa được skill này."
+    },
+    "files": {
+      "list_aria": "Tệp của skill",
+      "main": "Tệp chính",
+      "supporting_other": "Tệp phụ trợ {{count}}",
+      "supporting_empty": "Không có tệp phụ trợ.",
+      "add_file": "Tệp mới",
+      "mode_aria": "Chế độ xem tệp",
+      "mode_preview": "Xem trước",
+      "mode_edit": "Sửa",
+      "mode_raw": "Văn bản thuần"
     }
   },
   "create": {
@@ -210,13 +294,15 @@
     "not_supported": "Provider runtime này chưa hiển thị danh mục skill cục bộ.",
     "no_skills_title": "Không tìm thấy skill cục bộ nào",
     "no_skills_hint": "Runtime này chưa có skill cục bộ nào có thể khám phá.",
+    "search_placeholder": "Tìm skill cục bộ",
+    "no_search_results_title": "Không có skill cục bộ phù hợp",
+    "no_search_results_hint": "Không có skill cục bộ nào khớp \"{{query}}\".",
     "ignored_files_hint": "Symlink, file không đọc được, file quá lớn và bundle rất lớn bị bỏ qua khi import.",
     "ready": "Sẵn sàng import",
     "into_workspace": "vào workspace này.",
     "select_skill": "Chọn skill để tiếp tục.",
     "import_button": "Import vào Workspace",
     "importing": "Đang import…",
-    "skill_files_one": "{{count}} file",
     "skill_files_other": "{{count}} file",
     "skill_name_label": "Tên skill workspace",
     "skill_description_label": "Mô tả",
@@ -254,13 +340,18 @@
     "conflict_name_still_exists": "Tên đó đã tồn tại. Chọn tên khác hoặc bỏ qua."
   },
   "file_tree": {
-    "no_files": "Không có file"
+    "no_files": "Không có file",
+    "actions": {
+      "label": "Thao tác cho {{path}}",
+      "edit": "Sửa",
+      "rename": "Đổi tên",
+      "delete": "Xóa"
+    }
   },
   "file_viewer": {
-    "edit_tooltip": "Sửa",
-    "preview_tooltip": "Xem trước",
     "no_content": "*Chưa có nội dung*",
     "markdown_placeholder": "Viết nội dung markdown...",
-    "raw_placeholder": "Nội dung file..."
+    "raw_placeholder": "Nội dung file...",
+    "raw_aria": "Nội dung văn bản thuần của {{path}}"
   }
 }

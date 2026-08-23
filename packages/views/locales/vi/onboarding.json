@@ -1,6 +1,19 @@
 {
-  "step_header": {
-    "step_of": "Bước {{current}} / {{total}}"
+  "step_nav": {
+    "wordmark": "Hira",
+    "label": "Các bước thiết lập",
+    "about_you": {
+      "label": "Về bạn",
+      "description": "Vai trò của bạn và việc bạn muốn làm."
+    },
+    "workspace": {
+      "label": "Workspace",
+      "description": "Đặt tên và chọn URL."
+    },
+    "runtime": {
+      "label": "Gặp Mika",
+      "description": "Đồng đội agent đầu tiên của bạn, và nơi nó chạy."
+    }
   },
   "welcome": {
     "wordmark": "Chào mừng đến với Hira",
@@ -41,7 +54,8 @@
     "continue": "Tiếp tục",
     "skip": "Bỏ qua",
     "cancel": "Hủy",
-    "close": "Đóng"
+    "close": "Đóng",
+    "log_out": "Đăng xuất"
   },
   "source_backfill": {
     "eyebrow": "Một câu hỏi nhanh",
@@ -50,7 +64,9 @@
     "hint_ready": "Trông ổn rồi. Nhấn Gửi khi bạn sẵn sàng."
   },
   "questions": {
-    "eyebrow_about_you": "Về bạn",
+    "about_you": {
+      "question": "Cho chúng tôi biết đôi chút về bạn."
+    },
     "source": {
       "question": "Bạn biết đến Hira qua đâu?",
       "friends_colleagues": "Bạn bè hoặc đồng nghiệp",
@@ -103,18 +119,6 @@
     "hint_pick": "Chọn một lựa chọn để tiếp tục — hoặc bỏ qua nếu bạn không muốn trả lời.",
     "hint_continue": "Trông ổn rồi. Nhấn Tiếp tục khi bạn sẵn sàng."
   },
-  "runtime_aside": {
-    "what_eyebrow": "Agent runtime là gì?",
-    "what_prefix": "\"Máy tính\" bạn kết nối chính là thứ chúng tôi gọi nội bộ là ",
-    "what_term": "agent runtime",
-    "what_suffix": ": một tiến trình nền nhỏ chạy trên máy tính được ghép nối với một công cụ AI — Claude Code, Codex, v.v. Một công cụ, một agent runtime. Agent runtime là thứ thực sự thực thi các công việc Agent của bạn nhận.",
-    "good_eyebrow": "Biết thêm",
-    "swap_title": "Đổi bất cứ lúc nào",
-    "swap_body": "Runtime của mỗi Agent chỉ là một cài đặt. Thay đổi bất cứ khi nào bạn muốn.",
-    "add_more_title": "Thêm sau",
-    "add_more_body": "Bạn có thể kết nối một máy tính khác cho đồng đội, hoặc một máy riêng cho mỗi Agent.",
-    "learn_more": "Tìm hiểu về agent runtime →"
-  },
   "cli_install": {
     "copy_aria": "Sao chép",
     "intro": "Bạn cần một agent runtime trên máy tính này (Claude Code, Codex, Cursor, …) để nó chạy Agent. Cũng hoạt động trên máy chủ và môi trường dev từ xa.",
@@ -134,111 +138,21 @@
     "success_toast": "Bạn đã trong danh sách. Chúng tôi sẽ gửi email khi cloud runtime sẵn sàng.",
     "failed_toast": "Đăng ký danh sách chờ thất bại"
   },
-  "first_issue": {
-    "error_title": "Đã xảy ra lỗi",
-    "retry": "Thử lại",
-    "retry_failed": "Thử lại thất bại",
-    "finishing": "Đang hoàn tất",
-    "opening": "Gần xong — đang mở workspace của bạn."
-  },
-  "step_agent": {
-    "eyebrow": "Agent đầu tiên của bạn",
-    "headline": "Gặp người đồng đội đầu tiên.",
-    "lede_prefix": "Câu trả lời của bạn hướng đến một ",
-    "lede_suffix": ". Chọn một trong bốn loại phù hợp với bạn — mỗi mẫu sẵn sàng nhận công việc đầu tiên. Bạn có thể tinh chỉnh hướng dẫn từ trang cài đặt Agent sau.",
-    "footer_hint": "Một Agent là đủ để bắt đầu. Thêm nhiều hơn từ sidebar sau.",
-    "create_action": "Tạo {{name}}",
-    "create_failed": "Tạo Agent thất bại",
-    "recommended_badge": "Đề xuất",
-    "templates": {
-      "coding": {
-        "label": "Coding Agent",
-        "blurb": "Viết, tái cấu trúc và ship code. Đọc repo của bạn.",
-        "instructions": "You are a Coding Agent on a product team. Pick up coding issues — implement features, fix bugs, write tests, and open pull requests. Read the repository before you start, follow existing code conventions, and keep diffs focused. Ask for clarification when the acceptance criteria are ambiguous."
-      },
-      "planning": {
-        "label": "Planning Agent",
-        "blurb": "Phân rã công việc, soạn spec, giữ bảng gọn gàng.",
-        "instructions": "You are a Planning Agent. Turn loose ideas and open issues into scoped, ready-to-execute work: break them down into subtasks, write acceptance criteria, and propose owners and sequencing. Prefer clarity over speed. When blocked by missing context, ask one specific question rather than guessing."
-      },
-      "writing": {
-        "label": "Writing Agent",
-        "blurb": "Soạn thảo, tóm tắt, nghiên cứu. Phù hợp với nội dung dài.",
-        "instructions": "You are a Writing Agent. Draft documents, summarize long content, and research topics on the web when needed. Structure your output as finished prose a reader can use directly — not an outline. Cite sources when you draw from them. Match the tone the user establishes in the issue."
-      },
-      "assistant": {
-        "label": "Assistant",
-        "blurb": "Đa năng. Lựa chọn mặc định tốt khi công việc chưa rõ.",
-        "instructions": "You are a general-purpose teammate. Handle varied tasks — light coding, writing, research, planning — and stay pragmatic about scope. When the task is ambiguous, ask one clarifying question before diving in. Default to short, useful outputs over exhaustive ones."
-      }
-    },
-    "about_eyebrow": "Agent là gì",
-    "about_headline": "Một người đồng đội AI sống trong workspace của bạn.",
-    "about_body": "Agent xuất hiện trong mọi ô chọn người phụ trách, giống như bất kỳ đồng nghiệp nào — chỉ là họ có thể làm việc 24/7 trên bất kỳ runtime nào bạn cấp.",
-    "ways_eyebrow": "Cách làm việc với Agent",
-    "way_assign_title": "Giao cho Agent một công việc",
-    "way_assign_body": "Agent nhận công việc và báo cáo lại trong luồng.",
-    "way_mention_title": "@đề cập trong bình luận",
-    "way_mention_body": "Kéo Agent vào cuộc hội thoại để lấy ý kiến nhanh.",
-    "way_chat_title": "Chat trực tiếp",
-    "way_chat_body": "Đặt câu hỏi nhanh mà không cần tạo công việc.",
-    "way_autopilot_title": "Bật Autopilot",
-    "way_autopilot_body": "Phân loại hàng ngày, tóm tắt hàng tuần, kiểm tra hàng tháng — theo lịch.",
-    "add_more_hint": "Thêm Agent bất cứ lúc nào. Một nhóm nhỏ Agent chuyên biệt tốt hơn một Agent làm đủ thứ.",
-    "docs_link": "Tạo Agent đầu tiên →"
-  },
   "welcome_after_onboarding": {
-    "loading_helper": "Đang chuẩn bị Helper của bạn…",
-    "error_title": "Không thể hoàn tất cài đặt",
-    "error_generic": "Đã xảy ra lỗi. Thử lại.",
-    "retry": "Thử lại",
-    "dismiss_error": "Bỏ qua",
-    "error_close": "Đóng",
-    "user_context_heading": "Về tôi",
-    "user_context_role_label": "Vai trò",
-    "user_context_use_case_label": "Tôi muốn làm gì với Hira",
-    "runtime": {
-      "greeting": "Xin chào, chào mừng đến với Hira",
-      "subtitle": "Tôi là Agent trợ lý đầu tiên của bạn.",
-      "capabilities": "Hỏi tôi bất cứ điều gì về cách dùng Hira. Bạn cũng có thể nhờ tôi thực hiện việc trong workspace của bạn — tạo công việc, cài đặt cron task, tạo Agent mới…",
-      "section_label": "Chọn một hoặc nhiều công việc để bắt đầu:",
-      "assign_empty": "Chọn một hoặc nhiều",
-      "assign_count": "Giao {{count}} công việc cho tôi →",
-      "assign_count_plural": "Giao {{count}} công việc cho tôi →",
-      "cards": {
-        "intro": {
-          "subtitle": "Tôi sẽ giải thích trong 1–2 đoạn Hira là gì và có thể làm gì."
-        },
-        "tour": {
-          "subtitle": "Tôi sẽ hướng dẫn bạn cách công việc, Agent, Squad, Autopilot kết hợp với nhau."
-        },
-        "welcome_page": {
-          "subtitle": "Tôi sẽ tạo một slide deck HTML một tệp — được thiết kế theo vai trò của bạn, sẵn sàng sao chép và mở trên trình duyệt."
-        }
-      },
-      "success": {
-        "title": "Xong rồi!",
-        "subtitle": "Ngồi chờ nhé — {{agentName}} của bạn đang làm việc ☕",
-        "tip_inbox": "Khi có tiến triển, bạn sẽ thấy trong Hộp thư.",
-        "tip_chat": "Muốn chat trực tiếp? Nhấn vào bong bóng chat ở góc dưới bên phải.",
-        "got_it": "Đã hiểu →"
-      }
-    },
     "skip": {
       "loading": "Đang cài đặt workspace của bạn…",
       "title": "Chào mừng đến với Hira!",
       "subtitle": "Chúng tôi đã thêm hai công việc để giúp bạn với bước tiếp theo.",
       "got_it": "Đã hiểu",
       "status_in_progress": "Đang làm",
-      "status_todo": "Cần làm",
+      "error_title": "Chúng tôi không thiết lập được",
+      "error_body": "Hướng dẫn runtime chưa được tạo. Bạn có thể thử lại, hoặc kết nối một runtime từ trang Runtime bất cứ lúc nào.",
+      "retry": "Thử lại",
+      "dismiss": "Để sau",
       "cards": {
         "install_runtime": {
           "title": "Kết nối runtime",
           "subtitle": "Cài Codex hoặc Kimi để đưa Agent lên tuyến."
-        },
-        "create_agent": {
-          "title": "Tạo Agent đầu tiên",
-          "subtitle": "Khi runtime đã trực tuyến, hãy tạo Agent Hira đầu tiên."
         }
       }
     }
@@ -252,11 +166,13 @@
     "lede_resume": "Tiếp tục cài đặt với workspace bạn đã có, hoặc tạo một cái mới bên cạnh — bạn có thể thuộc bất kỳ số lượng workspace nào.",
     "name_label": "Tên workspace",
     "name_placeholder": "Acme Inc, Lab của tôi, Dự án phụ…",
+    "random_name": "Ngẫu nhiên",
     "url_label": "URL",
     "slug_placeholder": "acme",
     "issue_prefix_label": "Tiền tố công việc",
     "issue_prefix_prefix": "Công việc sẽ hiển thị như ",
     "issue_prefix_suffix": ". Bạn có thể thay đổi sau trong cài đặt.",
+    "issue_prefix_pending": "Đặt URL ở trên thì số hiệu issue sẽ theo đó — hoặc nhập tiền tố tại đây.",
     "create_new_title": "Tạo workspace mới",
     "create_new_subtitle": "Bắt đầu lại — không gian riêng cho một mảng công việc khác.",
     "hint_opening": "Đang mở {{name}}.",
@@ -274,37 +190,6 @@
     "slug_reserved_error": "URL workspace này đã được dành riêng và không thể dùng.",
     "slug_conflict_toast": "Chọn URL workspace khác",
     "create_failed_toast": "Tạo workspace thất bại",
-    "side_create_eyebrow": "Những gì có trong workspace",
-    "side_existing_eyebrow": "Workspace của bạn",
-    "side_things_eyebrow": "Những việc bạn sẽ làm ở đây",
-    "side_next_eyebrow": "Tiếp theo là gì",
-    "side_preview_name": "Workspace của bạn",
-    "side_preview_slug": "workspace",
-    "perk_assign": "Giao công việc cho Agent như giao cho đồng đội",
-    "perk_chat": "Chat với bất kỳ Agent nào mà không cần tạo công việc",
-    "perk_invite": "Mời đồng đội — họ chỉ thấy workspace này",
-    "perk_switch": "Chuyển sang workspace khác bất cứ lúc nào từ góc trên bên trái",
-    "next_runtime": "Kết nối máy tính để Agent có nơi chạy",
-    "next_agent": "Tạo Hira Helper từ runtime đã kết nối",
-    "next_starter": "Mở một công việc hướng dẫn cho bước tiếp theo",
-    "preview": {
-      "inbox_label": "Hộp thư",
-      "inbox_meta": "thông báo của bạn",
-      "issues_label": "Công việc",
-      "issues_meta": "bảng công việc chung",
-      "agents_label": "Agent",
-      "agents_meta": "đồng đội AI của bạn",
-      "projects_label": "Dự án",
-      "projects_meta": "nhóm các công việc liên quan",
-      "autopilot_label": "Autopilot",
-      "autopilot_meta": "tự động hóa theo lịch",
-      "runtimes_label": "Runtime",
-      "runtimes_meta": "nơi Agent chạy",
-      "skills_label": "Skill",
-      "skills_meta": "playbook có thể tái sử dụng",
-      "more_label": "Và nhiều hơn",
-      "more_meta": "và nhiều hơn"
-    },
     "creation_disabled_eyebrow": "Tạo workspace bị vô hiệu hóa",
     "creation_disabled_headline": "Yêu cầu quản trị viên gửi lời mời.",
     "creation_disabled_lede": "Instance Hira này không cho phép tạo workspace mới. Khi quản trị viên mời bạn vào workspace, hãy chấp nhận lời mời và làm mới trang để tiếp tục.",
@@ -319,7 +204,6 @@
     "scanning_lede_suffix": ", và các công cụ khác. Chúng tôi đang kiểm tra máy tính này xem bạn đã cài đặt những gì.",
     "found_headline": "Máy tính này đã kết nối. Chọn agent runtime.",
     "found_lede": "Đây là các agent runtime chúng tôi tìm thấy trên máy tính này. Chọn một cho Agent đầu tiên của bạn — bạn có thể đổi hoặc thêm sau.",
-    "runtime_count_one": "{{count}} agent runtime",
     "runtime_count_other": "{{count}} agent runtime",
     "status_all_online": "tất cả trực tuyến",
     "status_none_online": "không có trực tuyến",
@@ -342,18 +226,15 @@
     "hint_pick": "Chọn một agent runtime ở trên để tiếp tục.",
     "hint_waiting": "Đang chờ kết quả đầu tiên…",
     "hint_skip_or_refresh": "Làm mới sau khi cài, hoặc bỏ qua để vào workspace.",
-    "start_exploring": "Bắt đầu khám phá"
+    "continue": "Bắt đầu với Mika"
   },
   "step_platform": {
     "eyebrow": "Kết nối máy tính",
     "headline": "Kết nối máy tính để chạy Agent.",
     "lede": "Agent của bạn chạy trên một máy tính thực mà bạn kết nối với Hira. Chọn cách bạn muốn kết nối.",
     "hint_default": "Chọn cách kết nối — hoặc bỏ qua và kết nối máy tính sau.",
-    "hint_downloaded": "Hoàn tất cài đặt trên trang tải về, sau đó quay lại tab này.",
     "download_title": "Dùng máy tính này",
-    "download_title_after": "Đang mở trang tải về…",
     "download_subtitle": "Cài ứng dụng Desktop để kết nối máy tính này. Không cần cài đặt phức tạp — chọn nền tảng trên trang tiếp theo.",
-    "download_subtitle_after": "Đã mở trong tab mới. Chọn trình cài đặt ở đó, sau đó hoàn tất cài đặt trên Desktop.",
     "download_button": "Tải về",
     "cli_title": "Kết nối qua terminal",
     "cli_subtitle": "Kết nối máy chủ, môi trường dev từ xa hoặc bất kỳ máy không có giao diện. Cần terminal.",
@@ -365,7 +246,6 @@
     "cli_dialog_description": "Kết nối tương tự như Desktop, cài đặt từ terminal. Dùng cho máy chủ, môi trường dev từ xa hoặc bất kỳ máy không có giao diện.",
     "cli_dialog_pick_hint": "Chọn một máy tính ở trên.",
     "cli_dialog_connect": "Kết nối và tiếp tục",
-    "runtimes_connected_one": "{{count}} máy tính đã kết nối",
     "runtimes_connected_other": "{{count}} máy tính đã kết nối",
     "live_listening": "Trực tiếp · Đang chờ máy tính của bạn",
     "stage_normal_prefix": "Chạy lệnh ở trên. Ngay sau khi ",
@@ -379,6 +259,13 @@
     "stage_stalled_suffix": " là cách thuận tiện hơn — một cú nhấp và máy tính này được kết nối. Đóng hộp thoại này và chọn Desktop, hoặc nhấn Bỏ qua để tiếp tục."
   },
   "errors": {
-    "skip_failed": "Không thể hoàn tất hướng dẫn"
+    "skip_failed": "Không thể hoàn tất hướng dẫn",
+    "mika_setup_failed": "Không khởi tạo được workspace Mika của bạn"
+  },
+  "mika_intro": {
+    "headline": "Gặp Mika, đồng đội agent đầu tiên của bạn.",
+    "name": "Mika",
+    "role": "Chánh văn phòng",
+    "blurb": "Nói với Mika việc bạn muốn làm. Nó sẽ thành một issue, với đúng agent phụ trách."
   }
 }
