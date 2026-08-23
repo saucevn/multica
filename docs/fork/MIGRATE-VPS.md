@@ -439,6 +439,108 @@ mỗi lần cập nhật: `sync-upstream.sh` → dịch chuỗi `vi` mới → r
 
 ---
 
+## 6b. Tương thích với PR #7 (sync 1300 commit upstream) — đã kiểm chứng trên máy thật
+
+> Rà soát ngày 2026-08-23, đối chiếu `main` (b2be112e8) với
+> `sync/upstream-20260819-235029`. Số liệu migration đo bằng cách restore backup
+> `multica-db-20260823-031501.sql.gz` vào database tạm `multica_migtest` **trong
+> chính container `hira2-hira-db-1`**, chạy đủ 255 migration mới lên đó, rồi
+> `DROP DATABASE`. Không migration nào chạy lên DB production trong lúc rà soát.
+
+### 6b.1 Kết quả đo migration
+
+| Chỉ số | Giá trị đo được |
+|---|---|
+| Migration đã áp trên DB live | 152 **dòng** trong `schema_migrations` — cao nhất là `119_user_created_at_index` |
+| Migration mới của PR #7 | 255 (tổng 152 → 407) |
+| Kết quả chạy thử trên bản sao | **255/255 thành công, 0 lỗi** |
+| Tổng thời gian SQL | **11,1 giây** |
+| Migration chậm nhất | `140_comment_content_trgm_index` — 454 ms |
+| Số dòng dữ liệu sau migration | `issue` 469, `task_message` 22497, `comment` 1104, `agent_task_queue` 927 — **không đổi** |
+
+**`152` là số DÒNG, không phải số version.** Runner (`server/cmd/migrate/main.go`) dùng
+bảng `version TEXT PRIMARY KEY` và kiểm tra `EXISTS` cho **từng file**, không so sánh số
+thứ tự. Vì vậy migration đánh số thấp hơn mức hiện tại vẫn được áp bình thường — PR #7 có
+đúng một trường hợp như thế: `096_pending_check_suite`, đã chạy sạch trong lần thử.
+
+### 6b.2 Vì sao 255 migration này không nguy hiểm
+
+- **Không có `ALTER COLUMN ... TYPE`, không có `SET NOT NULL`.** Quét toàn bộ 255 file: 0 kết quả.
+- **Ba thao tác huỷ dữ liệu đều tự sinh tự diệt trong cùng một lần chạy:**
+  - `344_plugin_v2_reset` DROP 14 bảng `plugin_*` — tất cả đều do `285/294/319/325` tạo ra, đều nằm trong bộ 255.
+  - `318_drop_workspace_mcp_config` DROP `workspace.mcp_config` — do `314` tạo ra.
+  - `344` DROP `agent_task_queue.plugin_execution_manifest_id` — cũng sinh trong bộ này.
+
+  Không cột/bảng nào tồn tại trên DB production trước khi chạy. **Không mất dữ liệu.**
+- **Hai bảng lớn nhất không bị đụng tới.** `task_message` (22 MB) và `sys_cron_executions`
+  (11 MB) không xuất hiện trong bất kỳ migration mới nào.
+- **139 file dùng `CREATE INDEX CONCURRENTLY`, và mỗi file chỉ có đúng một câu lệnh.** Đây là
+  điều kiện bắt buộc: runner gửi cả file qua một `conn.Exec`, nhiều câu lệnh sẽ bị Postgres
+  bọc vào implicit transaction và `CONCURRENTLY` sẽ fail. Đã kiểm, không file nào vi phạm.
+- **Index không `CONCURRENTLY` chỉ nằm trên bảng nhỏ** — `agent_task_queue` (927 dòng),
+  `agent_runtime`, `autopilot_run`, `github_installation`. Khoá tính bằng mili giây.
+- **Constraint dùng đúng mẫu `NOT VALID` + `VALIDATE` tách migration** (`362` → `365`).
+  Sau khi chạy còn 2 constraint `NOT VALID` — đó là chủ ý của upstream (chỉ ràng buộc ghi
+  mới), không phải lỗi.
+- **Hook `103_drop_legacy_daily_rollups` KHÔNG chạy.** Đây là hook backfill `task_usage`
+  duy nhất và nặng nhất; `103` đã nằm trong 152 dòng của DB live nên vòng lặp `skip` trước
+  khi tới hook.
+
+### 6b.3 Bốn điểm lệch với file deploy (điểm 4 chưa từng được ghi)
+
+**1. Khối env backend thiếu 20 biến (không phải ~12).** `deploy/hira2/docker-compose.vps.yml`
+chép từ `main` trước sync. Danh sách đầy đủ:
+
+```
+MULTICA_ENTITLEMENT_{EMERGENCY_DISABLED,POLICY_ENABLED,POLICY_TIMEOUT,POLICY_URL,SERVICE_TOKEN,STALE_GRACE}
+MULTICA_LLM_{API_KEY,BASE_URL,DEFAULT_MODEL,MAX_RETRIES}
+MULTICA_{RUNTIME_RECONNECT_GRACE,SHUTDOWN_HOLD_DURATION,SLACK_SECRET_KEY,VCS_INTEGRATION_ENABLED,VCS_SECRET_KEY}
+MULTICA_WECOM_{MEDIA_ALLOW_CIDRS,SECRET_KEY,TRACE}
+S3_USE_PATH_STYLE  SMTP_FROM_EMAIL
+```
+
+Khối env của file deploy là **tập con thật sự** của upstream (không có biến riêng của fork),
+nên chép đè cả khối là an toàn. **Không biến nào làm backend chết nếu thiếu:**
+`MULTICA_ENTITLEMENT_POLICY_ENABLED` mặc định `false` (`router.go:371`) nên không có
+fail-closed; `MULTICA_LLM_*` là tuỳ chọn, thiếu thì tính năng auto-title/quick-action tự tắt;
+`SMTP_FROM_EMAIL` chỉ bắt buộc khi `SMTP_HOST` được set, mà stack này dùng Resend
+(`SMTP_HOST` rỗng, `RESEND_FROM_EMAIL=noreply@hira.vn`). Đây là **thiếu khả năng cấu hình**,
+không phải lỗi vận hành.
+
+**2. `S3_USE_PATH_STYLE` thiếu nhưng vô hại — attachment KHÔNG hỏng.** Bản đang chạy hardcode
+`o.UsePathStyle = true`. Bản mới tính mặc định `endpointURL != ""`; stack này có
+`AWS_ENDPOINT_URL` trỏ R2 nên vẫn ra `true`. Hành vi giữ nguyên.
+
+**3. `Dockerfile.web` bỏ `ARG NEXT_PUBLIC_WS_URL` — realtime vẫn sống.** Ghi chú cũ lo rằng
+sau rebuild WS URL sẽ rỗng và realtime chết im lặng. Truy ngược đường dẫn cho thấy **không
+xảy ra**:
+
+- `apps/web/app/layout.tsx` là async server component, đọc `process.env` **theo từng
+  request** (Next chỉ inline `NEXT_PUBLIC_*` vào bundle *client*, không phải code server) —
+  nên 4 biến runtime đã khai trong compose có tác dụng thật.
+- Nếu để rỗng: `web-providers.tsx` chạy `wsUrl={wsUrl || deriveWsUrl()}`, suy ra
+  `wss://app2.hira.vn/ws` từ `window.location`.
+- `deploy/hira2/Caddyfile.hira2` route `/ws` **thẳng vào `hira-api:8080`** (`flush_interval -1`),
+  không đi qua proxy của Next.
+
+  Mặc định `ws://localhost:8080/ws` trong `core-provider.tsx` chỉ chạm tới khi SSR, trình
+  duyệt không bao giờ rơi vào đó. Bốn biến runtime là lớp bảo hiểm, không phải điều kiện sống.
+
+**4. (MỚI) `§6b` trước đây là link chết.** `MIGRATE-VPS-COMMANDS.md` §D4b trỏ tới `§6b` của
+file này, nhưng file chỉ có `§6.1`–`§6.5`. Ba điểm lệch "đã ghi" thực chất chưa từng được
+viết ra ở đâu. Mục này là phần bù.
+
+### 6b.4 Rủi ro thật nằm ở BUILD, không nằm ở migration
+
+VPS chỉ có **2 vCPU / 7,8 GB RAM**, dùng chung với `apphira` (app.hira.vn — 1336 issue, có ghi
+mới mỗi ngày) và `lumi-prod`. Build Next.js monorepo tại chỗ sẽ chiếm gần hết CPU và RAM
+trong hàng chục phút và **đó** mới là thứ làm hàng xóm chậm — không phải 11 giây migration.
+
+**Giữ nguyên cách của §2.1: build ngoài máy (local/CI) rồi `docker save` → `docker load`.**
+Đừng build tại chỗ chỉ vì §6.5 nói "rebuild".
+
+---
+
 ## 7. Phạm vi đã chốt — và hệ quả
 
 | Quyết định | Hệ quả với runbook này |
