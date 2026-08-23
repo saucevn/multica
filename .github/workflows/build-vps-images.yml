@@ -1,0 +1,107 @@
+name: Build hira2 VPS images
+
+# Build linux/amd64 images for the hira2 stack on a native amd64 runner and hand
+# them back as a tarball to `docker load` on the VPS.
+#
+# Why this exists instead of building where the images are used:
+#
+#  * The VPS is 2 vCPU / 7.8 GB shared with app.hira.vn (v1, in daily use) and
+#    lumi-prod. A Next.js monorepo build there starves production for tens of
+#    minutes — that, not the ~11 s of migrations, is the real cutover risk.
+#  * The maintainer's machine is arm64, so a local build needs QEMU emulation:
+#    slow, OOM-prone, and one forgotten --platform away from producing an image
+#    that only fails once it is already on the VPS.
+#
+# Images are tagged with an explicit tag (NOT :dev) so the currently-running
+# :dev images stay intact as the rollback target. Cutover flips HIRA_BACKEND_IMAGE
+# / HIRA_WEB_IMAGE in ~/hira2/.env; rollback unsets them.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Git ref to build"
+        required: true
+        default: main
+      tag:
+        description: "Image tag — keep :dev free as the rollback target"
+        required: true
+        default: pr7
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Stamp build metadata
+        id: meta
+        run: |
+          {
+            echo "commit=$(git rev-parse HEAD)"
+            echo "short=$(git rev-parse --short HEAD)"
+            echo "date=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build backend
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          platforms: linux/amd64
+          load: true
+          tags: multica-backend:${{ inputs.tag }}
+          build-args: |
+            VERSION=${{ inputs.tag }}
+            COMMIT=${{ steps.meta.outputs.commit }}
+            DATE=${{ steps.meta.outputs.date }}
+          cache-from: type=gha,scope=hira2-backend
+          cache-to: type=gha,mode=max,scope=hira2-backend
+
+      - name: Build web
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.web
+          platforms: linux/amd64
+          load: true
+          tags: multica-web:${{ inputs.tag }}
+          build-args: |
+            NEXT_PUBLIC_APP_VERSION=${{ inputs.tag }}-${{ steps.meta.outputs.short }}
+          cache-from: type=gha,scope=hira2-web
+          cache-to: type=gha,mode=max,scope=hira2-web
+
+      # An arm64 image would build and save fine here and only fail on the VPS,
+      # after the maintenance window has already started. Fail loudly instead.
+      - name: Verify architecture
+        run: |
+          for img in "multica-backend:${{ inputs.tag }}" "multica-web:${{ inputs.tag }}"; do
+            arch=$(docker image inspect "$img" --format '{{.Os}}/{{.Architecture}}')
+            echo "$img -> $arch"
+            if [ "$arch" != "linux/amd64" ]; then
+              echo "::error::$img is $arch, expected linux/amd64"
+              exit 1
+            fi
+          done
+
+      - name: Save + checksum
+        run: |
+          out="hira2-images-${{ inputs.tag }}.tar.gz"
+          docker save "multica-backend:${{ inputs.tag }}" "multica-web:${{ inputs.tag }}" | gzip -9 > "$out"
+          sha256sum "$out" | tee "hira2-images-${{ inputs.tag }}.sha256"
+          ls -lh "$out"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hira2-images-${{ inputs.tag }}
+          path: |
+            hira2-images-${{ inputs.tag }}.tar.gz
+            hira2-images-${{ inputs.tag }}.sha256
+          retention-days: 14
+          # Already gzipped — re-zipping only burns runner time.
+          compression-level: 0
