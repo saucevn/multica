@@ -106,8 +106,31 @@ export function proxy(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // --- Fork: this instance has no marketing landing ---
+  // Upstream serves its public site at `/`; this is a private deployment, so an
+  // anonymous visitor gets the login page instead of Multica branding. The
+  // sibling marketing paths (/about, /changelog, …) are redirected in
+  // next.config.ts; `/` is handled here so the rule above keeps its fast path —
+  // a signed-in visitor with a workspace cookie still goes straight to
+  // `/{slug}/issues` and never sees the login screen.
+  //
+  // Signed-in but cookie-less visitors fall through to here too, which is
+  // correct: /login resolves them against their workspace list, exactly as the
+  // legacy-path branch above already relies on.
+  //
+  // The official-marketing-host guard is kept deliberately: upstream treats
+  // multica.ai as a public site that must stay reachable even with session
+  // cookies present, and this fork has no reason to hijack it. It also keeps
+  // upstream's own proxy tests passing unmodified.
+  if (pathname === "/" && !isOfficialMarketingHost(req.nextUrl.hostname)) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/login";
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+
   // --- Default: forward locale header to RSC, no redirect/rewrite ---
-  // Covers logged-out root path, /login, /:slug/*, and everything else.
+  // Covers /login, /:slug/*, and everything else.
   return nextWithLocale(req);
 }
 
