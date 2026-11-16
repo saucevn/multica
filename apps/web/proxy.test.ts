@@ -245,3 +245,46 @@ describe("proxy root and locale handling", () => {
     ).toBe("zh-Hans");
   });
 });
+
+// Fork-owned: this instance has no marketing landing, so `/` is a login door.
+// Without these, a future upstream sync could quietly restore the Multica
+// landing page as the first thing a visitor to app2.hira.vn sees.
+describe("fork: no marketing landing on `/`", () => {
+  it("sends an anonymous root visit to /login", () => {
+    expect(redirectLocation("/")).toBe("https://app.multica.test/login");
+  });
+
+  it("drops the query string so /login is not fed a stale `next`", () => {
+    expect(redirectLocation("/?utm_source=x")).toBe(
+      "https://app.multica.test/login",
+    );
+  });
+
+  it("keeps the fast path for a signed-in visitor with a workspace cookie", () => {
+    // Must NOT be /login: that would add a hop and flash the login screen for
+    // the common "type the bare domain" case.
+    expect(
+      redirectLocation("/", {
+        multica_logged_in: "1",
+        last_workspace_slug: "acme",
+      }),
+    ).toBe("https://app.multica.test/acme/issues");
+  });
+
+  it("sends a signed-in visitor without a workspace cookie to /login", () => {
+    expect(redirectLocation("/", { multica_logged_in: "1" })).toBe(
+      "https://app.multica.test/login",
+    );
+  });
+
+  it.each(["multica.ai", "www.multica.ai"])(
+    "leaves the official marketing host alone on %s",
+    (host) => {
+      expect(redirectLocation("/", {}, host)).toBeNull();
+    },
+  );
+
+  it("does not touch /login itself", () => {
+    expect(redirectLocation("/login")).toBeNull();
+  });
+});

@@ -48,6 +48,37 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
     qualities: [75, 80, 85],
   },
+  // Fork: this is a private instance, not a marketing site. Upstream's
+  // `app/(landing)` route group still serves Multica branding on these paths,
+  // which is what a visitor to app2.hira.vn currently lands on.
+  //
+  // Redirect rather than delete: the landing surface is ~41 upstream-owned files
+  // plus MDX content and images. Deleting them would produce delete/modify
+  // conflicts on every `scripts/sync-upstream.sh` run, forever — the exact tax
+  // this fork is built to avoid. Those files stay byte-identical to upstream.
+  //
+  // `/` is deliberately NOT listed here. Config redirects run before proxy.ts,
+  // and proxy.ts already sends a signed-in visitor with a `last_workspace_slug`
+  // cookie straight to `/{slug}/issues`. Claiming `/` here would preempt that
+  // and route them through `/login` instead — an extra hop and a visible flash
+  // of the login screen for the common "type the bare domain" case. The
+  // anonymous half of `/` is handled in proxy.ts instead.
+  //
+  // `permanent: false` (307) on purpose: a 308 is cached by browsers
+  // indefinitely, so a real Hira landing added later would never reach anyone
+  // who had already visited.
+  async redirects() {
+    return [
+      { source: "/homepage", destination: "/login", permanent: false },
+      { source: "/about", destination: "/login", permanent: false },
+      { source: "/changelog", destination: "/login", permanent: false },
+      { source: "/contact-sales", destination: "/login", permanent: false },
+      // Advertises upstream Multica's releases, which are not this fork's builds.
+      { source: "/download", destination: "/login", permanent: false },
+      { source: "/usecases", destination: "/login", permanent: false },
+      { source: "/usecases/:slug*", destination: "/login", permanent: false },
+    ];
+  },
   async rewrites() {
     return {
       // Run before file-system routes so /docs isn't shadowed by the

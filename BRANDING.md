@@ -63,6 +63,10 @@ Every upstream-owned file this fork edits. New fork-owned files (`locales/vi/**`
 | README.md | +Tiếng Việt link in language nav; +Vietnamese "Bản fork cá nhân — Hira" notice block after the header | Take upstream, re-apply the 2 fork additions (top of file) |
 | AGENTS.md | Fork-notice banner prepended above upstream content (golden rules + pointers) | Keep our banner, take upstream body below it |
 | CLAUDE.md | Fork-notice blockquote inserted after the intro line (golden rules + pointers) | Keep our blockquote, take upstream body |
+| apps/web/next.config.ts | +`redirects()` sending the 6 non-root marketing paths to /login | Re-apply block (additive, own key) |
+| apps/web/proxy.ts | +`pathname === "/"` → /login branch before the default return | Re-apply block; re-check it still sits AFTER the root-path workspace rule |
+| apps/web/app/robots.ts | Body replaced with `disallow: "/"`; multica.ai sitemap refs dropped | Keep ours (a private instance must never be crawled) |
+| apps/web/app/sitemap.ts | Body replaced with `return []` | Keep ours |
 
 > **In-app brand glyph (MulticaIcon) intentionally NOT swapped.** It is a monochrome
 > `currentColor` clip-path used as a loading spinner (animate-spin/pulse) and themed glyph
